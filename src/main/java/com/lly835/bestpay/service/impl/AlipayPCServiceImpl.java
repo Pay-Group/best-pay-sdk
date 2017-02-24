@@ -8,9 +8,9 @@ import com.lly835.bestpay.model.PayResponse;
 import org.apache.http.client.utils.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.JsonUtil;
-import utils.MapUtil;
-import utils.NameValuePairUtil;
+import com.lly835.bestpay.utils.JsonUtil;
+import com.lly835.bestpay.utils.MapUtil;
+import com.lly835.bestpay.utils.NameValuePairUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,11 +43,14 @@ public class AlipayPCServiceImpl extends BestPayServiceImpl{
         requestMap.put("total_fee", String.valueOf(request.getOrderAmount()));
         requestMap.put("seller_id", AlipayConfig.getPartner());
         requestMap.put("notify_url", request.getNotifyUrl());
-        requestMap.put("sign_type", AlipayConfig.getSignType());
+        requestMap.put("return_url", request.getReturnUrl());
 
         //2. 加密
-        //Map转Url
-        String content = MapUtil.toUrlWithSort(requestMap);
+        //去掉内容为空的参数 && Map转Url
+        String content = MapUtil.toUrlWithSort(MapUtil.removeEmptyKeyAndValue(requestMap));
+
+        //这里特别注意, 即时到账和wap支付, sign_type参数不参与签名
+        requestMap.put("sign_type", AlipayConfig.getSignType());
 
         //使用私钥签名
         String sign = RSA.sign(content, AlipayConfig.getPrivateKey(), AlipayConfig.getInputCharset());
@@ -60,8 +63,8 @@ public class AlipayPCServiceImpl extends BestPayServiceImpl{
         String url = new URIBuilder(AlipayConstants.ALIPAY_GATEWAY_NEW).setParameters(NameValuePairUtil.convert(requestMap)).toString();
         response.setRedirectUrl(url);
 
-        logger.debug(url);
         logger.info("【支付宝PC端支付】respones={}", JsonUtil.toJson(response));
+        logger.debug(url);
 
         return response;
     }

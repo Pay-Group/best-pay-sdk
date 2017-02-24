@@ -7,8 +7,8 @@ import com.lly835.bestpay.model.PayResponse;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import utils.JsonUtil;
-import utils.MapUtil;
+import com.lly835.bestpay.utils.JsonUtil;
+import com.lly835.bestpay.utils.MapUtil;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -51,8 +51,8 @@ public class AlipayAppServiceImpl extends BestPayServiceImpl{
         parameterMap.put("biz_content", JsonUtil.toJson(bizContentMap));
 
         //2. 加密
-        //Map转Url
-        String content = MapUtil.toUrlWithSort(parameterMap);
+        //去掉内容为空的参数 && Map转Url
+        String content = MapUtil.toUrlWithSort(MapUtil.removeEmptyKeyAndValue(parameterMap));
 
         //使用私钥签名
         String sign = RSA.sign(content, AlipayConfig.getPrivateKey(), AlipayConfig.getInputCharset());
