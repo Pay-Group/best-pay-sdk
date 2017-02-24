@@ -1,6 +1,8 @@
 package com.lly835.bestpay.utils;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -24,7 +26,7 @@ public class HttpRequestUtil {
      * @param jsonParam     参数
      * @return
      */
-    public static String httpPost(String url,String jsonParam){
+    public static String post(String url,String jsonParam){
         //post请求返回结果
         DefaultHttpClient httpClient = new DefaultHttpClient();
         String jsonResult = null;
@@ -56,6 +58,33 @@ public class HttpRequestUtil {
             logger.error("post请求提交失败:" + url, e);
         }
         return jsonResult;
+    }
+
+    /**
+     * 发送get请求
+     * @param url    路径
+     * @return
+     */
+    public static String get(String url){
+        String responseString = null;
+        try {
+            DefaultHttpClient client = new DefaultHttpClient();
+            //发送get请求
+            HttpGet request = new HttpGet(url);
+            HttpResponse response = client.execute(request);
+
+            /**请求发送成功，并得到响应**/
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                /**读取服务器返回过来的json字符串数据**/
+                return EntityUtils.toString(response.getEntity());
+                /**把json字符串转换成json对象**/
+            } else {
+                logger.error("get请求提交失败:" + url);
+            }
+        } catch (IOException e) {
+            logger.error("get请求提交失败:" + url, e);
+        }
+        return responseString;
     }
 
 }

@@ -12,6 +12,8 @@ public enum BestPayTypeEnum {
     ALIPAY_APP("alipay_app", "支付宝app"),
 
     ALIPAY_PC("alipay_pc", "支付宝pc"),
+
+    ALIPAY_WAP("alipay_wap", "支付宝wap"),
     ;
 
     private String code;

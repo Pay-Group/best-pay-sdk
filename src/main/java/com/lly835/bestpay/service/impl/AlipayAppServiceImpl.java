@@ -4,11 +4,11 @@ import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.encrypt.RSA;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
+import com.lly835.bestpay.utils.JsonUtil;
+import com.lly835.bestpay.utils.MapUtil;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.lly835.bestpay.utils.JsonUtil;
-import com.lly835.bestpay.utils.MapUtil;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -18,11 +18,10 @@ import java.util.Map;
  * 支付宝app支付
  * Created by null on 2017/2/14.
  */
-public class AlipayAppServiceImpl extends BestPayServiceImpl{
+public class AlipayAppServiceImpl{
 
     private final static Logger logger = LoggerFactory.getLogger(AlipayAppServiceImpl.class);
 
-    @Override
     public PayResponse pay(PayRequest request) {
 
         logger.info("【支付宝PC端支付】request={}", JsonUtil.toJson(request));
@@ -41,7 +40,7 @@ public class AlipayAppServiceImpl extends BestPayServiceImpl{
         bizContentMap.put("product_code", "QUICK_MSECURITY_PAY");
         bizContentMap.put("body", "");
 
-        parameterMap.put("app_id", AlipayConfig.getAppid());
+        parameterMap.put("app_id", AlipayConfig.getAppId());
         parameterMap.put("method", "alipay.trade.app.pay");
         parameterMap.put("charset", AlipayConfig.getInputCharset());
         parameterMap.put("sign_type", AlipayConfig.getSignType());
@@ -55,7 +54,7 @@ public class AlipayAppServiceImpl extends BestPayServiceImpl{
         String content = MapUtil.toUrlWithSort(MapUtil.removeEmptyKeyAndValue(parameterMap));
 
         //使用私钥签名
-        String sign = RSA.sign(content, AlipayConfig.getPrivateKey(), AlipayConfig.getInputCharset());
+        String sign = RSA.sign(content, AlipayConfig.getAppPrivateKey(), AlipayConfig.getInputCharset());
         logger.debug("【支付宝APP端支付】计算出来的签名:{}", sign);
 
         parameterMap.put("sign", sign);

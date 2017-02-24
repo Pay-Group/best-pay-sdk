@@ -5,13 +5,15 @@ import com.lly835.bestpay.constants.AlipayConstants;
 import com.lly835.bestpay.encrypt.RSA;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
-import org.apache.http.client.utils.URIBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.utils.JsonUtil;
 import com.lly835.bestpay.utils.MapUtil;
 import com.lly835.bestpay.utils.NameValuePairUtil;
+import org.apache.http.client.utils.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,11 +21,10 @@ import java.util.Map;
  * 支付宝PC端支付
  * Created by null on 2017/2/14.
  */
-public class AlipayPCServiceImpl extends BestPayServiceImpl{
+public class AlipayPCServiceImpl implements BestPayService{
 
     private final static Logger logger = LoggerFactory.getLogger(AlipayPCServiceImpl.class);
 
-    @Override
     public PayResponse pay(PayRequest request) throws Exception{
 
         logger.info("【支付宝PC端支付】request={}", JsonUtil.toJson(request));
@@ -35,13 +36,13 @@ public class AlipayPCServiceImpl extends BestPayServiceImpl{
         //1. 封装参数
         Map<String, String> requestMap = new HashMap<>();
         requestMap.put("service", "create_direct_pay_by_user");
-        requestMap.put("partner", AlipayConfig.getPartner());
+        requestMap.put("partner", AlipayConfig.getPartnerId());
         requestMap.put("_input_charset", AlipayConfig.getInputCharset());
         requestMap.put("out_trade_no", request.getOrderId());
         requestMap.put("subject", request.getOrderName());
         requestMap.put("payment_type", "1");
         requestMap.put("total_fee", String.valueOf(request.getOrderAmount()));
-        requestMap.put("seller_id", AlipayConfig.getPartner());
+        requestMap.put("seller_id", AlipayConfig.getPartnerId());
         requestMap.put("notify_url", request.getNotifyUrl());
         requestMap.put("return_url", request.getReturnUrl());
 
@@ -53,7 +54,7 @@ public class AlipayPCServiceImpl extends BestPayServiceImpl{
         requestMap.put("sign_type", AlipayConfig.getSignType());
 
         //使用私钥签名
-        String sign = RSA.sign(content, AlipayConfig.getPrivateKey(), AlipayConfig.getInputCharset());
+        String sign = RSA.sign(content, AlipayConfig.getPartnerPrivateKey(), AlipayConfig.getInputCharset());
         logger.debug("【支付宝PC端支付】计算出来的签名:{}", sign);
 
         requestMap.put("sign", sign);
@@ -67,5 +68,10 @@ public class AlipayPCServiceImpl extends BestPayServiceImpl{
         logger.debug(url);
 
         return response;
+    }
+
+    @Override
+    public PayResponse syncNotify(HttpServletRequest request) {
+        return null;
     }
 }
