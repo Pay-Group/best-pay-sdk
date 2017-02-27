@@ -18,6 +18,9 @@ public class PayResponse {
     /** 预支付的参数, 给app支付使用. */
     private String prePayParams;
 
+    /** 流水号. */
+    private String tradeNo;
+
     public String getOrderId() {
         return orderId;
     }
@@ -48,5 +51,13 @@ public class PayResponse {
 
     public void setPrePayParams(String prePayParams) {
         this.prePayParams = prePayParams;
+    }
+
+    public String getTradeNo() {
+        return tradeNo;
+    }
+
+    public void setTradeNo(String tradeNo) {
+        this.tradeNo = tradeNo;
     }
 }

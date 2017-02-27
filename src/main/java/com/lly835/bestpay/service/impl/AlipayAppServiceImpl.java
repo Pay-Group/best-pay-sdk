@@ -1,15 +1,18 @@
 package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AlipayConfig;
-import com.lly835.bestpay.encrypt.RSA;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
+import com.lly835.bestpay.service.BestPayService;
+import com.lly835.bestpay.service.Signature;
+import com.lly835.bestpay.service.impl.signatrue.AlipayAppSignatrueImpl;
 import com.lly835.bestpay.utils.JsonUtil;
 import com.lly835.bestpay.utils.MapUtil;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +21,7 @@ import java.util.Map;
  * 支付宝app支付
  * Created by null on 2017/2/14.
  */
-public class AlipayAppServiceImpl{
+public class AlipayAppServiceImpl implements BestPayService{
 
     private final static Logger logger = LoggerFactory.getLogger(AlipayAppServiceImpl.class);
 
@@ -49,22 +52,28 @@ public class AlipayAppServiceImpl{
         parameterMap.put("notify_url", request.getNotifyUrl());
         parameterMap.put("biz_content", JsonUtil.toJson(bizContentMap));
 
-        //2. 加密
-        //去掉内容为空的参数 && Map转Url
-        String content = MapUtil.toUrlWithSort(MapUtil.removeEmptyKeyAndValue(parameterMap));
-
-        //使用私钥签名
-        String sign = RSA.sign(content, AlipayConfig.getAppPrivateKey(), AlipayConfig.getInputCharset());
-        logger.debug("【支付宝APP端支付】计算出来的签名:{}", sign);
-
+        //2. 签名
+        Signature signature = new AlipayAppSignatrueImpl();
+        String sign = signature.sign(parameterMap);
         parameterMap.put("sign", sign);
-        logger.debug("【支付宝APP端支付】构造好的完整参数={}", JsonUtil.toJson(parameterMap));
+        logger.debug("【支付宝Wap端支付】构造好的完整参数={}", JsonUtil.toJson(parameterMap));
 
         //3. 返回的结果
         String prePayParams = MapUtil.toUrlWithSortAndEncode(parameterMap) + "&sign=" + URLEncoder.encode(sign);
         response.setPrePayParams(prePayParams);
         logger.debug("【支付宝APP端支付】response={}", JsonUtil.toJson(response));
         logger.debug("prePayParams={}", prePayParams);
+
+        return response;
+    }
+
+    @Override
+    public PayResponse syncNotify(HttpServletRequest request) {
+
+        //构造返回对象
+        PayResponse response = new PayResponse();
+        response.setOrderId(request.getParameter("out_trade_no"));
+        response.setTradeNo(request.getParameter("trade_no"));
 
         return response;
     }

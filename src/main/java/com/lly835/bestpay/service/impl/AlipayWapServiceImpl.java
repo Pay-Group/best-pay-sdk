@@ -1,14 +1,13 @@
 package com.lly835.bestpay.service.impl;
 
-import com.google.gson.Gson;
 import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.constants.AlipayConstants;
-import com.lly835.bestpay.encrypt.RSA;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.BestPayService;
+import com.lly835.bestpay.service.Signature;
+import com.lly835.bestpay.service.impl.signatrue.AlipayAppSignatrueImpl;
 import com.lly835.bestpay.utils.JsonUtil;
-import com.lly835.bestpay.utils.MapUtil;
 import com.lly835.bestpay.utils.NameValuePairUtil;
 import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.DateTime;
@@ -30,7 +29,6 @@ public class AlipayWapServiceImpl implements BestPayService{
 
     public PayResponse pay(PayRequest request) throws Exception{
 
-        Gson gson = new Gson();
         logger.info("【支付宝Wap端支付】request={}", JsonUtil.toJson(request));
 
         PayResponse response =  new PayResponse();
@@ -57,17 +55,11 @@ public class AlipayWapServiceImpl implements BestPayService{
         parameterMap.put("timestamp", DateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
         parameterMap.put("version", "1.0");
         parameterMap.put("notify_url", request.getNotifyUrl());
-        parameterMap.put("biz_content", gson.toJson(bizContentMap));
+        parameterMap.put("biz_content", JsonUtil.toJson(bizContentMap));
 
-        //2. 加密
-        //去掉内容为空的参数 && Map转Url
-        String content = MapUtil.toUrlWithSort(MapUtil.removeEmptyKeyAndValue(parameterMap));
-        logger.info("content={}", content);
-
-        //使用私钥签名
-        String sign = RSA.sign(content, AlipayConfig.getAppPrivateKey(), AlipayConfig.getInputCharset());
-        logger.debug("【支付宝Wap端支付】计算出来的签名:{}", sign);
-
+        //2. 签名
+        Signature signature = new AlipayAppSignatrueImpl();
+        String sign = signature.sign(parameterMap);
         parameterMap.put("sign", sign);
         logger.debug("【支付宝Wap端支付】构造好的完整参数={}", JsonUtil.toJson(parameterMap));
 
@@ -83,6 +75,12 @@ public class AlipayWapServiceImpl implements BestPayService{
 
     @Override
     public PayResponse syncNotify(HttpServletRequest request) {
-        return null;
+
+        //构造返回对象
+        PayResponse response = new PayResponse();
+        response.setOrderId(request.getParameter("out_trade_no"));
+        response.setTradeNo(request.getParameter("trade_no"));
+
+        return response;
     }
 }

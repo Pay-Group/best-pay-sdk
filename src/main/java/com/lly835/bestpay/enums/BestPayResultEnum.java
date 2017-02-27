@@ -11,6 +11,7 @@ public enum BestPayResultEnum {
     CONFIG_ERROR(2, "配置错误, 请检查是否漏了配置项"),
     ALIPAY_NOTIFY_ID_VERIFY_FAIL(10, "【支付宝web端支付验证签名】验证notifyId失败"),
     ALIPAY_ASYNC_SIGN_VERIFY_FAIL(11, "【支付宝web端支付同步返回验证签名】验证签名失败"),
+    ASYNC_SIGN_VERIFY_FAIL(12, "同步返回签名失败"),
     ;
 
     private Integer code;
