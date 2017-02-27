@@ -77,4 +77,9 @@ public class AlipayAppServiceImpl implements BestPayService{
 
         return response;
     }
+
+    @Override
+    public PayResponse asyncNotify(HttpServletRequest request) {
+        return null;
+    }
 }

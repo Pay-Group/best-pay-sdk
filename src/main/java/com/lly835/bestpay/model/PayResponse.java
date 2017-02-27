@@ -1,5 +1,7 @@
 package com.lly835.bestpay.model;
 
+import java.util.Date;
+
 /**
  * 支付时的同步返回参数
  * Created by null on 2017/2/14.
@@ -20,6 +22,15 @@ public class PayResponse {
 
     /** 流水号. */
     private String tradeNo;
+
+    /** 买家支付宝用户号, 买家支付宝账号对应的支付宝唯一用户号。以2088开头的纯16位数字. */
+    private String buyerId;
+
+    /** 买家支付宝账号, 买家支付宝账号, 邮箱或者手机号. */
+    private String buyerLogonId;
+
+    /** 支付时间. */
+    private Date payTime;
 
     public String getOrderId() {
         return orderId;
@@ -59,5 +70,29 @@ public class PayResponse {
 
     public void setTradeNo(String tradeNo) {
         this.tradeNo = tradeNo;
+    }
+
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    public void setBuyerId(String buyerId) {
+        this.buyerId = buyerId;
+    }
+
+    public String getBuyerLogonId() {
+        return buyerLogonId;
+    }
+
+    public void setBuyerLogonId(String buyerLogonId) {
+        this.buyerLogonId = buyerLogonId;
+    }
+
+    public Date getPayTime() {
+        return payTime;
+    }
+
+    public void setPayTime(Date payTime) {
+        this.payTime = payTime;
     }
 }

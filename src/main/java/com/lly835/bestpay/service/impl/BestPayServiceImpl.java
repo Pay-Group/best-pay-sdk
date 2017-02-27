@@ -65,7 +65,7 @@ public class BestPayServiceImpl implements BestPayService{
         //判断是否校验通过
         if (!this.verify(request)) {
             logger.error("【同步返回校验】签名验证不通过");
-            throw new BestPayException(BestPayResultEnum.ASYNC_SIGN_VERIFY_FAIL);
+            throw new BestPayException(BestPayResultEnum.SYNC_SIGN_VERIFY_FAIL);
         }
 
         BestPayService bestPayService =  payServiceMap.get(this.payType(request));
@@ -87,17 +87,44 @@ public class BestPayServiceImpl implements BestPayService{
     }
 
     /**
-     * 判断是什么支付类型
+     * 异步回调
+     * @return
+     */
+    @Override
+    public PayResponse asyncNotify(HttpServletRequest request) {
+
+        //判断是否校验通过
+        if (!this.verify(request)) {
+            logger.error("【异步返回校验】签名验证不通过");
+            throw new BestPayException(BestPayResultEnum.ASYNC_SIGN_VERIFY_FAIL);
+        }
+
+        BestPayService bestPayService =  payServiceMap.get(this.payType(request));
+        return bestPayService.asyncNotify(request);
+    }
+
+    /**
+     * 判断是什么支付类型(从同步回调中获取参数)
      * @param request
      * @return
      */
     private BestPayTypeEnum payType(HttpServletRequest request) {
-        if (request.getParameter("exterface") != null && request.getParameter("exterface").equals("create_direct_pay_by_user")) {
-            return BestPayTypeEnum.ALIPAY_PC;
+        //先判断是微信还是支付宝 是否是xml
+        //支付宝同步还是异步
+        if (request.getParameter("notify_type") == null) {
+            //支付宝同步
+            if (request.getParameter("exterface") != null && request.getParameter("exterface").equals("create_direct_pay_by_user")) {
+                return BestPayTypeEnum.ALIPAY_PC;
+            }
+            if (request.getParameter("method") != null && request.getParameter("method").equals("alipay.trade.wap.pay.return")) {
+                return BestPayTypeEnum.ALIPAY_WAP;
+            }
+        }else {
+            //支付宝异步(发起支付时使用这个参数标识支付方式)
+            String payType = request.getParameter("passback_params");
+            return BestPayTypeEnum.getByCode(payType);
         }
-        if (request.getParameter("method") != null && request.getParameter("method").equals("alipay.trade.wap.pay.return")) {
-            return BestPayTypeEnum.ALIPAY_WAP;
-        }
-        return BestPayTypeEnum.ALIPAY_PC;
+
+        throw new BestPayException(BestPayResultEnum.PAY_TYPE_ERROR);
     }
 }

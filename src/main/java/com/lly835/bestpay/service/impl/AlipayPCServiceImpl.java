@@ -18,7 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 支付宝PC端支付
+ * 支付宝PC端支付(即时到账)
+ * https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7386797.0.0.0NDYyr&treeId=62&articleId=103566&docType=1
  * Created by null on 2017/2/14.
  */
 public class AlipayPCServiceImpl implements BestPayService{
@@ -75,5 +76,10 @@ public class AlipayPCServiceImpl implements BestPayService{
         response.setTradeNo(request.getParameter("trade_no"));
 
         return response;
+    }
+
+    @Override
+    public PayResponse asyncNotify(HttpServletRequest request) {
+        return null;
     }
 }
