@@ -108,11 +108,12 @@ public class AlipayWapServiceImpl implements BestPayService{
         String tradeStatus = request.getParameter("trade_status");
         //退款状态
         String refundStatus = request.getParameter("refund_status");
-        if (!tradeStatus.equals(AlipayTradeStatusEnum.TRADE_SUCCESS)) {
+
+        if (tradeStatus != null && !tradeStatus.equals(AlipayTradeStatusEnum.TRADE_SUCCESS.name())) {
             throw new BestPayException(BestPayResultEnum.ALIPAY_TRADE_STATUS_IS_NOT_SUCCESS);
         }
         //忽略退款成功的消息(部分金额退款会发送交易成功的消息)
-        if (refundStatus.equals(AlipayRefundStatusEnum.REFUND_SUCCESS)) {
+        if (refundStatus != null && refundStatus.equals(AlipayRefundStatusEnum.REFUND_SUCCESS.name())) {
             throw new BestPayException(BestPayResultEnum.ALIPAY_TRADE_STATUS_IS_NOT_SUCCESS);
         }
 
