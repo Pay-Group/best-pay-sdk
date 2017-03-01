@@ -15,6 +15,7 @@ public enum BestPayResultEnum {
     ASYNC_SIGN_VERIFY_FAIL(13, "异步返回签名失败"),
     PAY_TYPE_ERROR(14, "错误的支付方式"),
     ALIPAY_TRADE_STATUS_IS_NOT_SUCCESS(15, "支付宝交易状态不是成功"),
+    ALIPAY_TIME_FORMAT_ERROR(16, "支付宝返回的时间格式不对"),
     ;
 
     private Integer code;

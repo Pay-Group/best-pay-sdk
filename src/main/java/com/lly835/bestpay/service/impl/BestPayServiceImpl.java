@@ -91,7 +91,7 @@ public class BestPayServiceImpl implements BestPayService{
      * @return
      */
     @Override
-    public PayResponse asyncNotify(HttpServletRequest request) {
+    public PayResponse asyncNotify(HttpServletRequest request) throws Exception {
 
         //判断是否校验通过
         if (!this.verify(request)) {

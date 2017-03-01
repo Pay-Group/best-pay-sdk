@@ -12,6 +12,7 @@ import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.service.Signature;
 import com.lly835.bestpay.service.impl.signatrue.AlipayAppSignatrueImpl;
+import com.lly835.bestpay.utils.DateUtil;
 import com.lly835.bestpay.utils.JsonUtil;
 import com.lly835.bestpay.utils.NameValuePairUtil;
 import org.apache.http.client.utils.URIBuilder;
@@ -124,7 +125,11 @@ public class AlipayWapServiceImpl implements BestPayService{
         response.setOrderAmount(Double.valueOf(request.getParameter("total_amount")));
         response.setBuyerId(request.getParameter("buyer_id"));
         response.setBuyerLogonId(request.getParameter("buyer_logon_id"));
-        response.setPayTime(new DateTime(request.getParameter("gmt_payment")).toDate());
+        try {
+            response.setPayTime(DateUtil.toDate(request.getParameter("gmt_payment")));
+        } catch (Exception e) {
+            throw new BestPayException(BestPayResultEnum.ALIPAY_TIME_FORMAT_ERROR);
+        }
 
         return response;
     }

@@ -15,7 +15,7 @@ public interface BestPayService {
     PayResponse pay(PayRequest request) throws Exception;
 
     /** 异步回调. */
-    PayResponse asyncNotify(HttpServletRequest request);
+    PayResponse asyncNotify(HttpServletRequest request) throws Exception;
 
     /** 同步回调. */
     PayResponse syncNotify(HttpServletRequest request);
