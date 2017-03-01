@@ -5,17 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.lly835</groupId>
     <artifactId>best-pay-sdk</artifactId>
-    <version>1.0.1.BETA</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
     <name>best-pay-sdk</name>
     <description>最好的支付sdk</description>
     <url>https://github.com/lly835/best-pay-sdk</url>
-
-    <!--<parent>-->
-        <!--<groupId>org.sonatype.oss</groupId>-->
-        <!--<artifactId>oss-parent</artifactId>-->
-        <!--<version>7</version>-->
-    <!--</parent>-->
 
     <licenses>
         <license>
@@ -157,7 +151,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.1</version>
+                        <version>1.5</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
