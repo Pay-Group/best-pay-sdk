@@ -19,7 +19,7 @@
 
 
 #### Maven最新版本
-```
+```xml
 <dependency>
     <groupId>com.github.lly835</groupId>
     <artifactId>best-pay-sdk</artifactId>
