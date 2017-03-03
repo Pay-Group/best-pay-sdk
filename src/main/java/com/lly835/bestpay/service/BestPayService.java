@@ -11,12 +11,19 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface BestPayService {
 
-    /** 发起支付. */
+    /**
+     * 发起支付.
+     */
     PayResponse pay(PayRequest request) throws Exception;
 
-    /** 异步回调. */
+    /**
+     * 异步回调.
+     */
     PayResponse asyncNotify(HttpServletRequest request) throws Exception;
 
-    /** 同步回调. */
+    /**
+     * 同步回调.
+     */
     PayResponse syncNotify(HttpServletRequest request);
+
 }
