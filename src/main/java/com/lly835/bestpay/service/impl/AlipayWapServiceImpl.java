@@ -9,35 +9,40 @@ import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.exception.BestPayException;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
+import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.service.Signature;
-import com.lly835.bestpay.service.impl.signatrue.AlipayAppSignatrueImpl;
+import com.lly835.bestpay.service.impl.signature.AlipayAppSignatureImpl;
 import com.lly835.bestpay.utils.DateUtil;
 import com.lly835.bestpay.utils.JsonUtil;
 import com.lly835.bestpay.utils.NameValuePairUtil;
 import org.apache.http.client.utils.URIBuilder;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 支付宝Wap端支付
  * https://doc.open.alipay.com/doc2/detail.htm?treeId=203&articleId=105463&docType=1
  * Created by null on 2017/2/14.
  */
-public class AlipayWapServiceImpl implements BestPayService{
+class AlipayWapServiceImpl extends AbstractComponent implements BestPayService {
 
-    private final static Logger logger = LoggerFactory.getLogger(AlipayWapServiceImpl.class);
+    private AlipayConfig alipayConfig;
 
-    public PayResponse pay(PayRequest request) throws Exception{
+    public AlipayWapServiceImpl(AlipayConfig alipayConfig) {
+        Objects.requireNonNull(alipayConfig, "alipayConfig is null.");
+        this.alipayConfig = alipayConfig;
+    }
+
+    public PayResponse pay(PayRequest request) throws Exception {
 
         logger.info("【支付宝Wap端支付】request={}", JsonUtil.toJson(request));
 
-        PayResponse response =  new PayResponse();
+        PayResponse response = new PayResponse();
         response.setOrderId(request.getOrderId());
         response.setOrderAmount(request.getOrderAmount());
 
@@ -54,19 +59,19 @@ public class AlipayWapServiceImpl implements BestPayService{
         bizContentMap.put("passback_params", BestPayTypeEnum.ALIPAY_WAP.getCode());
 
 
-        parameterMap.put("app_id", AlipayConfig.getAppId());
+        parameterMap.put("app_id", this.alipayConfig.getAppId());
         parameterMap.put("method", "alipay.trade.wap.pay");
         parameterMap.put("format", "JSON");
-        parameterMap.put("return_url", request.getReturnUrl());
+        parameterMap.put("return_url", this.alipayConfig.getReturnUrl());
         parameterMap.put("charset", "utf-8");
-        parameterMap.put("sign_type", AlipayConfig.getSignType());
+        parameterMap.put("sign_type", this.alipayConfig.getSignType().name());
         parameterMap.put("timestamp", DateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
         parameterMap.put("version", "1.0");
-        parameterMap.put("notify_url", request.getNotifyUrl());
+        parameterMap.put("notify_url", this.alipayConfig.getNotifyUrl());
         parameterMap.put("biz_content", JsonUtil.toJson(bizContentMap));
 
         //2. 签名
-        Signature signature = new AlipayAppSignatrueImpl();
+        Signature signature = new AlipayAppSignatureImpl(this.alipayConfig);
         String sign = signature.sign(parameterMap);
         parameterMap.put("sign", sign);
         logger.debug("【支付宝Wap端支付】构造好的完整参数={}", JsonUtil.toJson(parameterMap));
@@ -83,6 +88,7 @@ public class AlipayWapServiceImpl implements BestPayService{
 
     /**
      * 同步返回
+     *
      * @param request
      * @return
      */
@@ -99,6 +105,7 @@ public class AlipayWapServiceImpl implements BestPayService{
 
     /**
      * 异步返回
+     *
      * @param request
      * @return
      */

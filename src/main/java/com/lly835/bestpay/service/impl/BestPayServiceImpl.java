@@ -1,5 +1,6 @@
 package com.lly835.bestpay.service.impl;
 
+import com.lly835.bestpay.config.AliDirectPayConfig;
 import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.enums.BestPayResultEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
@@ -8,8 +9,8 @@ import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.service.Signature;
-import com.lly835.bestpay.service.impl.signatrue.AlipayAppSignatrueImpl;
-import com.lly835.bestpay.service.impl.signatrue.AlipayPCSignatrueImpl;
+import com.lly835.bestpay.service.impl.signature.AlipayAppSignatureImpl;
+import com.lly835.bestpay.service.impl.signature.AlipayPCSignatureImpl;
 import com.lly835.bestpay.utils.ServletRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-
-/**
- * Created by null on 2017/2/14.
- */
-public class BestPayServiceImpl implements BestPayService{
+public class BestPayServiceImpl implements BestPayService {
 
     private final static Logger logger = LoggerFactory.getLogger(BestPayServiceImpl.class);
 
@@ -30,24 +27,18 @@ public class BestPayServiceImpl implements BestPayService{
 
     private Map<BestPayTypeEnum, Signature> signatureMap = new HashMap<>();
 
-    public BestPayServiceImpl() {
-//        map.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppServiceImpl());
-        payServiceMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCServiceImpl());
-        payServiceMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayWapServiceImpl());
+    public BestPayServiceImpl(AlipayConfig alipayConfig, AliDirectPayConfig aliDirectPayConfig) {
+        payServiceMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppServiceImpl(alipayConfig));
+        payServiceMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCServiceImpl(aliDirectPayConfig));
+        payServiceMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayWapServiceImpl(alipayConfig));
 
-        signatureMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCSignatrueImpl());
-        signatureMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayAppSignatrueImpl());
-        signatureMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppSignatrueImpl());
-
-        //检查配置参数
-        AlipayConfig.check();
+        signatureMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCSignatureImpl(aliDirectPayConfig));
+        signatureMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayAppSignatureImpl(alipayConfig));
+        signatureMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppSignatureImpl(alipayConfig));
     }
 
     @Override
     public PayResponse pay(PayRequest request) throws Exception {
-
-        //检查支付参数
-        request.check();
 
         //判断是什么支付方式
         BestPayService alipayService = payServiceMap.get(request.getPayTypeEnum());
@@ -56,6 +47,7 @@ public class BestPayServiceImpl implements BestPayService{
 
     /**
      * 同步返回
+     *
      * @param request
      * @return
      */
@@ -68,12 +60,13 @@ public class BestPayServiceImpl implements BestPayService{
             throw new BestPayException(BestPayResultEnum.SYNC_SIGN_VERIFY_FAIL);
         }
 
-        BestPayService bestPayService =  payServiceMap.get(this.payType(request));
+        BestPayService bestPayService = payServiceMap.get(this.payType(request));
         return bestPayService.syncNotify(request);
     }
 
     /**
      * 同步验证, 包含notify_id验证和签名验证
+     *
      * @return
      */
     public Boolean verify(HttpServletRequest request) {
@@ -88,6 +81,7 @@ public class BestPayServiceImpl implements BestPayService{
 
     /**
      * 异步回调
+     *
      * @return
      */
     @Override
@@ -99,12 +93,13 @@ public class BestPayServiceImpl implements BestPayService{
             throw new BestPayException(BestPayResultEnum.ASYNC_SIGN_VERIFY_FAIL);
         }
 
-        BestPayService bestPayService =  payServiceMap.get(this.payType(request));
+        BestPayService bestPayService = payServiceMap.get(this.payType(request));
         return bestPayService.asyncNotify(request);
     }
 
     /**
      * 判断是什么支付类型(从同步回调中获取参数)
+     *
      * @param request
      * @return
      */
@@ -119,7 +114,7 @@ public class BestPayServiceImpl implements BestPayService{
             if (request.getParameter("method") != null && request.getParameter("method").equals("alipay.trade.wap.pay.return")) {
                 return BestPayTypeEnum.ALIPAY_WAP;
             }
-        }else {
+        } else {
             //支付宝异步(发起支付时使用这个参数标识支付方式)
             String payType = request.getParameter("passback_params");
             return BestPayTypeEnum.getByCode(payType);

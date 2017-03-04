@@ -1,102 +1,121 @@
 package com.lly835.bestpay.config;
 
-import com.lly835.bestpay.enums.BestPayResultEnum;
-import com.lly835.bestpay.exception.BestPayException;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.codec.binary.Base64;
+
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Objects;
 
 /**
- * 支付宝配置信息
- * 不需要每一项都配置
- * 合作伙伴(即时到账支付, wap支付) https://openhome.alipay.com/platform/keyManage.htm?keyType=partner
- * app(App支付, 扫码付等) https://openhome.alipay.com/platform/keyManage.htm
- * Created by null on 2017/2/14.
+ * 支付宝配置信息(非即时到账接口)
+ * <p>
+ * 文档地址: https://openhome.alipay.com/developmentDocument.htm
  */
+public class AlipayConfig extends PayConfig {
 
-public class AlipayConfig {
+    /**
+     * 应用id, 支付宝新版App支付, Wap支付的统一ID.
+     */
+    private String appId;
 
-    /** 合作者身份ID. */
-    private static String partnerId;
+    /**
+     * 应用的RSA私钥(合作伙伴自行创建).
+     */
+    private PrivateKey appRSAPrivateKey;
 
-    /** 合作伙伴的私钥(自己产生). */
-    private static String partnerPrivateKey;
+    /**
+     * 支付宝的RSA公钥(由合作伙伴上传RSA公钥后支付宝提供).
+     */
+    private PublicKey alipayRSAPublicKey;
 
-    /** 合作伙伴的公钥(支付宝提供). */
-    private static String partnerPublicKey;
+    /**
+     * 签名方式: RSA, RSA2两个值可选, 必须大写.
+     */
+    private SignType signType;
 
-    /** 应用id, 支付宝新版把app支付, 扫码付只需要用一个appid就行了. */
-    private static String appId;
-
-    /** 应用私钥. */
-    private static String appPrivateKey;
-
-    /** 应用公钥. */
-    private static String appPublicKey;
-
-    /** 签名方式：DSA、RSA、MD5三个值可选，必须大写. */
-    private static String signType = "RSA";
-
-    private static String inputCharset = "UTF-8";
-
-    public static String getPartnerId() {
-        return partnerId;
+    /**
+     * 支付宝配置信息. 默认使用RSA2签名方式.
+     *
+     * @param appId              应用id, 支付宝新版App支付, Wap支付的统一ID.
+     * @param appRSAPrivateKey   应用的RSA私钥(合作伙伴自行创建).
+     * @param alipayRSAPublicKey 支付宝的RSA公钥(由合作伙伴上传RSA公钥后支付宝提供).
+     * @param notifyUrl          异步通知地址.
+     * @param returnUrl          同步返回地址.
+     */
+    public AlipayConfig(String appId, String appRSAPrivateKey, String alipayRSAPublicKey, String notifyUrl,
+                        String returnUrl) {
+        this(appId, appRSAPrivateKey, alipayRSAPublicKey, SignType.RSA2, notifyUrl, returnUrl);
     }
 
-    public static void setPartnerId(String partnerId) {
-        AlipayConfig.partnerId = partnerId;
-    }
-
-    public static String getPartnerPrivateKey() {
-        return partnerPrivateKey;
-    }
-
-    public static void setPartnerPrivateKey(String partnerPrivateKey) {
-        AlipayConfig.partnerPrivateKey = partnerPrivateKey;
-    }
-
-    public static String getPartnerPublicKey() {
-        return partnerPublicKey;
-    }
-
-    public static void setPartnerPublicKey(String partnerPublicKey) {
-        AlipayConfig.partnerPublicKey = partnerPublicKey;
-    }
-
-    public static String getAppId() {
-        return appId;
-    }
-
-    public static void setAppId(String appId) {
-        AlipayConfig.appId = appId;
-    }
-
-    public static String getAppPrivateKey() {
-        return appPrivateKey;
-    }
-
-    public static void setAppPrivateKey(String appPrivateKey) {
-        AlipayConfig.appPrivateKey = appPrivateKey;
-    }
-
-    public static String getAppPublicKey() {
-        return appPublicKey;
-    }
-
-    public static void setAppPublicKey(String appPublicKey) {
-        AlipayConfig.appPublicKey = appPublicKey;
-    }
-
-    public static String getSignType() {
-        return signType;
-    }
-
-    public static String getInputCharset() {
-        return inputCharset;
-    }
-
-    public static Boolean check() {
-        if(StringUtils.isEmpty(partnerId)) {
-            throw new BestPayException(BestPayResultEnum.CONFIG_ERROR);
+    /**
+     * 支付宝配置信息.
+     *
+     * @param appId              应用id, 支付宝新版App支付, Wap支付的统一ID.
+     * @param appRSAPrivateKey   应用的RSA私钥(合作伙伴自行创建).
+     * @param alipayRSAPublicKey 支付宝的RSA公钥(由合作伙伴上传RSA公钥后支付宝提供).
+     * @param signType           签名方式.
+     * @param notifyUrl          异步通知地址.
+     * @param returnUrl          同步返回地址.
+     */
+    public AlipayConfig(String appId, String appRSAPrivateKey, String alipayRSAPublicKey, SignType signType,
+                        String notifyUrl, String returnUrl) {
+        super(notifyUrl, returnUrl);
+        Objects.requireNonNull(appId, "config param 'appId' is null.");
+        if (appId.length() > 32) {
+            throw new IllegalArgumentException("config param 'appId' is incorrect: size exceeds 32.");
         }
-        return true;
+        this.appId = appId;
+
+        Objects.requireNonNull(signType, "config param 'signType' is null.");
+        this.signType = signType;
+        switch (signType) {
+            case MD5:
+                throw new IllegalArgumentException("config param 'signType' [" + signType + "] is not match.");
+            case RSA:
+            case RSA2:
+                Objects.requireNonNull(appRSAPrivateKey, "config param 'appRSAPrivateKey' is null.");
+                try {
+                    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                    this.appRSAPrivateKey = keyFactory.generatePrivate(
+                            new PKCS8EncodedKeySpec(Base64.decodeBase64(appRSAPrivateKey)));
+                } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                    throw new IllegalArgumentException("config param 'appRSAPrivateKey' is incorrect.", e);
+                }
+                Objects.requireNonNull(alipayRSAPublicKey, "config param 'alipayRSAPublicKey' is null.");
+                try {
+                    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                    this.alipayRSAPublicKey = keyFactory.generatePublic(
+                            new X509EncodedKeySpec(Base64.decodeBase64(alipayRSAPublicKey)));
+                } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                    throw new IllegalArgumentException("config param 'alipayRSAPublicKey' is incorrect.", e);
+                }
+                break;
+        }
     }
+
+    public String getInputCharset() {
+        return "utf-8";
+    }
+
+    public String getAppId() {
+        return this.appId;
+    }
+
+    public PrivateKey getAppRSAPrivateKey() {
+        return this.appRSAPrivateKey;
+    }
+
+    public PublicKey getAlipayRSAPublicKey() {
+        return this.alipayRSAPublicKey;
+    }
+
+    public SignType getSignType() {
+        return this.signType;
+    }
+
 }
