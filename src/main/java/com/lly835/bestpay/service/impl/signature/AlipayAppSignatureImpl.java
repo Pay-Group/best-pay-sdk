@@ -1,12 +1,9 @@
 package com.lly835.bestpay.service.impl.signature;
 
 import com.lly835.bestpay.config.AlipayConfig;
-import com.lly835.bestpay.constants.AlipayConstants;
-import com.lly835.bestpay.encrypt.RSA;
+import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.Signature;
-import com.lly835.bestpay.utils.HttpRequestUtil;
-import com.lly835.bestpay.utils.MapUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -34,7 +31,7 @@ public class AlipayAppSignatureImpl extends AbstractComponent implements Signatu
     @Override
     public String sign(Map<String, String> sortedParamMap) {
         Objects.requireNonNull(sortedParamMap, "sortedParamMap is null.");
-        if (!(sortedParamMap instanceof SortedMap)) {
+        if (!(sortedParamMap instanceof TreeMap)) {
             throw new IllegalArgumentException("sortedParamMap is not sorted.");
         }
 
@@ -53,52 +50,64 @@ public class AlipayAppSignatureImpl extends AbstractComponent implements Signatu
         return signParamWithRSA(param);
     }
 
-    /**
-     * TODO
-     * @param parameterMap
-     * @param sign 需要校验的签名
-     * @return
-     */
     @Override
-    public boolean verify(Map<String, String> parameterMap, String sign) {
-
-        //首先校验notify_id, 同步返回是没有notify_id参数的
-        String notifyId = parameterMap.get("notify_id");
-        if (!StringUtils.isEmpty(notifyId)) {
-            boolean notifyIdFlag = this.verifyByNotifyId(notifyId);
-            if (!notifyIdFlag) { //TODO
-//            return false;
-            }
+    public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
+        Objects.requireNonNull(toBeVerifiedParamMap, "to be verified param map is null.");
+        if (toBeVerifiedParamMap.isEmpty()) {
+            throw new IllegalArgumentException("to be verified param map is empty.");
         }
 
-        //去除不参与签名的参数
-        parameterMap = MapUtil.removeParamsForAlipaySign(parameterMap);
-        //Map转Url
-        String content = MapUtil.toUrlWithSort(parameterMap);
-        //使用公钥验证
-//        boolean flag = RSA.verify(content, sign, AlipayConfig.getAppPublicKey(), AlipayConfig.getInputCharset());
-//        if (!flag) {
-//            return false;
-//        }
+        Objects.requireNonNull(signType, "sign type is null.");
+        switch (signType) {
+            case MD5:
+                throw new IllegalArgumentException("unsupported sign type: MD5.");
+        }
+
+        if (StringUtils.isBlank(sign)) {
+            throw new IllegalArgumentException("sign is blank.");
+        }
+
+        /* 1. 验签 */
+        List<String> paramList = new ArrayList<>();
+        for (Map.Entry<String, String> entry : toBeVerifiedParamMap.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            if (StringUtils.isBlank(k) || k.equals("sign_type") || k.equals("sign") || StringUtils.isEmpty(v)) {
+                continue;
+            }
+
+            paramList.add(k + "=" + v);
+        }
+        Collections.sort(paramList);
+        String toBeVerifiedStr = String.join("&", paramList);
+        boolean r = verifyParamWithRSA(toBeVerifiedStr, signType, sign);
+        if (!r) {
+            this.logger.warn("fail to verify sign with sign type {}.", signType.name());
+            return false;
+        }
+
+        /* 2. 校验notify_id, 同步返回是没有notify_id参数的 */
+        String notifyId = toBeVerifiedParamMap.get("notify_id");
+        if (!StringUtils.isEmpty(notifyId)) {
+            r = this.verifyNotifyId(notifyId);
+            if (!r) {
+                this.logger.warn("fail to verify notify id.");
+                return false;
+            }
+        }
 
         return true;
     }
 
 
     /**
+     * TODO
      * 验证notifyId, 注意notifyId的时效性大约为1分钟
      *
-     * @param notifyId
-     * @return
+     * @param notifyId 异步通知通知id
+     * @return 验证notifyId通过返回true, 否则返回false
      */
-    private Boolean verifyByNotifyId(String notifyId) {
-//        String veryfyUrl = AlipayConstants.ALIPAY_VERIFY_URL + "partner=" + AlipayConfig.getPartnerId() + "&notify_id=" + notifyId;
-//        String result = HttpRequestUtil.get(veryfyUrl);
-//
-//        if (result.equals("true")) {
-//            return true;
-//        }
-
+    private boolean verifyNotifyId(String notifyId) {
         return false;
     }
 
@@ -118,9 +127,31 @@ public class AlipayAppSignatureImpl extends AbstractComponent implements Signatu
             java.security.Signature sig = java.security.Signature.getInstance(algorithm);
             sig.initSign(this.alipayConfig.getAppRSAPrivateKey());
             sig.update(param.getBytes(this.alipayConfig.getInputCharset()));
-            return new String(org.apache.commons.codec.binary.Base64.encodeBase64(sig.sign()));
+            return Base64.getEncoder().encodeToString(sig.sign());
         } catch (UnsupportedEncodingException | InvalidKeyException | NoSuchAlgorithmException | SignatureException e) {
             throw new IllegalStateException("sign error.", e);
+        }
+    }
+
+    private boolean verifyParamWithRSA(String param, SignType signType, String sign) {
+        String algorithm;
+        switch (signType) {
+            case RSA:
+                algorithm = "SHA1WithRSA";
+                break;
+            case RSA2:
+                algorithm = "SHA256WithRSA";
+                break;
+            default:
+                throw new IllegalStateException("unsupported sign type [" + this.alipayConfig.getSignType() + "].");
+        }
+        try {
+            java.security.Signature sig = java.security.Signature.getInstance(algorithm);
+            sig.initVerify(this.alipayConfig.getAlipayRSAPublicKey());
+            sig.update(param.getBytes("utf-8"));
+            return sig.verify(Base64.getDecoder().decode(sign));
+        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | UnsupportedEncodingException e) {
+            throw new IllegalStateException("AliPay verify error.");
         }
     }
 

@@ -16,14 +16,14 @@ public class PayConfig {
 
     public PayConfig(String notifyUrl, String returnUrl) {
         Objects.requireNonNull(notifyUrl, "config param 'notifyUrl' is null.");
-        if (!notifyUrl.startsWith("http") || !notifyUrl.startsWith("https")) {
+        if (!notifyUrl.startsWith("http") && !notifyUrl.startsWith("https")) {
             throw new IllegalArgumentException("config param 'notifyUrl' does not start with http/https.");
         }
         if (notifyUrl.length() > 256) {
             throw new IllegalArgumentException("config param 'notifyUrl' is incorrect: size exceeds 256.");
         }
         if (returnUrl != null) {
-            if (!returnUrl.startsWith("http") || !returnUrl.startsWith("https")) {
+            if (!returnUrl.startsWith("http") && !returnUrl.startsWith("https")) {
                 throw new IllegalArgumentException("config param 'returnUrl' does not start with http/https.");
             }
             if (returnUrl.length() > 256) {
