@@ -1,6 +1,7 @@
 package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AlipayConfig;
+import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.constants.AlipayConstants;
 import com.lly835.bestpay.enums.AlipayRefundStatusEnum;
 import com.lly835.bestpay.enums.AlipayTradeStatusEnum;
@@ -101,6 +102,11 @@ class AlipayWapServiceImpl extends AbstractComponent implements BestPayService {
         response.setTradeNo(request.getParameter("trade_no"));
 
         return response;
+    }
+
+    @Override
+    public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
+        return false;
     }
 
     /**

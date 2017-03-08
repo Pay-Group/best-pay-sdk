@@ -1,13 +1,11 @@
 package com.lly835.bestpay.service.impl.signature;
 
 import com.lly835.bestpay.config.AliDirectPayConfig;
+import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.constants.AlipayConstants;
-import com.lly835.bestpay.encrypt.RSA;
 import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.Signature;
 import com.lly835.bestpay.utils.HttpRequestUtil;
-import com.lly835.bestpay.utils.MapUtil;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.Objects;
@@ -40,28 +38,28 @@ public class AlipayPCSignatureImpl extends AbstractComponent implements Signatur
     }
 
     @Override
-    public boolean verify(Map<String, String> parameterMap, String sign) {
-        //首先校验notify_id
-        String notifyId = parameterMap.get("notify_id");
-        if (StringUtils.isEmpty(notifyId)) {
-            return false;
-        }
-        boolean notifyIdFlag = this.verifyByNotifyId(notifyId);
-        if (!notifyIdFlag) { //TODO
-//            return false;
-        }
-
-        //去除不参与签名的参数
-        parameterMap = MapUtil.removeParamsForAlipaySign(parameterMap);
-        //Map转Url
-        String content = MapUtil.toUrlWithSort(parameterMap);
-        //使用公钥验证
-//        boolean flag = RSA.verify(content, sign, AlipayConfig.getPartnerPublicKey(), AlipayConfig.getInputCharset());
-//        if (!flag) {
+    public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
+//        //首先校验notify_id
+//        String notifyId = parameterMap.get("notify_id");
+//        if (StringUtils.isEmpty(notifyId)) {
 //            return false;
 //        }
+//        boolean notifyIdFlag = this.verifyByNotifyId(notifyId);
+//        if (!notifyIdFlag) { //TODO
+////            return false;
+//        }
+//
+//        //去除不参与签名的参数
+//        parameterMap = MapUtil.removeParamsForAlipaySign(parameterMap);
+//        //Map转Url
+//        String content = MapUtil.toUrlWithSort(parameterMap);
+//        //使用公钥验证
+////        boolean flag = RSA.verify(content, sign, AlipayConfig.getPartnerPublicKey(), AlipayConfig.getInputCharset());
+////        if (!flag) {
+////            return false;
+////        }
 
-        return true;
+        return false;
     }
 
     /**

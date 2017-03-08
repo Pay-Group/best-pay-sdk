@@ -1,6 +1,7 @@
 package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AliDirectPayConfig;
+import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.constants.AlipayConstants;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
@@ -83,6 +84,11 @@ class AlipayPCServiceImpl extends AbstractComponent implements BestPayService{
         response.setTradeNo(request.getParameter("trade_no"));
 
         return response;
+    }
+
+    @Override
+    public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
+        return false;
     }
 
     @Override

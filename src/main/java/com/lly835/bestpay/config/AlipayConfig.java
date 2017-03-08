@@ -45,6 +45,32 @@ public class AlipayConfig extends PayConfig {
      * @param appRSAPrivateKey   应用的RSA私钥(合作伙伴自行创建).
      * @param alipayRSAPublicKey 支付宝的RSA公钥(由合作伙伴上传RSA公钥后支付宝提供).
      * @param notifyUrl          异步通知地址.
+     */
+    public AlipayConfig(String appId, String appRSAPrivateKey, String alipayRSAPublicKey, String notifyUrl) {
+        this(appId, appRSAPrivateKey, alipayRSAPublicKey, notifyUrl, null);
+    }
+
+    /**
+     * 支付宝配置信息.
+     *
+     * @param appId              应用id, 支付宝新版App支付, Wap支付的统一ID.
+     * @param appRSAPrivateKey   应用的RSA私钥(合作伙伴自行创建).
+     * @param alipayRSAPublicKey 支付宝的RSA公钥(由合作伙伴上传RSA公钥后支付宝提供).
+     * @param signType           签名方式.
+     * @param notifyUrl          异步通知地址.
+     */
+    public AlipayConfig(String appId, String appRSAPrivateKey, String alipayRSAPublicKey, SignType signType,
+                        String notifyUrl) {
+        this(appId, appRSAPrivateKey, alipayRSAPublicKey, signType, notifyUrl, null);
+    }
+
+    /**
+     * 支付宝配置信息. 默认使用RSA2签名方式.
+     *
+     * @param appId              应用id, 支付宝新版App支付, Wap支付的统一ID.
+     * @param appRSAPrivateKey   应用的RSA私钥(合作伙伴自行创建).
+     * @param alipayRSAPublicKey 支付宝的RSA公钥(由合作伙伴上传RSA公钥后支付宝提供).
+     * @param notifyUrl          异步通知地址.
      * @param returnUrl          同步返回地址.
      */
     public AlipayConfig(String appId, String appRSAPrivateKey, String alipayRSAPublicKey, String notifyUrl,

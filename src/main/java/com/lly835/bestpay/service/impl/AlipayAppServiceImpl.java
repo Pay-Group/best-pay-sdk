@@ -1,12 +1,12 @@
 package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AlipayConfig;
+import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.service.Signature;
-import com.lly835.bestpay.service.impl.signature.AlipayAppSignatureImpl;
 import com.lly835.bestpay.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -23,10 +23,13 @@ import java.util.*;
 class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
 
     private AlipayConfig alipayConfig;
+    private Signature signature;
 
-    public AlipayAppServiceImpl(AlipayConfig alipayConfig) {
+    public AlipayAppServiceImpl(AlipayConfig alipayConfig, Signature signature) {
         Objects.requireNonNull(alipayConfig, "alipayConfig is null.");
         this.alipayConfig = alipayConfig;
+        Objects.requireNonNull(signature, "signature is null.");
+        this.signature = signature;
     }
 
     @Override
@@ -56,8 +59,7 @@ class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
         parameterMap.put("biz_content", JsonUtil.toJson(bizContentMap));
 
         //2. 签名
-        Signature signature = new AlipayAppSignatureImpl(this.alipayConfig);
-        String sign = signature.sign(parameterMap);
+        String sign = this.signature.sign(parameterMap);
         String encodedSign;
         try {
             encodedSign = URLEncoder.encode(sign, this.alipayConfig.getInputCharset());
@@ -97,6 +99,11 @@ class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
         response.setTradeNo(request.getParameter("trade_no"));
 
         return response;
+    }
+
+    @Override
+    public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
+        return this.signature.verify(toBeVerifiedParamMap, signType, sign);
     }
 
     @Override

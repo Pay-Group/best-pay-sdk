@@ -2,39 +2,33 @@ package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AliDirectPayConfig;
 import com.lly835.bestpay.config.AlipayConfig;
+import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.enums.BestPayResultEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.exception.BestPayException;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
+import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.service.Signature;
 import com.lly835.bestpay.service.impl.signature.AlipayAppSignatureImpl;
 import com.lly835.bestpay.service.impl.signature.AlipayPCSignatureImpl;
-import com.lly835.bestpay.utils.ServletRequestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BestPayServiceImpl implements BestPayService {
-
-    private final static Logger logger = LoggerFactory.getLogger(BestPayServiceImpl.class);
+public class BestPayServiceImpl extends AbstractComponent implements BestPayService {
 
     private Map<BestPayTypeEnum, BestPayService> payServiceMap = new HashMap<>();
 
-    private Map<BestPayTypeEnum, Signature> signatureMap = new HashMap<>();
-
     public BestPayServiceImpl(AlipayConfig alipayConfig, AliDirectPayConfig aliDirectPayConfig) {
-        payServiceMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppServiceImpl(alipayConfig));
+        Signature pcSignature = new AlipayPCSignatureImpl(aliDirectPayConfig);
+        Signature appSignature = new AlipayAppSignatureImpl(alipayConfig);
+
+        payServiceMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppServiceImpl(alipayConfig, appSignature));
         payServiceMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCServiceImpl(aliDirectPayConfig));
         payServiceMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayWapServiceImpl(alipayConfig));
-
-        signatureMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCSignatureImpl(aliDirectPayConfig));
-        signatureMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayAppSignatureImpl(alipayConfig));
-        signatureMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppSignatureImpl(alipayConfig));
     }
 
     @Override
@@ -55,28 +49,19 @@ public class BestPayServiceImpl implements BestPayService {
     public PayResponse syncNotify(HttpServletRequest request) {
 
         //判断是否校验通过
-        if (!this.verify(request)) {
-            logger.error("【同步返回校验】签名验证不通过");
-            throw new BestPayException(BestPayResultEnum.SYNC_SIGN_VERIFY_FAIL);
-        }
-
-        BestPayService bestPayService = payServiceMap.get(this.payType(request));
-        return bestPayService.syncNotify(request);
+//        if (!this.verify(request)) {
+//            logger.error("【同步返回校验】签名验证不通过");
+//            throw new BestPayException(BestPayResultEnum.SYNC_SIGN_VERIFY_FAIL);
+//        }
+//
+//        BestPayService bestPayService = payServiceMap.get(this.payType(request));
+//        return bestPayService.syncNotify(request);
+        return null;
     }
 
-    /**
-     * 同步验证, 包含notify_id验证和签名验证
-     *
-     * @return
-     */
-    public Boolean verify(HttpServletRequest request) {
-
-        //String转换为Map
-        Map<String, String> parameterMap = ServletRequestUtils.getParameterMap(request);
-
-        //判断是什么支付类型
-        Signature signature = signatureMap.get(this.payType(request));
-        return signature.verify(parameterMap, parameterMap.get("sign"));
+    @Override
+    public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
+        return false;
     }
 
     /**
@@ -88,10 +73,10 @@ public class BestPayServiceImpl implements BestPayService {
     public PayResponse asyncNotify(HttpServletRequest request) throws Exception {
 
         //判断是否校验通过
-        if (!this.verify(request)) {
-            logger.error("【异步返回校验】签名验证不通过");
-            throw new BestPayException(BestPayResultEnum.ASYNC_SIGN_VERIFY_FAIL);
-        }
+//        if (!this.verify(request)) {
+//            logger.error("【异步返回校验】签名验证不通过");
+//            throw new BestPayException(BestPayResultEnum.ASYNC_SIGN_VERIFY_FAIL);
+//        }
 
         BestPayService bestPayService = payServiceMap.get(this.payType(request));
         return bestPayService.asyncNotify(request);
@@ -122,4 +107,5 @@ public class BestPayServiceImpl implements BestPayService {
 
         throw new BestPayException(BestPayResultEnum.PAY_TYPE_ERROR);
     }
+
 }
