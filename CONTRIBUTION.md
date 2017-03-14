@@ -25,7 +25,7 @@ $ git push
 * 定期使用项目仓库内容更新自己仓库内容。
 
 ```bash
-$ git remote add upstream git@github.com:lly835/best-pay-sdk.git
+$ git remote add upstream git@github.com:Pay-Group/best-pay-sdk.git
 $ git fetch upstream
 $ git checkout develop
 $ git rebase upstream/develop
