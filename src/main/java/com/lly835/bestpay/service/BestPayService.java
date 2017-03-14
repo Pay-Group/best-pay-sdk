@@ -4,7 +4,6 @@ import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -19,15 +18,13 @@ public interface BestPayService {
     PayResponse pay(PayRequest request) throws Exception;
 
     /**
-     * 异步回调.
+     * 验证支付结果. 包括同步和异步.
+     *
+     * @param toBeVerifiedParamMap 待验证的支付结果参数.
+     * @param signType             签名方式.
+     * @param sign                 签名.
+     * @return 验证结果.
      */
-    PayResponse asyncNotify(HttpServletRequest request) throws Exception;
-
-    /**
-     * 同步回调.
-     */
-    PayResponse syncNotify(HttpServletRequest request);
-
     boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign);
 
 }

@@ -6,15 +6,17 @@ import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.BestPayService;
-import com.lly835.bestpay.service.Signature;
 import com.lly835.bestpay.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.Objects;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * 支付宝app支付
@@ -23,9 +25,9 @@ import java.util.*;
 class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
 
     private AlipayConfig alipayConfig;
-    private Signature signature;
+    private AlipaySignature signature;
 
-    public AlipayAppServiceImpl(AlipayConfig alipayConfig, Signature signature) {
+    public AlipayAppServiceImpl(AlipayConfig alipayConfig, AlipaySignature signature) {
         Objects.requireNonNull(alipayConfig, "alipayConfig is null.");
         this.alipayConfig = alipayConfig;
         Objects.requireNonNull(signature, "signature is null.");
@@ -34,32 +36,22 @@ class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
 
     @Override
     public PayResponse pay(PayRequest request) {
-        PayResponse response = new PayResponse();
-        response.setOrderId(request.getOrderId());
-        response.setOrderAmount(request.getOrderAmount());
+        this.logger.info("【支付宝App端支付】request={}", JsonUtil.toJson(request));
 
-        //1. 封装参数
-        SortedMap<String, String> parameterMap = new TreeMap<>();
-        Map<String, Object> bizContentMap = new HashMap<>();
+        /* 1. 封装参数 */
+        SortedMap<String, String> commonParamMap = new TreeMap<>();
+        commonParamMap.put("app_id", this.alipayConfig.getAppId());
+        commonParamMap.put("method", "alipay.trade.app.pay");
+        commonParamMap.put("format", "JSON");
+        commonParamMap.put("charset", this.alipayConfig.getInputCharset());
+        commonParamMap.put("sign_type", this.alipayConfig.getSignType().name());
+        commonParamMap.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        commonParamMap.put("version", "1.0");
+        commonParamMap.put("notify_url", this.alipayConfig.getNotifyUrl());
+        commonParamMap.put("biz_content", JsonUtil.toJson(request.getAlipayBizParam().getBizParam()));
 
-        bizContentMap.put("subject", request.getOrderName());
-        bizContentMap.put("out_trade_no", request.getOrderId());
-        bizContentMap.put("timeout_express", "30m");
-        bizContentMap.put("total_amount", request.getOrderAmount());
-        bizContentMap.put("product_code", "QUICK_MSECURITY_PAY");
-        bizContentMap.put("body", "");
-
-        parameterMap.put("app_id", this.alipayConfig.getAppId());
-        parameterMap.put("method", "alipay.trade.app.pay");
-        parameterMap.put("charset", this.alipayConfig.getInputCharset());
-        parameterMap.put("sign_type", this.alipayConfig.getSignType().name());
-        parameterMap.put("timestamp", DateTime.now().toString("yyyy-MM-dd HH:mm:ss"));
-        parameterMap.put("version", "1.0");
-        parameterMap.put("notify_url", this.alipayConfig.getNotifyUrl());
-        parameterMap.put("biz_content", JsonUtil.toJson(bizContentMap));
-
-        //2. 签名
-        String sign = this.signature.sign(parameterMap);
+        /* 2. 签名 */
+        String sign = this.signature.sign(commonParamMap);
         String encodedSign;
         try {
             encodedSign = URLEncoder.encode(sign, this.alipayConfig.getInputCharset());
@@ -67,9 +59,9 @@ class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
             throw new IllegalStateException("illegal encoding charset.", e);
         }
 
-        //3. 返回的结果
+        /* 3. 返回的结果 */
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, String> entry : parameterMap.entrySet()) {
+        for (Map.Entry<String, String> entry : commonParamMap.entrySet()) {
             String k = entry.getKey();
             String v = entry.getValue();
             if (StringUtils.isBlank(k) || k.equals("sign") || StringUtils.isBlank(v)) {
@@ -85,19 +77,10 @@ class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
             sb.append(k).append("=").append(encodedV).append("&");
         }
         sb.append("sign=").append(encodedSign);
-        response.setPrePayParams(sb.toString());
 
-        return response;
-    }
-
-    @Override
-    public PayResponse syncNotify(HttpServletRequest request) {
-
-        //构造返回对象
+        /* 4. 返回签名结果 */
         PayResponse response = new PayResponse();
-        response.setOrderId(request.getParameter("out_trade_no"));
-        response.setTradeNo(request.getParameter("trade_no"));
-
+        response.setPrePayParams(sb.toString());
         return response;
     }
 
@@ -106,8 +89,4 @@ class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
         return this.signature.verify(toBeVerifiedParamMap, signType, sign);
     }
 
-    @Override
-    public PayResponse asyncNotify(HttpServletRequest request) {
-        return null;
-    }
 }

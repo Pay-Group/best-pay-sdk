@@ -1,9 +1,8 @@
-package com.lly835.bestpay.service.impl.signature;
+package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.service.AbstractComponent;
-import com.lly835.bestpay.service.Signature;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -19,22 +18,17 @@ import java.util.*;
  * @auther <a href="mailto:lly835@163.com">廖师兄</a>
  * @since 1.0
  */
-public class AlipayAppSignatureImpl extends AbstractComponent implements Signature {
+class AlipaySignature extends AbstractComponent {
 
     private AlipayConfig alipayConfig;
 
-    public AlipayAppSignatureImpl(AlipayConfig alipayConfig) {
+    public AlipaySignature(AlipayConfig alipayConfig) {
         Objects.requireNonNull(alipayConfig, "alipayConfig is null.");
         this.alipayConfig = alipayConfig;
     }
 
-    @Override
-    public String sign(Map<String, String> sortedParamMap) {
+    public String sign(SortedMap<String, String> sortedParamMap) {
         Objects.requireNonNull(sortedParamMap, "sortedParamMap is null.");
-        if (!(sortedParamMap instanceof TreeMap)) {
-            throw new IllegalArgumentException("sortedParamMap is not sorted.");
-        }
-
         List<String> paramList = new ArrayList<>();
         for (Map.Entry<String, String> entry : sortedParamMap.entrySet()) {
             String k = entry.getKey();
@@ -50,7 +44,6 @@ public class AlipayAppSignatureImpl extends AbstractComponent implements Signatu
         return signParamWithRSA(param);
     }
 
-    @Override
     public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
         Objects.requireNonNull(toBeVerifiedParamMap, "to be verified param map is null.");
         if (toBeVerifiedParamMap.isEmpty()) {

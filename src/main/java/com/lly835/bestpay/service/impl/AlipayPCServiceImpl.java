@@ -7,13 +7,10 @@ import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.BestPayService;
-import com.lly835.bestpay.service.Signature;
 import com.lly835.bestpay.service.impl.signature.AlipayPCSignatureImpl;
 import com.lly835.bestpay.utils.JsonUtil;
 import com.lly835.bestpay.utils.NameValuePairUtil;
 import org.apache.http.client.utils.URIBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
