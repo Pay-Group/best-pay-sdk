@@ -46,33 +46,66 @@ class AlipayPCSignature extends AbstractComponent {
                 return signParamWithMD5(param);
             case RSA:
                 return signParamWithRSA(param);
+            default:
+                throw new IllegalStateException("unsupported sign type.");
         }
-        return "";
-
     }
 
     public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
-//        //首先校验notify_id
-//        String notifyId = parameterMap.get("notify_id");
-//        if (StringUtils.isEmpty(notifyId)) {
-//            return false;
-//        }
-//        boolean notifyIdFlag = this.verifyByNotifyId(notifyId);
-//        if (!notifyIdFlag) { //TODO
-////            return false;
-//        }
-//
-//        //去除不参与签名的参数
-//        parameterMap = MapUtil.removeParamsForAlipaySign(parameterMap);
-//        //Map转Url
-//        String content = MapUtil.toUrlWithSort(parameterMap);
-//        //使用公钥验证
-////        boolean flag = RSA.verify(content, sign, AlipayConfig.getPartnerPublicKey(), AlipayConfig.getInputCharset());
-////        if (!flag) {
-////            return false;
-////        }
+        Objects.requireNonNull(toBeVerifiedParamMap, "to be verified param map is null.");
+        if (toBeVerifiedParamMap.isEmpty()) {
+            throw new IllegalArgumentException("to be verified param map is empty.");
+        }
 
-        return false;
+        Objects.requireNonNull(signType, "sign type is null.");
+        switch (signType) {
+            case RSA2:
+                throw new IllegalArgumentException("unsupported sign type: RSA2.");
+        }
+
+        if (StringUtils.isBlank(sign)) {
+            throw new IllegalArgumentException("sign is blank.");
+        }
+
+        /* 1. 验签 */
+        List<String> paramList = new ArrayList<>();
+        for (Map.Entry<String, String> entry : toBeVerifiedParamMap.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            if (StringUtils.isBlank(k) || k.equals("sign_type") || k.equals("sign") || StringUtils.isEmpty(v)) {
+                continue;
+            }
+
+            paramList.add(k + "=" + v);
+        }
+        Collections.sort(paramList);
+        String toBeVerifiedStr = String.join("&", paramList);
+
+        boolean r = false;
+        switch (signType) {
+            case MD5:
+                r = verifyParamWithMD5(toBeVerifiedStr, sign);
+                break;
+            case RSA:
+                r = verifyParamWithRSA(toBeVerifiedStr, sign);
+                break;
+        }
+        if (!r) {
+            this.logger.warn("fail to verify sign with sign type {}.", signType.name());
+            return false;
+        }
+
+        /* 2. 校验notify_id, 同步返回是没有notify_id参数的 */
+        String notifyId = toBeVerifiedParamMap.get("notify_id");
+        if (!StringUtils.isEmpty(notifyId)) {
+            r = verifyNotifyId(notifyId);
+            if (!r) {
+                this.logger.warn("fail to verify notify id.");
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -80,7 +113,7 @@ class AlipayPCSignature extends AbstractComponent {
      * @param notifyId
      * @return
      */
-    private Boolean verifyByNotifyId(String notifyId) {
+    private boolean verifyNotifyId(String notifyId) {
         String veryfyUrl = AlipayConstants.ALIPAY_VERIFY_URL + "partner=" + this.aliDirectPayConfig.getPartnerId() + "&notify_id=" + notifyId;
         String result = HttpRequestUtil.get(veryfyUrl);
 
@@ -104,6 +137,11 @@ class AlipayPCSignature extends AbstractComponent {
         } catch (UnsupportedEncodingException | InvalidKeyException | NoSuchAlgorithmException | SignatureException e) {
             throw new IllegalStateException("sign error.", e);
         }
+    }
+
+    private boolean verifyParamWithMD5(String param, String sign) {
+        String expectedSign = DigestUtils.md5Hex(param + this.aliDirectPayConfig.getPartnerMD5Key());
+        return sign.equals(expectedSign);
     }
 
     private boolean verifyParamWithRSA(String param, String sign) {

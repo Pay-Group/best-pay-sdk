@@ -7,6 +7,7 @@ import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.utils.JsonUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -62,7 +63,11 @@ class AlipayWapServiceImpl extends AbstractComponent implements BestPayService {
         String payUrl;
         try {
             payUrl = new URIBuilder("https://openapi.alipay.com/gateway.do").setParameters(
-                    commonParamMap.entrySet().stream().map(e -> {
+                    commonParamMap.entrySet().stream().filter(e -> {
+                        String k = e.getKey();
+                        String v = e.getValue();
+                        return !(StringUtils.isBlank(k) || StringUtils.isBlank(v));
+                    }).map(e -> {
                         String k = e.getKey();
                         String v = e.getValue();
                         return new BasicNameValuePair(k, v);
