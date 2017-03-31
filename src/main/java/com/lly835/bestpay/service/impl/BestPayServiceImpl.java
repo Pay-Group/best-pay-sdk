@@ -8,7 +8,6 @@ import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.exception.BestPayException;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
-import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.BestPayService;
 
 import javax.servlet.http.HttpServletRequest;

@@ -4,7 +4,6 @@ import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
-import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;

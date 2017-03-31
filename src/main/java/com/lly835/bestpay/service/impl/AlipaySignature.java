@@ -2,7 +2,6 @@ package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.config.SignType;
-import com.lly835.bestpay.service.AbstractComponent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -30,16 +29,13 @@ class AlipaySignature extends AbstractComponent {
     public String sign(SortedMap<String, String> sortedParamMap) {
         Objects.requireNonNull(sortedParamMap, "sortedParamMap is null.");
         List<String> paramList = new ArrayList<>();
-        for (Map.Entry<String, String> entry : sortedParamMap.entrySet()) {
-            String k = entry.getKey();
-            String v = entry.getValue();
+        sortedParamMap.forEach((k, v) -> {
             if (StringUtils.isBlank(k) || k.equals("sign") || StringUtils.isBlank(v)) {
-                continue;
+                return;
             }
 
             paramList.add(k + "=" + v);
-        }
-
+        });
         String param = String.join("&", paramList);
         return signParamWithRSA(param);
     }
@@ -62,15 +58,13 @@ class AlipaySignature extends AbstractComponent {
 
         /* 1. 验签 */
         List<String> paramList = new ArrayList<>();
-        for (Map.Entry<String, String> entry : toBeVerifiedParamMap.entrySet()) {
-            String k = entry.getKey();
-            String v = entry.getValue();
+        toBeVerifiedParamMap.forEach((k, v) -> {
             if (StringUtils.isBlank(k) || k.equals("sign_type") || k.equals("sign") || StringUtils.isEmpty(v)) {
-                continue;
+                return;
             }
 
             paramList.add(k + "=" + v);
-        }
+        });
         Collections.sort(paramList);
         String toBeVerifiedStr = String.join("&", paramList);
         boolean r = verifyParamWithRSA(toBeVerifiedStr, signType, sign);
