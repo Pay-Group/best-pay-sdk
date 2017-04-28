@@ -15,7 +15,7 @@ public interface BestPayService {
     /**
      * 发起支付.
      */
-    PayResponse pay(PayRequest request) throws Exception;
+    PayResponse pay(PayRequest request);
 
     /**
      * 验证支付结果. 包括同步和异步.

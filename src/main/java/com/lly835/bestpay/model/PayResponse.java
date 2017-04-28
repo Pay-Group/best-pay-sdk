@@ -1,10 +1,13 @@
 package com.lly835.bestpay.model;
 
+import lombok.Data;
+
 import java.net.URI;
 
 /**
  * 支付时的同步返回参数
  */
+@Data
 public class PayResponse {
 
     private String prePayParams;

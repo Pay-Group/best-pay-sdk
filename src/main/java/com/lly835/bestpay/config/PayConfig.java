@@ -14,7 +14,23 @@ class PayConfig {
      */
     private String returnUrl;
 
-    public PayConfig(String notifyUrl, String returnUrl) {
+    public String getNotifyUrl() {
+        return notifyUrl;
+    }
+
+    public void setNotifyUrl(String notifyUrl) {
+        this.notifyUrl = notifyUrl;
+    }
+
+    public String getReturnUrl() {
+        return returnUrl;
+    }
+
+    public void setReturnUrl(String returnUrl) {
+        this.returnUrl = returnUrl;
+    }
+
+    public void check() {
         Objects.requireNonNull(notifyUrl, "config param 'notifyUrl' is null.");
         if (!notifyUrl.startsWith("http") && !notifyUrl.startsWith("https")) {
             throw new IllegalArgumentException("config param 'notifyUrl' does not start with http/https.");
@@ -30,16 +46,7 @@ class PayConfig {
                 throw new IllegalArgumentException("config param 'returnUrl' is incorrect: size exceeds 256.");
             }
         }
-        this.notifyUrl = notifyUrl;
-        this.returnUrl = returnUrl;
     }
 
-    public String getNotifyUrl() {
-        return this.notifyUrl;
-    }
-
-    public String getReturnUrl() {
-        return this.returnUrl;
-    }
 
 }

@@ -2,6 +2,7 @@ package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.config.SignType;
+import com.lly835.bestpay.model.AlipayBizParam;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.BestPayService;
@@ -18,7 +19,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * 支付宝app支付
+ * 支付宝app支付业务参数
+ * 详见 https://doc.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.Vvthbm&treeId=204&articleId=105465&docType=1
  * Created by null on 2017/2/14.
  */
 class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
@@ -47,7 +49,7 @@ class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
         commonParamMap.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         commonParamMap.put("version", "1.0");
         commonParamMap.put("notify_url", this.alipayConfig.getNotifyUrl());
-        commonParamMap.put("biz_content", JsonUtil.toJson(request.getAlipayBizParam().getBizParam()));
+        commonParamMap.put("biz_content", JsonUtil.toJson(this.buildParam(request)));
 
         /* 2. 签名 */
         String sign = this.signature.sign(commonParamMap);
@@ -86,6 +88,21 @@ class AlipayAppServiceImpl extends AbstractComponent implements BestPayService {
     @Override
     public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
         return this.signature.verify(toBeVerifiedParamMap, signType, sign);
+    }
+
+    /**
+     * 构造支付宝需要的业务参数
+     * @param request
+     * @return
+     */
+    private AlipayBizParam buildParam(PayRequest request) {
+        AlipayBizParam alipayBizParam = new AlipayBizParam();
+        alipayBizParam.setSubject(request.getOrderName());
+        alipayBizParam.setOutTradeNo(request.getOrderId());
+        alipayBizParam.setTotalAmount(String.valueOf(request.getOrderAmount()));
+        alipayBizParam.setProductCode("QUICK_MSECURITY_PAY");
+        alipayBizParam.setBody("abc");
+        return alipayBizParam;
     }
 
 }

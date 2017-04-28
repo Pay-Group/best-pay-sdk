@@ -1,7 +1,7 @@
 package com.lly835.bestpay.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -13,6 +13,8 @@ public class JsonUtil {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
+    private static GsonBuilder gsonBuilder = new GsonBuilder();
+
     /**
      * Convert target object to json string.
      *
@@ -20,11 +22,8 @@ public class JsonUtil {
      * @return converted json string.
      */
     public static String toJson(Object obj) {
-        try {
-            return mapper.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            throw new IllegalStateException("fail to convert [" + obj + "] to String.", e);
-        }
+        gsonBuilder.setPrettyPrinting();
+        return gsonBuilder.create().toJson(obj);
     }
 
     /**

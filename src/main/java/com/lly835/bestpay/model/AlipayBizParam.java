@@ -3,6 +3,10 @@ package com.lly835.bestpay.model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 支付宝支付时的业务参数
+ * 详见 https://doc.open.alipay.com/doc2/detail.htm?treeId=203&articleId=105463&docType=1
+ */
 public class AlipayBizParam {
 
     private String body;

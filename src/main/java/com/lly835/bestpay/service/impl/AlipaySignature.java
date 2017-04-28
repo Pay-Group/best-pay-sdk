@@ -112,7 +112,7 @@ class AlipaySignature extends AbstractComponent {
         }
         try {
             java.security.Signature sig = java.security.Signature.getInstance(algorithm);
-            sig.initSign(this.alipayConfig.getAppRSAPrivateKey());
+            sig.initSign(this.alipayConfig.getAppRSAPrivateKeyObject());
             sig.update(param.getBytes(this.alipayConfig.getInputCharset()));
             return Base64.getEncoder().encodeToString(sig.sign());
         } catch (UnsupportedEncodingException | InvalidKeyException | NoSuchAlgorithmException | SignatureException e) {
@@ -134,7 +134,7 @@ class AlipaySignature extends AbstractComponent {
         }
         try {
             java.security.Signature sig = java.security.Signature.getInstance(algorithm);
-            sig.initVerify(this.alipayConfig.getAlipayRSAPublicKey());
+            sig.initVerify(this.alipayConfig.getAlipayRSAPublicKeyOBject());
             sig.update(param.getBytes("utf-8"));
             return sig.verify(Base64.getDecoder().decode(sign));
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | UnsupportedEncodingException e) {

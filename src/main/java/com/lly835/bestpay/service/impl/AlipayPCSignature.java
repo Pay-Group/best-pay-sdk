@@ -1,24 +1,17 @@
 package com.lly835.bestpay.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.SortedMap;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import com.lly835.bestpay.config.AliDirectPayConfig;
 import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.constants.AlipayConstants;
 import com.lly835.bestpay.utils.HttpRequestUtil;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.util.*;
 
 /**
  * 支付宝即时到账方式签名
@@ -135,7 +128,7 @@ class AlipayPCSignature extends AbstractComponent {
     private String signParamWithRSA(String param) {
         try {
             java.security.Signature sig = java.security.Signature.getInstance("SHA1WithRSA");
-            sig.initSign(this.aliDirectPayConfig.getPartnerRSAPrivateKey());
+            sig.initSign(this.aliDirectPayConfig.getPartnerRSAPrivateKeyObject());
             sig.update(param.getBytes(this.aliDirectPayConfig.getInputCharset()));
             return Base64.getEncoder().encodeToString(sig.sign());
         } catch (UnsupportedEncodingException | InvalidKeyException | NoSuchAlgorithmException | SignatureException e) {
@@ -151,7 +144,7 @@ class AlipayPCSignature extends AbstractComponent {
     private boolean verifyParamWithRSA(String param, String sign) {
         try {
             java.security.Signature sig = java.security.Signature.getInstance("SHA1WithRSA");
-            sig.initVerify(this.aliDirectPayConfig.getAlipayRSAPublicKey());
+            sig.initVerify(this.aliDirectPayConfig.getAlipayRSAPublicKeyObject());
             sig.update(param.getBytes("utf-8"));
             return sig.verify(Base64.getDecoder().decode(sign));
         } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException | UnsupportedEncodingException e) {

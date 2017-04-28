@@ -2,6 +2,7 @@ package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.config.SignType;
+import com.lly835.bestpay.model.AlipayBizParam;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.service.BestPayService;
@@ -44,7 +45,7 @@ class AlipayWapServiceImpl extends AbstractComponent implements BestPayService {
         /* 1. 封装参数 */
         SortedMap<String, String> commonParamMap = new TreeMap<>();
         commonParamMap.put("app_id", this.alipayConfig.getAppId());
-        commonParamMap.put("method", "alipay.trade.app.pay");
+        commonParamMap.put("method", "alipay.trade.wap.pay");
         commonParamMap.put("format", "JSON");
         commonParamMap.put("return_url", this.alipayConfig.getReturnUrl());
         commonParamMap.put("charset", this.alipayConfig.getInputCharset());
@@ -52,7 +53,7 @@ class AlipayWapServiceImpl extends AbstractComponent implements BestPayService {
         commonParamMap.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         commonParamMap.put("version", "1.0");
         commonParamMap.put("notify_url", this.alipayConfig.getNotifyUrl());
-        commonParamMap.put("biz_content", JsonUtil.toJson(request.getAlipayBizParam().getBizParam()));
+        commonParamMap.put("biz_content", JsonUtil.toJson(this.buildParam(request).getBizParam()));
 
         /* 2. 签名 */
         String sign = this.signature.sign(commonParamMap);
@@ -78,12 +79,27 @@ class AlipayWapServiceImpl extends AbstractComponent implements BestPayService {
         /* 4. 返回签名结果 */
         PayResponse response = new PayResponse();
         response.setPayUri(URI.create(payUrl));
+        this.logger.info("【支付宝Wap端支付】response={}", JsonUtil.toJson(response));
         return response;
     }
 
     @Override
     public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
         return this.signature.verify(toBeVerifiedParamMap, signType, sign);
+    }
+
+    /**
+     * 构造支付宝需要的业务参数
+     * @param request
+     * @return
+     */
+    private AlipayBizParam buildParam(PayRequest request) {
+        AlipayBizParam alipayBizParam = new AlipayBizParam();
+        alipayBizParam.setSubject(request.getOrderName());
+        alipayBizParam.setOutTradeNo(request.getOrderId());
+        alipayBizParam.setTotalAmount(String.valueOf(request.getOrderAmount()));
+        alipayBizParam.setProductCode("QUICK_WAP_PAY");
+        return alipayBizParam;
     }
 
 }

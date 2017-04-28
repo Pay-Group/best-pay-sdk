@@ -36,7 +36,7 @@ class AlipayPCServiceImpl extends AbstractComponent implements BestPayService {
     }
 
     @Override
-    public PayResponse pay(PayRequest request) throws Exception {
+    public PayResponse pay(PayRequest request) {
         this.logger.info("【支付宝PC端支付】request={}", JsonUtil.toJson(request));
 
         /* 1. 封装参数 */
@@ -47,18 +47,18 @@ class AlipayPCServiceImpl extends AbstractComponent implements BestPayService {
         commonParamMap.put("sign_type", this.aliDirectPayConfig.getSignType().name());
         commonParamMap.put("notify_url", this.aliDirectPayConfig.getNotifyUrl());
         commonParamMap.put("return_url", this.aliDirectPayConfig.getReturnUrl());
-        commonParamMap.put("out_trade_no", request.getAlipayBizParam().getOutTradeNo());
-        commonParamMap.put("subject", request.getAlipayBizParam().getSubject());
+        commonParamMap.put("out_trade_no", request.getOrderId());
+        commonParamMap.put("subject", request.getOrderName());
         commonParamMap.put("payment_type", "1");
-        commonParamMap.put("total_fee", request.getAlipayBizParam().getTotalAmount());
-        commonParamMap.put("seller_id", request.getAlipayBizParam().getSellerId());
-        commonParamMap.put("body", request.getAlipayBizParam().getBody());
-        commonParamMap.put("enable_paymethod", request.getAlipayBizParam().getEnablePayChannels());
-        commonParamMap.put("disable_paymethod", request.getAlipayBizParam().getDisablePayChannels());
-        commonParamMap.put("extra_common_param", request.getAlipayBizParam().getPassbackParams());
-        commonParamMap.put("it_b_pay", request.getAlipayBizParam().getTimeoutExpress());
-        commonParamMap.put("goods_type", request.getAlipayBizParam().getGoodsType());
-        commonParamMap.put("extend_param", request.getAlipayBizParam().getExtendParams());
+        commonParamMap.put("total_fee", String.valueOf(request.getOrderAmount()));
+        commonParamMap.put("seller_id", this.aliDirectPayConfig.getPartnerId());
+//        commonParamMap.put("body", request.getAlipayBizParam().getBody());
+//        commonParamMap.put("enable_paymethod", request.getAlipayBizParam().getEnablePayChannels());
+//        commonParamMap.put("disable_paymethod", request.getAlipayBizParam().getDisablePayChannels());
+//        commonParamMap.put("extra_common_param", request.getAlipayBizParam().getPassbackParams());
+//        commonParamMap.put("it_b_pay", request.getAlipayBizParam().getTimeoutExpress());
+//        commonParamMap.put("goods_type", request.getAlipayBizParam().getGoodsType());
+//        commonParamMap.put("extend_param", request.getAlipayBizParam().getExtendParams());
 
         /* 2. 签名 */
         String sign = this.signature.sign(commonParamMap);

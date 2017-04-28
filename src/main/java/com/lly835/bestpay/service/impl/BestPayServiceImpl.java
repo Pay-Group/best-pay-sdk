@@ -1,6 +1,5 @@
 package com.lly835.bestpay.service.impl;
 
-import com.lly835.bestpay.config.AliDirectPayConfig;
 import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.enums.BestPayResultEnum;
@@ -16,21 +15,33 @@ import java.util.Map;
 
 public class BestPayServiceImpl extends AbstractComponent implements BestPayService {
 
+    private AlipayConfig alipayConfig;
+
     private Map<BestPayTypeEnum, BestPayService> payServiceMap = new HashMap<>();
 
-    public BestPayServiceImpl(AlipayConfig alipayConfig, AliDirectPayConfig aliDirectPayConfig) {
+    public BestPayServiceImpl(AlipayConfig alipayConfig) {
+        this.alipayConfig = alipayConfig;
         AlipaySignature appSignature = new AlipaySignature(alipayConfig);
-        AlipayPCSignature pcSignature = new AlipayPCSignature(aliDirectPayConfig);
+//        AlipayPCSignature pcSignature = new AlipayPCSignature(aliDirectPayConfig);
 
         payServiceMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppServiceImpl(alipayConfig, appSignature));
-        payServiceMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCServiceImpl(aliDirectPayConfig, pcSignature));
+//        payServiceMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCServiceImpl(aliDirectPayConfig, pcSignature));
         payServiceMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayWapServiceImpl(alipayConfig, appSignature));
     }
 
-    @Override
-    public PayResponse pay(PayRequest request) throws Exception {
+    public AlipayConfig getAlipayConfig() {
+        return alipayConfig;
+    }
 
-        //判断是什么支付方式
+    @Override
+    public PayResponse pay(PayRequest request) {
+
+        if (request.getPayTypeEnum() == BestPayTypeEnum.ALIPAY_APP
+                || request.getPayTypeEnum() == BestPayTypeEnum.ALIPAY_WAP) {
+            alipayConfig.check();
+        }
+
+        //调用相应的支付方式
         BestPayService alipayService = payServiceMap.get(request.getPayTypeEnum());
         return alipayService.pay(request);
     }

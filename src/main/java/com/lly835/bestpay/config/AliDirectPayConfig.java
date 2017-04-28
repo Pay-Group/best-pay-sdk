@@ -29,50 +29,29 @@ public class AliDirectPayConfig extends PayConfig {
      */
     private String partnerMD5Key;
 
+
+    private String partnerRSAPrivateKey;
+
+    private String alipayRSAPublicKey;
+
     /**
      * 合作伙伴的RSA私钥(合作伙伴自行创建).
      */
-    private PrivateKey partnerRSAPrivateKey;
+    private PrivateKey partnerRSAPrivateKeyObject;
 
     /**
      * 支付宝的RSA公钥(由合作伙伴上传RSA公钥后支付宝提供).
      */
-    private PublicKey alipayRSAPublicKey;
+    private PublicKey alipayRSAPublicKeyObject;
 
     /**
      * 签名方式: MD5, RSA两个值可选, 必须大写.
      */
     private SignType signType;
 
-    /**
-     * 支付宝配置信息. 默认使用RSA签名方式.
-     *
-     * @param partnerId            合作伙伴身份ID, 以2088开头的16位纯数字.
-     * @param partnerMD5Key        合作伙伴的MD5秘钥.
-     * @param partnerRSAPrivateKey 合作伙伴的RSA私钥(合作伙伴自行创建).
-     * @param alipayRSAPublicKey   支付宝的RSA公钥(由合作伙伴上传RSA公钥后支付宝提供).
-     * @param notifyUrl            异步通知地址.
-     * @param returnUrl            同步返回地址.
-     */
-    public AliDirectPayConfig(String partnerId, String partnerMD5Key, String partnerRSAPrivateKey,
-                              String alipayRSAPublicKey, String notifyUrl, String returnUrl) {
-        this(partnerId, partnerMD5Key, partnerRSAPrivateKey, alipayRSAPublicKey, SignType.RSA, notifyUrl, returnUrl);
-    }
+    public void check() {
+        super.check();
 
-    /**
-     * 支付宝配置信息.
-     *
-     * @param partnerId            合作伙伴身份ID, 以2088开头的16位纯数字.
-     * @param partnerMD5Key        合作伙伴的MD5秘钥.
-     * @param partnerRSAPrivateKey 合作伙伴的RSA私钥(合作伙伴自行创建).
-     * @param alipayRSAPublicKey   支付宝的RSA公钥(由合作伙伴上传RSA公钥后支付宝提供).
-     * @param signType             签名方式.
-     * @param notifyUrl            异步通知地址.
-     * @param returnUrl            同步返回地址.
-     */
-    public AliDirectPayConfig(String partnerId, String partnerMD5Key, String partnerRSAPrivateKey,
-                              String alipayRSAPublicKey, SignType signType, String notifyUrl, String returnUrl) {
-        super(notifyUrl, returnUrl);
         Objects.requireNonNull(partnerId, "config param 'partnerId' is null.");
         if (!partnerId.matches("^2088[0-9]{12}$")) {
             throw new IllegalArgumentException("config param 'partnerId' [" + partnerId + "] is incorrect.");
@@ -92,7 +71,7 @@ public class AliDirectPayConfig extends PayConfig {
                 Objects.requireNonNull(partnerRSAPrivateKey, "config param 'partnerRSAPrivateKey' is null.");
                 try {
                     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-                    this.partnerRSAPrivateKey = keyFactory.generatePrivate(
+                    this.partnerRSAPrivateKeyObject = keyFactory.generatePrivate(
                             new PKCS8EncodedKeySpec(Base64.decodeBase64(partnerRSAPrivateKey)));
                 } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                     throw new IllegalArgumentException("config param 'partnerRSAPrivateKey' is incorrect.", e);
@@ -100,7 +79,7 @@ public class AliDirectPayConfig extends PayConfig {
                 Objects.requireNonNull(alipayRSAPublicKey, "config param 'alipayRSAPublicKey' is null.");
                 try {
                     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-                    this.alipayRSAPublicKey = keyFactory.generatePublic(
+                    this.alipayRSAPublicKeyObject = keyFactory.generatePublic(
                             new X509EncodedKeySpec(Base64.decodeBase64(alipayRSAPublicKey)));
                 } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
                     throw new IllegalArgumentException("config param 'alipayRSAPublicKey' is incorrect.", e);
@@ -116,23 +95,38 @@ public class AliDirectPayConfig extends PayConfig {
     }
 
     public String getPartnerId() {
-        return this.partnerId;
+        return partnerId;
     }
 
     public String getPartnerMD5Key() {
-        return this.partnerMD5Key;
+        return partnerMD5Key;
     }
 
-    public PrivateKey getPartnerRSAPrivateKey() {
-        return this.partnerRSAPrivateKey;
+    public PrivateKey getPartnerRSAPrivateKeyObject() {
+        return partnerRSAPrivateKeyObject;
     }
 
-    public PublicKey getAlipayRSAPublicKey() {
-        return this.alipayRSAPublicKey;
+    public PublicKey getAlipayRSAPublicKeyObject() {
+        return alipayRSAPublicKeyObject;
+    }
+
+    public void setPartnerId(String partnerId) {
+        this.partnerId = partnerId;
+    }
+
+    public void setPartnerRSAPrivateKey(String partnerRSAPrivateKey) {
+        this.partnerRSAPrivateKey = partnerRSAPrivateKey;
+    }
+
+    public void setAlipayRSAPublicKey(String alipayRSAPublicKey) {
+        this.alipayRSAPublicKey = alipayRSAPublicKey;
     }
 
     public SignType getSignType() {
-        return this.signType;
+        return signType;
     }
 
+    public void setSignType(SignType signType) {
+        this.signType = signType;
+    }
 }
