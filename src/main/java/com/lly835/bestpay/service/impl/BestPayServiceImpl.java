@@ -8,11 +8,7 @@ import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.exception.BestPayException;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
-import com.lly835.bestpay.service.AbstractComponent;
 import com.lly835.bestpay.service.BestPayService;
-import com.lly835.bestpay.service.Signature;
-import com.lly835.bestpay.service.impl.signature.AlipayAppSignatureImpl;
-import com.lly835.bestpay.service.impl.signature.AlipayPCSignatureImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -23,12 +19,12 @@ public class BestPayServiceImpl extends AbstractComponent implements BestPayServ
     private Map<BestPayTypeEnum, BestPayService> payServiceMap = new HashMap<>();
 
     public BestPayServiceImpl(AlipayConfig alipayConfig, AliDirectPayConfig aliDirectPayConfig) {
-        Signature pcSignature = new AlipayPCSignatureImpl(aliDirectPayConfig);
-        Signature appSignature = new AlipayAppSignatureImpl(alipayConfig);
+        AlipaySignature appSignature = new AlipaySignature(alipayConfig);
+        AlipayPCSignature pcSignature = new AlipayPCSignature(aliDirectPayConfig);
 
         payServiceMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppServiceImpl(alipayConfig, appSignature));
-        payServiceMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCServiceImpl(aliDirectPayConfig));
-        payServiceMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayWapServiceImpl(alipayConfig));
+        payServiceMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCServiceImpl(aliDirectPayConfig, pcSignature));
+        payServiceMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayWapServiceImpl(alipayConfig, appSignature));
     }
 
     @Override
@@ -45,7 +41,6 @@ public class BestPayServiceImpl extends AbstractComponent implements BestPayServ
      * @param request
      * @return
      */
-    @Override
     public PayResponse syncNotify(HttpServletRequest request) {
 
         //判断是否校验通过
@@ -69,7 +64,6 @@ public class BestPayServiceImpl extends AbstractComponent implements BestPayServ
      *
      * @return
      */
-    @Override
     public PayResponse asyncNotify(HttpServletRequest request) throws Exception {
 
         //判断是否校验通过
@@ -79,7 +73,7 @@ public class BestPayServiceImpl extends AbstractComponent implements BestPayServ
 //        }
 
         BestPayService bestPayService = payServiceMap.get(this.payType(request));
-        return bestPayService.asyncNotify(request);
+        return null;
     }
 
     /**

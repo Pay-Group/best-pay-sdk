@@ -1,5 +1,7 @@
 package com.lly835.bestpay.rest;
 
+import com.lly835.bestpay.utils.JsonUtil;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.net.URI;
@@ -108,7 +110,7 @@ public class ResponseValue {
         if (this.data instanceof String) {
             return (String) this.data;
         } else {
-            return Json.getJsonFromObject(this.data);
+            return JsonUtil.toJson(this.data);
         }
     }
 

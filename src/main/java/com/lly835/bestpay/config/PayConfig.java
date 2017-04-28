@@ -2,7 +2,7 @@ package com.lly835.bestpay.config;
 
 import java.util.Objects;
 
-public class PayConfig {
+class PayConfig {
 
     /**
      * 支付完成后的异步通知地址.
