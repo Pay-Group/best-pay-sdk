@@ -12,6 +12,7 @@ import com.lly835.bestpay.service.BestPayService;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 
 public class BestPayServiceImpl extends AbstractComponent implements BestPayService {
 
@@ -24,7 +25,7 @@ public class BestPayServiceImpl extends AbstractComponent implements BestPayServ
         AlipaySignature appSignature = new AlipaySignature(alipayConfig);
 //        AlipayPCSignature pcSignature = new AlipayPCSignature(aliDirectPayConfig);
 
-        payServiceMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppServiceImpl(alipayConfig, appSignature));
+//        payServiceMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppServiceImpl(alipayConfig, appSignature));
 //        payServiceMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCServiceImpl(aliDirectPayConfig, pcSignature));
         payServiceMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayWapServiceImpl(alipayConfig, appSignature));
     }
@@ -53,13 +54,16 @@ public class BestPayServiceImpl extends AbstractComponent implements BestPayServ
      * @return
      */
     public PayResponse syncNotify(HttpServletRequest request) {
+        Map<String, String> map = (SortedMap<String, String>) request.getParameterMap();
+
+        System.out.println(request);
 
         //判断是否校验通过
 //        if (!this.verify(request)) {
 //            logger.error("【同步返回校验】签名验证不通过");
 //            throw new BestPayException(BestPayResultEnum.SYNC_SIGN_VERIFY_FAIL);
 //        }
-//
+
 //        BestPayService bestPayService = payServiceMap.get(this.payType(request));
 //        return bestPayService.syncNotify(request);
         return null;

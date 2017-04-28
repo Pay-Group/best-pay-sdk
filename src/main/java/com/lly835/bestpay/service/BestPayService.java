@@ -4,6 +4,7 @@ import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -26,5 +27,12 @@ public interface BestPayService {
      * @return 验证结果.
      */
     boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign);
+
+    /**
+     * 同步回调
+     * @param request
+     * @return
+     */
+    PayResponse syncNotify(HttpServletRequest request);
 
 }

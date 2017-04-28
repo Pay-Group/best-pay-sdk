@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
+import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
@@ -86,6 +87,11 @@ class AlipayWapServiceImpl extends AbstractComponent implements BestPayService {
     @Override
     public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
         return this.signature.verify(toBeVerifiedParamMap, signType, sign);
+    }
+
+    @Override
+    public PayResponse syncNotify(HttpServletRequest request) {
+        return null;
     }
 
     /**
