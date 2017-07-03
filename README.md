@@ -16,8 +16,8 @@
 1. https://github.com/Pay-Group/best-pay-demo
 
 ## 文档说明
-1. 开发文档(https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/develop)
-2. 账号借用(https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/borrowAccount)
+1. [开发文档](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/develop)
+2. [账号借用](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/borrowAccount)
 
 ## 交流方式
 1. qq群（590730230）。目前项目处于刚刚起步开发阶段，欢迎有兴趣的朋友加群共同开发。
