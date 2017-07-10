@@ -3,6 +3,8 @@ package com.lly835.bestpay.service;
 import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
+import com.lly835.bestpay.model.RefundRequest;
+import com.lly835.bestpay.model.RefundResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -34,5 +36,20 @@ public interface BestPayService {
      * @return
      */
     PayResponse syncNotify(HttpServletRequest request);
+
+    /**
+     * 异步回调
+     * @param notifyData
+     * @return
+     */
+    PayResponse asyncNotify(String notifyData);
+
+    /**
+     * 退款
+     * @param request
+     * @return
+     */
+    RefundResponse refund(RefundRequest request);
+
 
 }

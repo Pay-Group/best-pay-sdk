@@ -2,9 +2,7 @@ package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.config.SignType;
-import com.lly835.bestpay.model.AlipayBizParam;
-import com.lly835.bestpay.model.PayRequest;
-import com.lly835.bestpay.model.PayResponse;
+import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.utils.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -90,6 +88,11 @@ class AlipayWapServiceImpl extends AbstractComponent implements BestPayService {
     }
 
     @Override
+    public PayResponse asyncNotify(String notifyData) {
+        return null;
+    }
+
+    @Override
     public PayResponse syncNotify(HttpServletRequest request) {
         return null;
     }
@@ -108,4 +111,8 @@ class AlipayWapServiceImpl extends AbstractComponent implements BestPayService {
         return alipayBizParam;
     }
 
+    @Override
+    public RefundResponse refund(RefundRequest request) {
+        return null;
+    }
 }

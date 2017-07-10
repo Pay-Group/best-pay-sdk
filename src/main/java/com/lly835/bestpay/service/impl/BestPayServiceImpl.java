@@ -1,50 +1,34 @@
 package com.lly835.bestpay.service.impl;
 
-import com.lly835.bestpay.config.AlipayConfig;
 import com.lly835.bestpay.config.SignType;
+import com.lly835.bestpay.config.WxPayH5Config;
 import com.lly835.bestpay.enums.BestPayResultEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.exception.BestPayException;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
+import com.lly835.bestpay.model.RefundRequest;
+import com.lly835.bestpay.model.RefundResponse;
 import com.lly835.bestpay.service.BestPayService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedMap;
 
 public class BestPayServiceImpl extends AbstractComponent implements BestPayService {
 
-    private AlipayConfig alipayConfig;
+    private WxPayH5Config wxPayH5Config;
 
-    private Map<BestPayTypeEnum, BestPayService> payServiceMap = new HashMap<>();
-
-    public BestPayServiceImpl(AlipayConfig alipayConfig) {
-        this.alipayConfig = alipayConfig;
-        AlipaySignature appSignature = new AlipaySignature(alipayConfig);
-//        AlipayPCSignature pcSignature = new AlipayPCSignature(aliDirectPayConfig);
-
-//        payServiceMap.put(BestPayTypeEnum.ALIPAY_APP, new AlipayAppServiceImpl(alipayConfig, appSignature));
-//        payServiceMap.put(BestPayTypeEnum.ALIPAY_PC, new AlipayPCServiceImpl(aliDirectPayConfig, pcSignature));
-        payServiceMap.put(BestPayTypeEnum.ALIPAY_WAP, new AlipayWapServiceImpl(alipayConfig, appSignature));
-    }
-
-    public AlipayConfig getAlipayConfig() {
-        return alipayConfig;
+    public void setWxPayH5Config(WxPayH5Config wxPayH5Config) {
+        this.wxPayH5Config = wxPayH5Config;
     }
 
     @Override
     public PayResponse pay(PayRequest request) {
+        //微信h5支付
+        WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+        wxPayService.setWxPayH5Config(this.wxPayH5Config);
 
-        if (request.getPayTypeEnum() == BestPayTypeEnum.ALIPAY_APP
-                || request.getPayTypeEnum() == BestPayTypeEnum.ALIPAY_WAP) {
-            alipayConfig.check();
-        }
-
-        //调用相应的支付方式
-        BestPayService alipayService = payServiceMap.get(request.getPayTypeEnum());
-        return alipayService.pay(request);
+        return wxPayService.pay(request);
     }
 
     /**
@@ -54,18 +38,6 @@ public class BestPayServiceImpl extends AbstractComponent implements BestPayServ
      * @return
      */
     public PayResponse syncNotify(HttpServletRequest request) {
-        Map<String, String> map = (SortedMap<String, String>) request.getParameterMap();
-
-        System.out.println(request);
-
-        //判断是否校验通过
-//        if (!this.verify(request)) {
-//            logger.error("【同步返回校验】签名验证不通过");
-//            throw new BestPayException(BestPayResultEnum.SYNC_SIGN_VERIFY_FAIL);
-//        }
-
-//        BestPayService bestPayService = payServiceMap.get(this.payType(request));
-//        return bestPayService.syncNotify(request);
         return null;
     }
 
@@ -79,16 +51,13 @@ public class BestPayServiceImpl extends AbstractComponent implements BestPayServ
      *
      * @return
      */
-    public PayResponse asyncNotify(HttpServletRequest request) throws Exception {
+    public PayResponse asyncNotify(String notifyData) {
 
-        //判断是否校验通过
-//        if (!this.verify(request)) {
-//            logger.error("【异步返回校验】签名验证不通过");
-//            throw new BestPayException(BestPayResultEnum.ASYNC_SIGN_VERIFY_FAIL);
-//        }
+        //微信h5支付
+        WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+        wxPayService.setWxPayH5Config(this.wxPayH5Config);
 
-        BestPayService bestPayService = payServiceMap.get(this.payType(request));
-        return null;
+        return wxPayService.asyncNotify(notifyData);
     }
 
     /**
@@ -117,4 +86,11 @@ public class BestPayServiceImpl extends AbstractComponent implements BestPayServ
         throw new BestPayException(BestPayResultEnum.PAY_TYPE_ERROR);
     }
 
+    @Override
+    public RefundResponse refund(RefundRequest request) {
+        //微信h5支付
+        WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        return wxPayService.refund(request);
+    }
 }

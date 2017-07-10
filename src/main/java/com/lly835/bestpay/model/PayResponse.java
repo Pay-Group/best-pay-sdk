@@ -1,5 +1,6 @@
 package com.lly835.bestpay.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.net.URI;
@@ -11,22 +12,28 @@ import java.net.URI;
 public class PayResponse {
 
     private String prePayParams;
+
     private URI payUri;
 
-    public String getPrePayParams() {
-        return this.prePayParams;
-    }
+    /** 以下字段仅在微信h5支付返回. */
+    private String appId;
 
-    public void setPrePayParams(String prePayParams) {
-        this.prePayParams = prePayParams;
-    }
+    private String timeStamp;
 
-    public URI getPayUri() {
-        return this.payUri;
-    }
+    private String nonceStr;
 
-    public void setPayUri(URI payUri) {
-        this.payUri = payUri;
-    }
+    @JsonProperty("package")
+    private String packAge;
 
+    private String signType;
+
+    private String paySign;
+
+    /** 以下字段在微信异步通知下返回. */
+    private Double orderAmount;
+
+    private String orderId;
+
+    //第三方支付的流水号
+    private String outTradeNo;
 }

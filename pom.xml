@@ -3,13 +3,13 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.github.lly835</groupId>
+    <groupId>cn.springboot</groupId>
     <artifactId>best-pay-sdk</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <name>best-pay-sdk</name>
     <description>最好的支付sdk</description>
-    <url>https://github.com/lly835/best-pay-sdk</url>
+    <url>https://github.com/Pay-Group/best-pay-sdk</url>
 
     <licenses>
         <license>
@@ -20,16 +20,16 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/lly835/best-pay-sdk</url>
-        <connection>git@github.com:lly835/best-pay-sdk.git</connection>
-        <developerConnection>https://github.com/lly835/best-pay-sdk</developerConnection>
+        <url>https://github.com/Pay-Group/best-pay-sdk</url>
+        <connection>git@github.com:Pay-Group/best-pay-sdk.git</connection>
+        <developerConnection>https://github.com/Pay-Group/best-pay-sdk</developerConnection>
     </scm>
 
     <developers>
         <developer>
             <name>lly835</name>
             <email>lly835@163.com</email>
-            <url>https://github.com/lly835/best-pay-sdk</url>
+            <url>https://github.com/Pay-Group/best-pay-sdk</url>
         </developer>
     </developers>
 
@@ -110,15 +110,32 @@
             <version>8.5.6</version>
         </dependency>
 
+        <!--http client-->
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-simplexml</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.9</version>
+        </dependency>
+
     </dependencies>
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
+            <id>snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
+            <id>releases</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
