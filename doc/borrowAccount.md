@@ -36,9 +36,10 @@ http://127.0.0.1:8080/pay?openid=xxxxxxxxxx
 
 #### 付款码
 
-![29](http://app-all.b0.upaiyun.com/29.JPG!300)
+![29](http://app-all.b0.upaiyun.com/29.jpg!300)
 
-![49](http://app-all.b0.upaiyun.com/49.JPG!300)
+
+![49](http://app-all.b0.upaiyun.com/49.jpg!300)
 
 
 
