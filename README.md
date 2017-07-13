@@ -20,6 +20,8 @@
 ## 项目demo
 1. https://github.com/Pay-Group/best-pay-demo
 2. 扫码体验
+    
+    ![师兄干货](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/weixin.jpg)
 
 ## 交流方式
 1. qq群（590730230）。目前项目处于刚刚起步开发阶段，欢迎有兴趣的朋友加群共同开发。
@@ -33,5 +35,7 @@
     <version>1.1.0</version>
 </dependency>
 ```
+
+
 
 
