@@ -35,7 +35,7 @@ http://xxx.s1.natapp.cc
 http://127.0.0.1:8080/pay?openid=xxxxxxxxxx
 
 #### 付款码
-![29-w100](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/29.JPG)
+![29-w100](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/29.JPG =100x100)
 
 ![49](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/49.jpg)
 
