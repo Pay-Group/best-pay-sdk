@@ -29,7 +29,7 @@
 http://sell.springboot.cn/sell/pay?openid=xxxxxxxxx
 
 你的外网
-http://xxx.s1.natapp.cc
+http://xxx.s1.natapp.cc/pay
 
 你的电脑
 http://127.0.0.1:8080/pay?openid=xxxxxxxxxx
