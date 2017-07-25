@@ -1,5 +1,5 @@
 # 使用文档(以微信公众账号支付为例)
-
+## 你也可以直接[观看视频教程](http://v.youku.com/v_show/id_XMjg5MjM4ODIyNA==.html?spm=a2h3j.8428770.3416059.1)
 1. 配置
 
     ```
