@@ -1,8 +1,8 @@
 # 使用文档(以微信公众账号支付为例)
 ## 视频教程
-    [best-pay-sdk的使用](http://v.youku.com/v_show/id_XMjg5MjM4ODIyNA==.html?spm=a2h3j.8428770.3416059.1)
-    [支付调试补充]()
-    [借用授权并支付]()
+1. [best-pay-sdk的使用](http://v.youku.com/v_show/id_XMjg5MjM4ODIyNA==.html?spm=a2h3j.8428770.3416059.1)
+2. [支付调试补充]()
+3. [借用授权并支付]()
 
 ## 文字教程
 1. 配置
