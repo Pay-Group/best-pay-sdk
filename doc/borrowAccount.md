@@ -1,6 +1,6 @@
 # 支付账号借用
 
-## 点击观看[借用账号及支付开发教程](http://v.youku.com/v_show/id_XMjg5MjM4ODIyNA==.html?spm=a2h3j.8428770.3416059.1)
+## 点击观看[视频教程](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/use.md)
 
 个人身份是不能申请微信或者支付宝支付的，必须企业资质才行。账号借用有风险，所以收取一定的费用，价格如下。
 
