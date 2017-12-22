@@ -19,7 +19,7 @@
 内容:
 1. 付款截图(付款码见下方)
 2. 你在"师兄干货"这个公众账号中的openid
-3. 你的外网地址，推荐使用[内网穿透](https://natapp.cn/)
+3. 你的外网地址,natapp的3级域名会变化,请使用二级域名，推荐使用[内网穿透](https://natapp.cn/)
 4. 慕课网用户需提交课程订单截图
 
 #### 请求示意图
@@ -32,7 +32,7 @@
 http://sell.springboot.cn/sell/pay?openid=xxxxxxxxx
 
 你的外网
-http://xxx.s1.natapp.cc/pay?openid=xxxxxxxxx
+http://xxx.natapp.cc/pay?openid=xxxxxxxxx
 
 你的电脑
 http://127.0.0.1:8080/pay?openid=xxxxxxxxxx
