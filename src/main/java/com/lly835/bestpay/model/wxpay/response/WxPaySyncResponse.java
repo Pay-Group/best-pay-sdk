@@ -53,5 +53,7 @@ public class WxPaySyncResponse {
     @Element(name = "code_url", required = false)
     private String codeUrl;
 
+    @Element(name = "mweb_url", required = false)
+    private String mwebUrl;
     /** 微信支付异步返回的数据. */
 }

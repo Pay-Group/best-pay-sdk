@@ -36,4 +36,7 @@ public class PayResponse {
 
     //第三方支付的流水号
     private String outTradeNo;
+
+    /** 以下支付是h5支付返回*/
+    private String mwebUrl;
 }
