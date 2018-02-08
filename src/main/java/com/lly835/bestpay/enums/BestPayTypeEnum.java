@@ -15,6 +15,8 @@ public enum BestPayTypeEnum {
     ALIPAY_WAP("alipay_wap", "支付宝wap"),
 
     WXPAY_H5("wxpay_h5", "微信公众账号支付"),
+
+    WXPAY_MWEB("MWEB", "微信公众账号支付"),
     ;
 
     private String code;
