@@ -85,4 +85,7 @@ public class WxPayAsyncResponse {
 
     @Element(name = "time_end", required = false)
     private String timeEnd;
+
+    @Element(name = "mweb_url", required = false)
+    private String mwebUrl;
 }
