@@ -28,4 +28,12 @@ public interface WxPayApi {
      */
     @POST("/secapi/pay/refund")
     Call<WxPayRefundResponse> refund(@Body RequestBody body);
+
+    /**
+     * 申请沙箱密钥
+     * @param body
+     * @return
+     */
+    @POST("/pay/getsignkey")
+    Call<Object> getsignkey(@Body RequestBody body);
 }

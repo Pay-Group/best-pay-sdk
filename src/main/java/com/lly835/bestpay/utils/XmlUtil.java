@@ -72,4 +72,15 @@ public class XmlUtil {
         }
         return null;
     }
+
+//    public static String toSimpleXML(Object obj) {
+//        Serializer serializer = new Persister();
+//        OutputElement outputElement = new OutputElement();
+//        try {
+//            serializer.write(obj, );
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return stringWriter.toString();
+//    }
 }

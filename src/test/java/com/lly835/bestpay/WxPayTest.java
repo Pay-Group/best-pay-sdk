@@ -35,10 +35,10 @@ public class WxPayTest {
         WxPayH5Config wxPayH5Config = new WxPayH5Config();
         wxPayH5Config.setNotifyUrl("http://127.0.0.1:8080");
         wxPayH5Config.setReturnUrl("http://127.0.0.1:8080");
-        wxPayH5Config.setAppId("wxd898fcb0171xxxxx");
+        wxPayH5Config.setAppId("wxd898fcb01713c658");
         wxPayH5Config.setAppSecret("xxxx");
-        wxPayH5Config.setMchId("148346xxxxx");
-        wxPayH5Config.setMchKey("xxxxxxxx");
+        wxPayH5Config.setMchId("1483469312");
+        wxPayH5Config.setMchKey("C5245D70627C1F8E9964D494B0735025");
         wxPayH5Config.setKeyPath("/Users/admin/Downloads/cert/h5.p12");
         this.wxPayH5Config = wxPayH5Config;
 
