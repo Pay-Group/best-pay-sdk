@@ -12,6 +12,7 @@ import org.simpleframework.xml.Root;
 @Data
 @Root(name = "xml", strict = false) //name:要解析的xml数据的头部
 public class WxPayRefundResponse {
+
     @Element(name = "return_code")
     private String returnCode;
 
@@ -65,7 +66,7 @@ public class WxPayRefundResponse {
     private Integer settlementTotalFee;
 
     @Element(name = "fee_type", required = false)
-    private Integer feeType;
+    private String feeType;
 
     @Element(name = "cash_fee", required = false)
     private Integer cashFee;

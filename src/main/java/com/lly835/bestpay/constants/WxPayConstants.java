@@ -9,6 +9,6 @@ public interface WxPayConstants {
 
     String SUCCESS = "SUCCESS";
 
-    String WXPAY_GATEWAY = "https://api.mch.weixin.qq.com/sandboxnew/";
+    String WXPAY_GATEWAY = "https://api.mch.weixin.qq.com/";
 
 }

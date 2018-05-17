@@ -85,4 +85,11 @@ public class WxPayAsyncResponse {
 
     @Element(name = "time_end", required = false)
     private String timeEnd;
+
+    //支付优惠时多返回字段
+    @Element(name = "settlement_total_fee", required = false)
+    private Integer settlementTotalFee;
+
+    @Element(name = "coupon_type", required = false)
+    private String couponType;
 }

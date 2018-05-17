@@ -1,50 +1,54 @@
 package com.lly835.bestpay.model.wxpay.request;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import lombok.Data;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  * 退款请求参数
  * Created by 廖师兄
  * 2017-07-02 01:09
  */
-@XStreamAlias("xml")
 @Data
+@Root(name = "xml", strict = false)
 public class WxPayRefundRequest {
+
+    @Element(name = "appid")
     private String appid;
 
-    @XStreamAlias("mch_id")
+    @Element(name = "mch_id")
     private String mchId;
 
-    @XStreamAlias("nonce_str")
+    @Element(name = "nonce_str")
     private String nonceStr;
 
+    @Element(name = "sign")
     private String sign;
 
-    @XStreamAlias("sign_type")
+    @Element(name = "sign_type", required = false)
     private String signType;
 
-    @XStreamAlias("transaction_id")
+    @Element(name = "transaction_id", required = false)
     private String transactionId;
 
-    @XStreamAlias("out_trade_no")
+    @Element(name = "out_trade_no")
     private String outTradeNo;
 
-    @XStreamAlias("out_refund_no")
+    @Element(name = "out_refund_no")
     private String outRefundNo;
 
-    @XStreamAlias("total_fee")
+    @Element(name = "total_fee")
     private Integer totalFee;
 
-    @XStreamAlias("refund_fee")
+    @Element(name = "refund_fee")
     private Integer refundFee;
 
-    @XStreamAlias("refund_fee_type")
+    @Element(name = "refund_fee_type", required = false)
     private String refundFeeType;
 
-    @XStreamAlias("refund_desc")
+    @Element(name = "refund_desc", required = false)
     private String refundDesc;
 
-    @XStreamAlias("refund_account")
+    @Element(name = "refund_account", required = false)
     private String refundAccount;
 }
