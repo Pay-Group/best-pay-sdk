@@ -86,6 +86,9 @@ public class WxPayAsyncResponse {
     @Element(name = "time_end", required = false)
     private String timeEnd;
 
+    @Element(name = "mweb_url", required = false)
+    private String mwebUrl;
+
     //支付优惠时多返回字段
     @Element(name = "settlement_total_fee", required = false)
     private Integer settlementTotalFee;

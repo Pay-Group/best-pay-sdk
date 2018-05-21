@@ -3,6 +3,7 @@ package com.lly835.bestpay.service.impl;
 import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.config.WxPayH5Config;
 import com.lly835.bestpay.constants.WxPayConstants;
+import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.model.RefundRequest;
@@ -54,13 +55,13 @@ public class WxPayServiceImpl implements BestPayService {
         wxRequest.setBody(request.getOrderName());
         wxRequest.setOpenid(request.getOpenid());
 
-        wxRequest.setTradeType("JSAPI");
+        wxRequest.setTradeType(switchH5TradeType(request.getPayTypeEnum()));
         wxRequest.setAppid(wxPayH5Config.getAppId());
         wxRequest.setMchId(wxPayH5Config.getMchId());
         wxRequest.setNotifyUrl(wxPayH5Config.getNotifyUrl());
         wxRequest.setNonceStr(RandomUtil.getRandomStr());
-        wxRequest.setSpbillCreateIp("8.8.8.8");
-        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
+        wxRequest.setSpbillCreateIp(request.getSpbillCreateIp() == null || request.getSpbillCreateIp().isEmpty() ? "8.8.8.8" : request.getSpbillCreateIp());
+        wxRequest.setSign(WxPaySignature.sign(buildMap(wxRequest), wxPayH5Config.getMchKey()));
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(WxPayConstants.WXPAY_GATEWAY)
@@ -208,6 +209,7 @@ public class WxPayServiceImpl implements BestPayService {
         payResponse.setOrderAmount(MoneyUtil.Fen2Yuan(response.getTotalFee()));
         payResponse.setOrderId(response.getOutTradeNo());
         payResponse.setOutTradeNo(response.getTransactionId());
+        payResponse.setMwebUrl(response.getMwebUrl());
         return payResponse;
     }
 
@@ -237,8 +239,26 @@ public class WxPayServiceImpl implements BestPayService {
         payResponse.setPackAge(packAge);
         payResponse.setSignType(signType);
         payResponse.setPaySign(WxPaySignature.sign(map, wxPayH5Config.getMchKey()));
+        payResponse.setMwebUrl(response.getMwebUrl());
 
         return payResponse;
+    }
+
+
+    /**
+     * H5支付交易类型选择
+     */
+    public String switchH5TradeType(BestPayTypeEnum payTypeEnum){
+        String tradeType = "JSAPI";
+        switch (payTypeEnum){
+            case WXPAY_H5:
+                tradeType = "JSAPI";
+                break;
+            case WXPAY_MWEB:
+                tradeType = "MWEB";
+                break;
+        }
+        return tradeType;
     }
 
 }
