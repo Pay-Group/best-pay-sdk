@@ -15,6 +15,7 @@ import com.lly835.bestpay.model.wxpay.response.WxPayAsyncResponse;
 import com.lly835.bestpay.model.wxpay.response.WxPayRefundResponse;
 import com.lly835.bestpay.model.wxpay.response.WxPaySyncResponse;
 import com.lly835.bestpay.service.BestPayService;
+import com.lly835.bestpay.utils.MapUtil;
 import com.lly835.bestpay.utils.MoneyUtil;
 import com.lly835.bestpay.utils.RandomUtil;
 import com.lly835.bestpay.utils.XmlUtil;
@@ -22,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -64,9 +66,13 @@ public class WxPayServiceImpl implements BestPayService {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(WxPayConstants.WXPAY_GATEWAY)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
+                .client(new OkHttpClient.Builder()
+                        .addInterceptor((new HttpLoggingInterceptor()
+                                .setLevel(HttpLoggingInterceptor.Level.BODY)))
+                        .build()
+                )
                 .build();
-        String xml = XmlUtil.toXMl(wxRequest);
-        RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"),xml);
+        RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxRequest));
         Call<WxPaySyncResponse> call = retrofit.create(WxPayApi.class).unifiedorder(body);
         Response<WxPaySyncResponse> retrofitResponse  = null;
         try{
@@ -78,7 +84,6 @@ public class WxPayServiceImpl implements BestPayService {
             throw new RuntimeException("【微信统一支付】发起支付, 网络异常");
         }
         WxPaySyncResponse response = retrofitResponse.body();
-//        log.info("【微信统一支付】response={}", JsonUtil.toJson(response));
 
         if(!response.getReturnCode().equals(WxPayConstants.SUCCESS)) {
             throw new RuntimeException("【微信统一支付】发起支付, returnCode != SUCCESS, returnMsg = " + response.getReturnMsg());
@@ -107,14 +112,14 @@ public class WxPayServiceImpl implements BestPayService {
      */
     @Override
     public PayResponse asyncNotify(String notifyData) {
-        //xml解析为对象
-        WxPayAsyncResponse asyncResponse = (WxPayAsyncResponse) XmlUtil.fromXML(notifyData, WxPayAsyncResponse.class);
-
         //签名校验
-        if (!WxPaySignature.verify(buildMap(asyncResponse), wxPayH5Config.getMchKey())) {
-            log.error("【微信支付异步通知】签名验证失败, response={}", asyncResponse);
+        if (!WxPaySignature.verify(XmlUtil.toMap(notifyData), wxPayH5Config.getMchKey())) {
+            log.error("【微信支付异步通知】签名验证失败, response={}", notifyData);
             throw new RuntimeException("【微信支付异步通知】签名验证失败");
         }
+
+        //xml解析为对象
+        WxPayAsyncResponse asyncResponse = (WxPayAsyncResponse) XmlUtil.toObject(notifyData, WxPayAsyncResponse.class);
 
         if(!asyncResponse.getReturnCode().equals(WxPayConstants.SUCCESS)) {
             throw new RuntimeException("【微信支付异步通知】发起支付, returnCode != SUCCESS, returnMsg = " + asyncResponse.getReturnMsg());
@@ -147,22 +152,25 @@ public class WxPayServiceImpl implements BestPayService {
         wxRequest.setAppid(wxPayH5Config.getAppId());
         wxRequest.setMchId(wxPayH5Config.getMchId());
         wxRequest.setNonceStr(RandomUtil.getRandomStr());
-        wxRequest.setSign(WxPaySignature.sign(buildMap(wxRequest), wxPayH5Config.getMchKey()));
+        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
 
         //初始化证书
         if (wxPayH5Config.getSslContext() == null) {
             wxPayH5Config.initSSLContext();
         }
-        OkHttpClient.Builder okHttpClient = new OkHttpClient()
+        OkHttpClient okHttpClient = new OkHttpClient()
                 .newBuilder()
-                .sslSocketFactory(wxPayH5Config.getSslContext().getSocketFactory());
+                .sslSocketFactory(wxPayH5Config.getSslContext().getSocketFactory())
+                .addInterceptor((new HttpLoggingInterceptor()
+                        .setLevel(HttpLoggingInterceptor.Level.BODY)))
+                .build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(WxPayConstants.WXPAY_GATEWAY)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
-                .client(okHttpClient.build())
+                .client(okHttpClient)
                 .build();
-        String xml = XmlUtil.toXMl(wxRequest);
+        String xml = XmlUtil.toString(wxRequest);
         RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"),xml);
         Call<WxPayRefundResponse> call = retrofit.create(WxPayApi.class).refund(body);
         Response<WxPayRefundResponse> retrofitResponse  = null;
@@ -183,7 +191,6 @@ public class WxPayServiceImpl implements BestPayService {
             throw new RuntimeException("【微信退款】发起退款, resultCode != SUCCESS, err_code = " + response.getErrCode() + " err_code_des=" + response.getErrCodeDes());
         }
 
-//        log.info("【微信退款】发起退款, response={}", JsonUtil.toJson(retrofitResponse.body()));
         return buildRefundResponse(response);
     }
 
@@ -197,24 +204,6 @@ public class WxPayServiceImpl implements BestPayService {
         return refundResponse;
     }
 
-    private Map<String, String> buildMap(WxPayRefundRequest request) {
-        Map<String, String> map = new HashMap<>();
-        map.put("appid", request.getAppid());
-        map.put("mch_id", request.getMchId());
-        map.put("nonce_str", request.getNonceStr());
-        map.put("sign", request.getSign());
-        map.put("sign_type", request.getSignType());
-        map.put("transaction_id", request.getTransactionId());
-        map.put("out_trade_no", request.getOutTradeNo());
-        map.put("out_refund_no", request.getOutRefundNo());
-        map.put("total_fee", String.valueOf(request.getTotalFee()));
-        map.put("refund_fee", String.valueOf(request.getRefundFee()));
-        map.put("refund_fee_type", request.getRefundFeeType());
-        map.put("refund_desc", request.getRefundDesc());
-        map.put("refund_account", request.getRefundAccount());
-        return map;
-    }
-
     private PayResponse buildPayResponse(WxPayAsyncResponse response) {
         PayResponse payResponse = new PayResponse();
         payResponse.setOrderAmount(MoneyUtil.Fen2Yuan(response.getTotalFee()));
@@ -222,58 +211,6 @@ public class WxPayServiceImpl implements BestPayService {
         payResponse.setOutTradeNo(response.getTransactionId());
         payResponse.setMwebUrl(response.getMwebUrl());
         return payResponse;
-    }
-
-    private Map<String, String> buildMap(WxPayAsyncResponse response) {
-        Map<String, String> map = new HashMap<>();
-        map.put("return_code", response.getReturnCode());
-        map.put("return_msg", response.getReturnMsg());
-        map.put("appid", response.getAppid());
-        map.put("mch_id", response.getMchId());
-        map.put("device_info", response.getDeviceInfo());
-        map.put("nonce_str", response.getNonceStr());
-        map.put("sign", response.getSign());
-        map.put("result_code", response.getResultCode());
-        map.put("err_code", response.getErrCode());
-        map.put("err_code_des", response.getErrCodeDes());
-        map.put("openid", response.getOpenid());
-        map.put("is_subscribe", response.getIsSubscribe());
-        map.put("trade_type", response.getTradeType());
-        map.put("bank_type", response.getBankType());
-        map.put("total_fee", String.valueOf(response.getTotalFee()));
-        map.put("fee_type", response.getFeeType());
-        map.put("cash_fee", response.getCashFee());
-        map.put("cash_fee_type", response.getCashFeeType());
-        map.put("coupon_fee", response.getCouponFee());
-        map.put("coupon_count", response.getCouponCount());
-        map.put("transaction_id", response.getTransactionId());
-        map.put("out_trade_no", response.getOutTradeNo());
-        map.put("attach", response.getAttach());
-        map.put("time_end", response.getTimeEnd());
-        return map;
-    }
-
-    /**
-     * 构造map
-     * @param request
-     * @return
-     */
-    private Map<String, String> buildMap(WxPayUnifiedorderRequest request) {
-        Map<String, String> map = new HashMap<>();
-        map.put("appid", request.getAppid());
-        map.put("mch_id", request.getMchId());
-        map.put("nonce_str", request.getNonceStr());
-        map.put("sign", request.getSign());
-        map.put("attach", request.getAttach());
-        map.put("body", request.getBody());
-        map.put("detail", request.getDetail());
-        map.put("notify_url", request.getNotifyUrl());
-        map.put("openid", request.getOpenid());
-        map.put("out_trade_no", request.getOutTradeNo());
-        map.put("spbill_create_ip", request.getSpbillCreateIp());
-        map.put("total_fee", String.valueOf(request.getTotalFee()));
-        map.put("trade_type", request.getTradeType());
-        return map;
     }
 
     /**
