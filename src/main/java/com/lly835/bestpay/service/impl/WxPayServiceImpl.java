@@ -61,7 +61,7 @@ public class WxPayServiceImpl implements BestPayService {
         wxRequest.setNotifyUrl(wxPayH5Config.getNotifyUrl());
         wxRequest.setNonceStr(RandomUtil.getRandomStr());
         wxRequest.setSpbillCreateIp(request.getSpbillCreateIp() == null || request.getSpbillCreateIp().isEmpty() ? "8.8.8.8" : request.getSpbillCreateIp());
-        wxRequest.setSign(WxPaySignature.sign(buildMap(wxRequest), wxPayH5Config.getMchKey()));
+        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(WxPayConstants.WXPAY_GATEWAY)
