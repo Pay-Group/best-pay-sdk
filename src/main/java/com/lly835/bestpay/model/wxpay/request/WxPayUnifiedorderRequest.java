@@ -1,48 +1,53 @@
 package com.lly835.bestpay.model.wxpay.request;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import lombok.Data;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
 
 /**
  * Created by 廖师兄
  * 2017-07-02 13:42
  */
-@XStreamAlias("xml")
 @Data
+@Root(name = "xml", strict = false)
 public class WxPayUnifiedorderRequest {
 
+    @Element(name = "appid")
     private String appid;
 
-    @XStreamAlias("mch_id")
+    @Element(name = "mch_id")
     private String mchId;
 
-    @XStreamAlias("nonce_str")
+    @Element(name = "nonce_str")
     private String nonceStr;
 
+    @Element(name = "sign")
     private String sign;
 
+    @Element(name = "attach", required = false)
     private String attach;
 
+    @Element(name = "body", required = false)
     private String body;
 
+    @Element(name = "detail", required = false)
     private String detail;
 
-
-    @XStreamAlias("notify_url")
+    @Element(name = "notify_url")
     private String notifyUrl;
 
+    @Element(name = "openid", required=false)
     private String openid;
 
-    @XStreamAlias("out_trade_no")
+    @Element(name = "out_trade_no")
     private String outTradeNo;
 
-    @XStreamAlias("spbill_create_ip")
+    @Element(name = "spbill_create_ip")
     private String spbillCreateIp;
 
-    @XStreamAlias("total_fee")
+    @Element(name = "total_fee")
     private Integer totalFee;
 
-    @XStreamAlias("trade_type")
+    @Element(name = "trade_type")
     private String tradeType;
-
 }

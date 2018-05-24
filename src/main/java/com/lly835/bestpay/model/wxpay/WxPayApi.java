@@ -1,6 +1,7 @@
 package com.lly835.bestpay.model.wxpay;
 
 import com.lly835.bestpay.model.wxpay.response.WxPayRefundResponse;
+import com.lly835.bestpay.model.wxpay.response.WxPaySandboxKeyResponse;
 import com.lly835.bestpay.model.wxpay.response.WxPaySyncResponse;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -28,4 +29,12 @@ public interface WxPayApi {
      */
     @POST("/secapi/pay/refund")
     Call<WxPayRefundResponse> refund(@Body RequestBody body);
+
+    /**
+     * 申请沙箱密钥
+     * @param body
+     * @return
+     */
+    @POST("/sandboxnew/pay/getsignkey")
+    Call<WxPaySandboxKeyResponse> getsignkey(@Body RequestBody body);
 }
