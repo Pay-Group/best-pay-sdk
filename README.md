@@ -13,8 +13,8 @@
 2. [支付账号借用](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/borrowAccount.md)
 
 ## 特别注意
-1. 本sdk要求的最低的jdk版本是8
-2. 支付时的编码只支持utf-8
+1. 要求JDK8+
+2. IDE 需安装 lombok 插件
 3. 如果想贡献代码，请阅读[代码贡献指南](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/CONTRIBUTION.md)
 
 ## 项目demo
