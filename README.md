@@ -9,8 +9,7 @@
 1.2.0 | 微信h5 | √ | √ | 2018.05.23发布
 
 ## 文档
-1. [使用文档(内含视频)](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/use.md)
-2. [支付账号借用](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/borrowAccount.md)
+1. [使用文档](https://github.com/Pay-Group/best-pay-sdk/blob/develop/doc/use.md)
 
 ## 特别注意
 1. 要求JDK8+
