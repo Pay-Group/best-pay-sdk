@@ -12,7 +12,7 @@ import com.lly835.bestpay.model.wxpay.WxPayApi;
 import com.lly835.bestpay.model.wxpay.request.WxPayRefundRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayUnifiedorderRequest;
 import com.lly835.bestpay.model.wxpay.response.WxPayAsyncResponse;
-import com.lly835.bestpay.model.wxpay.response.WxPayRefundResponse;
+import com.lly835.bestpay.model.wxpay.response.WxRefundResponse;
 import com.lly835.bestpay.model.wxpay.response.WxPaySyncResponse;
 import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.utils.MapUtil;
@@ -172,8 +172,8 @@ public class WxPayServiceImpl implements BestPayService {
                 .build();
         String xml = XmlUtil.toString(wxRequest);
         RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"),xml);
-        Call<WxPayRefundResponse> call = retrofit.create(WxPayApi.class).refund(body);
-        Response<WxPayRefundResponse> retrofitResponse  = null;
+        Call<WxRefundResponse> call = retrofit.create(WxPayApi.class).refund(body);
+        Response<WxRefundResponse> retrofitResponse  = null;
         try{
             retrofitResponse = call.execute();
         }catch (IOException e) {
@@ -182,7 +182,7 @@ public class WxPayServiceImpl implements BestPayService {
         if (!retrofitResponse.isSuccessful()) {
             throw new RuntimeException("【微信退款】发起退款, 网络异常");
         }
-        WxPayRefundResponse response = retrofitResponse.body();
+        WxRefundResponse response = retrofitResponse.body();
 
         if(!response.getReturnCode().equals(WxPayConstants.SUCCESS)) {
             throw new RuntimeException("【微信退款】发起退款, returnCode != SUCCESS, returnMsg = " + response.getReturnMsg());
@@ -194,7 +194,7 @@ public class WxPayServiceImpl implements BestPayService {
         return buildRefundResponse(response);
     }
 
-    private RefundResponse buildRefundResponse(WxPayRefundResponse response) {
+    private RefundResponse buildRefundResponse(WxRefundResponse response) {
         RefundResponse refundResponse = new RefundResponse();
         refundResponse.setOrderId(response.getOutTradeNo());
         refundResponse.setOrderAmount(MoneyUtil.Fen2Yuan(response.getTotalFee()));

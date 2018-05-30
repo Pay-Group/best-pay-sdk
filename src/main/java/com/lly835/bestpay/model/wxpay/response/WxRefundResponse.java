@@ -11,7 +11,7 @@ import org.simpleframework.xml.Root;
  */
 @Data
 @Root(name = "xml", strict = false) //name:要解析的xml数据的头部
-public class WxPayRefundResponse {
+public class WxRefundResponse {
 
     @Element(name = "return_code")
     private String returnCode;

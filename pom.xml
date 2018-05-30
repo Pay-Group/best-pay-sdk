@@ -126,6 +126,12 @@
             <artifactId>logging-interceptor</artifactId>
             <version>3.8.0</version>
         </dependency>
+        <!--解密支持-->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.59</version>
+        </dependency>
 
     </dependencies>
 
