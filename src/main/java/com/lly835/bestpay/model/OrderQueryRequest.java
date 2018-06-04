@@ -16,5 +16,13 @@ public class OrderQueryRequest {
      */
     private BestPayTypeEnum payTypeEnum;
 
-    private String orderId;
+    /**
+     * 订单号(orderId 和 outOrderId 二选一，两个都传以outOrderId为准)
+     */
+    private String orderId = "";
+
+    /**
+     * 外部订单号(例如微信生成的)
+     */
+    private String outOrderId = "";
 }

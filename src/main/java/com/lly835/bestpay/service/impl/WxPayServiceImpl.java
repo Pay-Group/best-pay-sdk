@@ -4,17 +4,21 @@ import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.config.WxPayH5Config;
 import com.lly835.bestpay.constants.WxPayConstants;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
+import com.lly835.bestpay.enums.OrderStatusEnum;
+import com.lly835.bestpay.model.OrderQueryRequest;
+import com.lly835.bestpay.model.OrderQueryResponse;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.model.RefundRequest;
 import com.lly835.bestpay.model.RefundResponse;
 import com.lly835.bestpay.model.wxpay.WxPayApi;
+import com.lly835.bestpay.model.wxpay.request.WxOrderQueryRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayRefundRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayUnifiedorderRequest;
+import com.lly835.bestpay.model.wxpay.response.WxOrderQueryResponse;
 import com.lly835.bestpay.model.wxpay.response.WxPayAsyncResponse;
-import com.lly835.bestpay.model.wxpay.response.WxRefundResponse;
 import com.lly835.bestpay.model.wxpay.response.WxPaySyncResponse;
-import com.lly835.bestpay.service.BestPayService;
+import com.lly835.bestpay.model.wxpay.response.WxRefundResponse;
 import com.lly835.bestpay.utils.MapUtil;
 import com.lly835.bestpay.utils.MoneyUtil;
 import com.lly835.bestpay.utils.RandomUtil;
@@ -39,9 +43,19 @@ import java.util.Map;
  * 2017-07-02 13:40
  */
 @Slf4j
-public class WxPayServiceImpl implements BestPayService {
+public class WxPayServiceImpl extends BestPayServiceImpl {
 
     private WxPayH5Config wxPayH5Config;
+
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(WxPayConstants.WXPAY_GATEWAY)
+            .addConverterFactory(SimpleXmlConverterFactory.create())
+            .client(new OkHttpClient.Builder()
+                    .addInterceptor((new HttpLoggingInterceptor()
+                            .setLevel(HttpLoggingInterceptor.Level.BODY)))
+                    .build()
+            )
+            .build();
 
     public void setWxPayH5Config(WxPayH5Config wxPayH5Config) {
         this.wxPayH5Config = wxPayH5Config;
@@ -63,15 +77,6 @@ public class WxPayServiceImpl implements BestPayService {
         wxRequest.setSpbillCreateIp(request.getSpbillCreateIp() == null || request.getSpbillCreateIp().isEmpty() ? "8.8.8.8" : request.getSpbillCreateIp());
         wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(WxPayConstants.WXPAY_GATEWAY)
-                .addConverterFactory(SimpleXmlConverterFactory.create())
-                .client(new OkHttpClient.Builder()
-                        .addInterceptor((new HttpLoggingInterceptor()
-                                .setLevel(HttpLoggingInterceptor.Level.BODY)))
-                        .build()
-                )
-                .build();
         RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxRequest));
         Call<WxPaySyncResponse> call = retrofit.create(WxPayApi.class).unifiedorder(body);
         Response<WxPaySyncResponse> retrofitResponse  = null;
@@ -192,6 +197,48 @@ public class WxPayServiceImpl implements BestPayService {
         }
 
         return buildRefundResponse(response);
+    }
+
+    /**
+     * 查询订单
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public OrderQueryResponse query(OrderQueryRequest request) {
+        WxOrderQueryRequest wxRequest = new WxOrderQueryRequest();
+        wxRequest.setOutTradeNo(request.getOrderId());
+        wxRequest.setTransactionId(request.getOutOrderId());
+
+        wxRequest.setAppid(wxPayH5Config.getAppId());
+        wxRequest.setMchId(wxPayH5Config.getMchId());
+        wxRequest.setNonceStr(RandomUtil.getRandomStr());
+        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
+        RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxRequest));
+
+        Call<WxOrderQueryResponse> call = retrofit.create(WxPayApi.class).orderquery(body);
+        Response<WxOrderQueryResponse> retrofitResponse  = null;
+        try{
+            retrofitResponse = call.execute();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (!retrofitResponse.isSuccessful()) {
+            throw new RuntimeException("【微信订单查询】网络异常");
+        }
+        WxOrderQueryResponse response = retrofitResponse.body();
+        if(!response.getReturnCode().equals(WxPayConstants.SUCCESS)) {
+            throw new RuntimeException("【微信订单查询】returnCode != SUCCESS, returnMsg = " + response.getReturnMsg());
+        }
+        if (!response.getResultCode().equals(WxPayConstants.SUCCESS)) {
+            throw new RuntimeException("【微信订单查询】resultCode != SUCCESS, err_code = " + response.getErrCode() + ", err_code_des=" + response.getErrCodeDes());
+        }
+
+        return OrderQueryResponse.builder()
+                .orderStatusEnum(OrderStatusEnum.findByName(response.getTradeState()))
+                .resultMsg(response.getTradeStateDesc() == null ? "" : response.getTradeStateDesc())
+                .build();
     }
 
     private RefundResponse buildRefundResponse(WxRefundResponse response) {

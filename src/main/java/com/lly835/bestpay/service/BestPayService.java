@@ -1,6 +1,8 @@
 package com.lly835.bestpay.service;
 
 import com.lly835.bestpay.config.SignType;
+import com.lly835.bestpay.model.OrderQueryRequest;
+import com.lly835.bestpay.model.OrderQueryResponse;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.model.RefundRequest;
@@ -51,5 +53,10 @@ public interface BestPayService {
      */
     RefundResponse refund(RefundRequest request);
 
-
+    /**
+     * 查询订单
+     * @param request
+     * @return
+     */
+    OrderQueryResponse query(OrderQueryRequest request);
 }

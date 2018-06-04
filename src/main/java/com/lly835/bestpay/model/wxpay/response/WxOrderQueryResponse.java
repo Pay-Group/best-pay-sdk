@@ -52,7 +52,7 @@ public class WxOrderQueryResponse {
     @Element(name = "trade_type", required = false)
     private String tradeType;
 
-    @Element(name = "tradeState", required = false)
+    @Element(name = "trade_state", required = false)
     private String tradeState;
 
     @Element(name = "bank_type", required = false)

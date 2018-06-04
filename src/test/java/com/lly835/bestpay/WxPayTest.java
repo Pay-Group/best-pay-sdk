@@ -2,6 +2,8 @@ package com.lly835.bestpay;
 
 import com.lly835.bestpay.config.WxPayH5Config;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
+import com.lly835.bestpay.model.OrderQueryRequest;
+import com.lly835.bestpay.model.OrderQueryResponse;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
 import com.lly835.bestpay.model.RefundRequest;
@@ -77,6 +79,15 @@ public class WxPayTest {
         request.setOrderId("4171207152120180517165324719749");
         request.setOrderAmount(5.51);
         RefundResponse response = bestPayService.refund(request);
+        log.info(JsonUtil.toJson(response));
+    }
+
+    @Test
+    public void query() {
+        OrderQueryRequest request = new OrderQueryRequest();
+        request.setPayTypeEnum(BestPayTypeEnum.WXPAY_H5);
+        request.setOrderId("1528103259255858491");
+        OrderQueryResponse response = bestPayService.query(request);
         log.info(JsonUtil.toJson(response));
     }
 
