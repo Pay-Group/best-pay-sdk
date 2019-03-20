@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -321,8 +322,8 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
         RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxRequest));
 
-        Call<String> call = retrofit.create(WxPayApi.class).downloadBill(body);
-        Response<String> retrofitResponse  = null;
+        Call<ResponseBody> call = retrofit.create(WxPayApi.class).downloadBill(body);
+        Response<ResponseBody> retrofitResponse  = null;
         try{
             retrofitResponse = call.execute();
         }catch (IOException e) {
@@ -333,7 +334,12 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
             throw new RuntimeException("【微信订单查询】网络异常");
         }
 
-        String response = retrofitResponse.body();
+        String response = null;
+        try {
+            response = retrofitResponse.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         return response;
