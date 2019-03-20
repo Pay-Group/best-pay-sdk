@@ -11,10 +11,7 @@ import com.lly835.bestpay.model.wxpay.request.WxDownloadBillRequest;
 import com.lly835.bestpay.model.wxpay.request.WxOrderQueryRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayRefundRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayUnifiedorderRequest;
-import com.lly835.bestpay.model.wxpay.response.WxOrderQueryResponse;
-import com.lly835.bestpay.model.wxpay.response.WxPayAsyncResponse;
-import com.lly835.bestpay.model.wxpay.response.WxPaySyncResponse;
-import com.lly835.bestpay.model.wxpay.response.WxRefundResponse;
+import com.lly835.bestpay.model.wxpay.response.*;
 import com.lly835.bestpay.utils.MapUtil;
 import com.lly835.bestpay.utils.MoneyUtil;
 import com.lly835.bestpay.utils.RandomUtil;
@@ -337,6 +334,16 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         String response = null;
         try {
             response = retrofitResponse.body().string();
+
+            //如果返回xml格式，表示返回异常
+            if(response.startsWith("<")) {
+                WxDownloadBillResponse downloadBillResponse =  (WxDownloadBillResponse)XmlUtil.toObject(response,
+                        WxDownloadBillResponse.class);
+                throw new RuntimeException("【对账文件】返回异常 错误码: " +
+                        downloadBillResponse.getErrorCode() +
+                        " 错误信息: " + downloadBillResponse.getReturnMsg());
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
