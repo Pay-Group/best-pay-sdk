@@ -2,12 +2,7 @@ package com.lly835.bestpay;
 
 import com.lly835.bestpay.config.WxPayH5Config;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
-import com.lly835.bestpay.model.OrderQueryRequest;
-import com.lly835.bestpay.model.OrderQueryResponse;
-import com.lly835.bestpay.model.PayRequest;
-import com.lly835.bestpay.model.PayResponse;
-import com.lly835.bestpay.model.RefundRequest;
-import com.lly835.bestpay.model.RefundResponse;
+import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.wxpay.response.WxPayAsyncResponse;
 import com.lly835.bestpay.service.impl.BestPayServiceImpl;
 import com.lly835.bestpay.utils.JsonUtil;
@@ -89,6 +84,15 @@ public class WxPayTest {
         request.setOrderId("1528103259255858491");
         OrderQueryResponse response = bestPayService.query(request);
         log.info(JsonUtil.toJson(response));
+    }
+
+    @Test
+    public void downloadBill(){
+        DownloadBillRequest request = new DownloadBillRequest();
+        request.setBillDate("20190319");
+
+        String response = bestPayService.downloadBill(request);
+        log.info("【对账文件内容】 {}", response);
     }
 
 }

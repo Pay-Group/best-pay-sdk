@@ -46,4 +46,7 @@ public interface WxPayApi {
      */
     @POST("/pay/orderquery")
     Call<WxOrderQueryResponse> orderquery(@Body RequestBody body);
+
+    @POST("/pay/downloadbill")
+    Call<String> downloadBill(@Body RequestBody body);
 }

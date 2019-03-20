@@ -5,13 +5,9 @@ import com.lly835.bestpay.config.WxPayH5Config;
 import com.lly835.bestpay.constants.WxPayConstants;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.enums.OrderStatusEnum;
-import com.lly835.bestpay.model.OrderQueryRequest;
-import com.lly835.bestpay.model.OrderQueryResponse;
-import com.lly835.bestpay.model.PayRequest;
-import com.lly835.bestpay.model.PayResponse;
-import com.lly835.bestpay.model.RefundRequest;
-import com.lly835.bestpay.model.RefundResponse;
+import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.wxpay.WxPayApi;
+import com.lly835.bestpay.model.wxpay.request.WxDownloadBillRequest;
 import com.lly835.bestpay.model.wxpay.request.WxOrderQueryRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayRefundRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayUnifiedorderRequest;
@@ -308,4 +304,38 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         return tradeType;
     }
 
+    /**
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public String downloadBill(DownloadBillRequest request) {
+
+        WxDownloadBillRequest wxRequest = new WxDownloadBillRequest();
+        wxRequest.setBillDate(request.getBillDate());
+
+        wxRequest.setAppid(wxPayH5Config.getAppId());
+        wxRequest.setMchId(wxPayH5Config.getMchId());
+        wxRequest.setNonceStr(RandomUtil.getRandomStr());
+        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
+        RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxRequest));
+
+        Call<String> call = retrofit.create(WxPayApi.class).downloadBill(body);
+        Response<String> retrofitResponse  = null;
+        try{
+            retrofitResponse = call.execute();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (!retrofitResponse.isSuccessful()) {
+            throw new RuntimeException("【微信订单查询】网络异常");
+        }
+
+        String response = retrofitResponse.body();
+
+
+        return response;
+    }
 }

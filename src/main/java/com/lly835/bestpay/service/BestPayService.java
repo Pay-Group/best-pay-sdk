@@ -1,12 +1,7 @@
 package com.lly835.bestpay.service;
 
 import com.lly835.bestpay.config.SignType;
-import com.lly835.bestpay.model.OrderQueryRequest;
-import com.lly835.bestpay.model.OrderQueryResponse;
-import com.lly835.bestpay.model.PayRequest;
-import com.lly835.bestpay.model.PayResponse;
-import com.lly835.bestpay.model.RefundRequest;
-import com.lly835.bestpay.model.RefundResponse;
+import com.lly835.bestpay.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -59,4 +54,12 @@ public interface BestPayService {
      * @return
      */
     OrderQueryResponse query(OrderQueryRequest request);
+
+
+    /**
+     * 下载对账单
+     * @param request
+     * @return
+     */
+    String downloadBill(DownloadBillRequest request);
 }
