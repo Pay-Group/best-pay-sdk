@@ -7,13 +7,14 @@ import com.lly835.bestpay.model.wxpay.response.WxPayAsyncResponse;
 import com.lly835.bestpay.service.impl.BestPayServiceImpl;
 import com.lly835.bestpay.utils.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Random;
 
 /**
@@ -86,13 +87,44 @@ public class WxPayTest {
         log.info(JsonUtil.toJson(response));
     }
 
-    @Test
-    public void downloadBill(){
-        DownloadBillRequest request = new DownloadBillRequest();
-        request.setBillDate("20190319");
+    /**
+     * 解析对账文件示例
+     * @param billFile
+     */
+    private void parseBill(String billFile) throws IOException{
 
-        String response = bestPayService.downloadBill(request);
-        log.info("【对账文件内容】 {}", response);
+        BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(billFile.getBytes(Charset.forName("utf8"))), Charset.forName("utf8")));
+        String line;
+//        StringBuffer strbuf=new StringBuffer();
+        int count = 0;
+        while ( (line = br.readLine()) != null ) {
+            if(!line.trim().equals("")){
+
+//                strbuf.append(line+"\r\n");
+                log.info("第{}行数据: {}", count + 1, line);
+                count ++;
+            }
+        }
+
+
+    }
+
+    @Test
+    public void downloadBill() throws IOException{
+        DownloadBillRequest request = new DownloadBillRequest();
+        request.setBillDate("20190318");
+
+        try {
+            String response = bestPayService.downloadBill(request);
+            log.info("【对账文件内容】 {}", response);
+
+            //分析对账文件
+            parseBill(response);
+        } catch (RuntimeException e) {
+            log.error("【对账文件获取失败】{}", e.getMessage());
+            Assert.assertNull(e);
+        }
+
     }
 
 }
