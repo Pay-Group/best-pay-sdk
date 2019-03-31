@@ -5,20 +5,13 @@ import com.lly835.bestpay.config.WxPayH5Config;
 import com.lly835.bestpay.constants.WxPayConstants;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.enums.OrderStatusEnum;
-import com.lly835.bestpay.model.OrderQueryRequest;
-import com.lly835.bestpay.model.OrderQueryResponse;
-import com.lly835.bestpay.model.PayRequest;
-import com.lly835.bestpay.model.PayResponse;
-import com.lly835.bestpay.model.RefundRequest;
-import com.lly835.bestpay.model.RefundResponse;
+import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.wxpay.WxPayApi;
+import com.lly835.bestpay.model.wxpay.request.WxDownloadBillRequest;
 import com.lly835.bestpay.model.wxpay.request.WxOrderQueryRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayRefundRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayUnifiedorderRequest;
-import com.lly835.bestpay.model.wxpay.response.WxOrderQueryResponse;
-import com.lly835.bestpay.model.wxpay.response.WxPayAsyncResponse;
-import com.lly835.bestpay.model.wxpay.response.WxPaySyncResponse;
-import com.lly835.bestpay.model.wxpay.response.WxRefundResponse;
+import com.lly835.bestpay.model.wxpay.response.*;
 import com.lly835.bestpay.utils.MapUtil;
 import com.lly835.bestpay.utils.MoneyUtil;
 import com.lly835.bestpay.utils.RandomUtil;
@@ -27,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -308,4 +302,53 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         return tradeType;
     }
 
+    /**
+     *
+     * @param request
+     * @return
+     */
+    @Override
+    public String downloadBill(DownloadBillRequest request) {
+
+        WxDownloadBillRequest wxRequest = new WxDownloadBillRequest();
+        wxRequest.setBillDate(request.getBillDate());
+
+        wxRequest.setAppid(wxPayH5Config.getAppId());
+        wxRequest.setMchId(wxPayH5Config.getMchId());
+        wxRequest.setNonceStr(RandomUtil.getRandomStr());
+        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
+        RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxRequest));
+
+        Call<ResponseBody> call = retrofit.create(WxPayApi.class).downloadBill(body);
+        Response<ResponseBody> retrofitResponse  = null;
+        try{
+            retrofitResponse = call.execute();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (!retrofitResponse.isSuccessful()) {
+            throw new RuntimeException("【微信订单查询】网络异常");
+        }
+
+        String response = null;
+        try {
+            response = retrofitResponse.body().string();
+
+            //如果返回xml格式，表示返回异常
+            if(response.startsWith("<")) {
+                WxDownloadBillResponse downloadBillResponse =  (WxDownloadBillResponse)XmlUtil.toObject(response,
+                        WxDownloadBillResponse.class);
+                throw new RuntimeException("【对账文件】返回异常 错误码: " +
+                        downloadBillResponse.getErrorCode() +
+                        " 错误信息: " + downloadBillResponse.getReturnMsg());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return response;
+    }
 }

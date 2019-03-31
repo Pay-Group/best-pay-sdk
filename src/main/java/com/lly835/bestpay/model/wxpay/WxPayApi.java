@@ -5,6 +5,7 @@ import com.lly835.bestpay.model.wxpay.response.WxRefundResponse;
 import com.lly835.bestpay.model.wxpay.response.WxPaySandboxKeyResponse;
 import com.lly835.bestpay.model.wxpay.response.WxPaySyncResponse;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -46,4 +47,7 @@ public interface WxPayApi {
      */
     @POST("/pay/orderquery")
     Call<WxOrderQueryResponse> orderquery(@Body RequestBody body);
+
+    @POST("/pay/downloadbill")
+    Call<ResponseBody> downloadBill(@Body RequestBody body);
 }
