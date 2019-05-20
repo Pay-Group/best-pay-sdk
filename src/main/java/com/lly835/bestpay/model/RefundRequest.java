@@ -23,4 +23,14 @@ public class RefundRequest {
      * 订单金额.
      */
     private Double orderAmount;
+
+    /**
+     * 子订单退款号
+     */
+    private String orderChildRefundId;
+
+    /**
+     * 订单总金额.
+     */
+    private Double totalOrderAmount;
 }
