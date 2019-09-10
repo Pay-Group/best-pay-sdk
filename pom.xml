@@ -13,6 +13,7 @@
 
     <modules>
         <module>best-pay-sdk</module>
+        <module>best-pay-demo</module>
     </modules>
 
     <licenses>

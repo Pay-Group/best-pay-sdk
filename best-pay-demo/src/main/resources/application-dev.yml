@@ -1,0 +1,6 @@
+wechat:
+  mpAppId: wxd898xxxx
+  mchId: 1483xxxx
+  mchKey: C5245D70xxxxx
+  keyPath: /var/weixin_cert/h5.p12
+  notifyUrl: http://xxx.com/notify
