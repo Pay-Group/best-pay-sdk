@@ -62,4 +62,12 @@ public interface BestPayService {
      * @return
      */
     String downloadBill(DownloadBillRequest request);
+
+
+    /**
+     * 根据规则生成二维码URL
+     * @param productId 商品ID
+     * @return 二维码中的内容为链接
+     */
+    String getQrCodeUrl(String productId);
 }

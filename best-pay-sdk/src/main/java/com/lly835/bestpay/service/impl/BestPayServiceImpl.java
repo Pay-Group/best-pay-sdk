@@ -115,4 +115,13 @@ public class BestPayServiceImpl implements BestPayService {
 
         return wxPayService.downloadBill(request);
     }
+
+    @Override
+    public String getQrCodeUrl(String productId) {
+
+        WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+
+        return wxPayService.getQrCodeUrl(productId);
+    }
 }

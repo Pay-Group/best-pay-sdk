@@ -351,4 +351,40 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
 
         return response;
     }
+
+    /**
+     * 根据微信规则生成扫码二维码的URL
+     * @return
+     */
+    @Override
+    public String getQrCodeUrl(String productId) {
+
+        String appid = wxPayH5Config.getAppId();
+        String mch_id = wxPayH5Config.getMchId();
+        String timeStamp = String.valueOf(System.currentTimeMillis() / 1000);
+        String nonceStr = RandomUtil.getRandomStr();
+
+
+        //先构造要签名的map
+        Map<String, String> map = new HashMap<>();
+        map.put("appid", appid);
+        map.put("mch_id", mch_id);
+        map.put("product_id", productId);
+        map.put("time_stamp", timeStamp);
+        map.put("nonce_str", nonceStr);
+
+
+        String url = "weixin://wxpay/bizpayurl?"
+                + "appid=" + appid
+                + "&mch_id=" + mch_id
+                + "&product_id=" + productId
+                + "&time_stamp=" + timeStamp
+                + "&nonce_str=" + nonceStr
+                + "&sign=" + WxPaySignature.sign(map, wxPayH5Config.getMchKey());
+
+
+
+
+        return url;
+    }
 }
