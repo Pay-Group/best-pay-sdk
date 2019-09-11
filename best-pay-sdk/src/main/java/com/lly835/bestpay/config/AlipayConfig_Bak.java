@@ -16,7 +16,7 @@ import java.util.Objects;
  * <p>
  * 文档地址: https://openhome.alipay.com/developmentDocument.htm
  */
-public class AlipayConfig extends PayConfig {
+public class AlipayConfig_Bak extends PayConfig {
 
     /**
      * 应用id, 支付宝新版App支付, Wap支付的统一ID.

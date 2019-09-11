@@ -39,4 +39,9 @@ public class PayResponse {
 
     /** 以下支付是h5支付返回*/
     private String mwebUrl;
+
+    /**
+     * AliPay  pc网站支付返回的body体，html 可直接嵌入网页使用
+     */
+    private String body;
 }

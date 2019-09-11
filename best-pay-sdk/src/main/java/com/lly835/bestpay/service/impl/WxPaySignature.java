@@ -36,11 +36,11 @@ public class WxPaySignature {
     /**
      * 校验签名
      * @param params
-     * @param signKey
+     * @param privateKey
      * @return
      */
-    public static Boolean verify(Map<String, String> params, String signKey) {
-        String sign = sign(params, signKey);
+    public static Boolean verify(Map<String, String> params,  String privateKey) {
+        String sign = sign(params, privateKey);
         return sign.equals(params.get("sign"));
     }
 }
