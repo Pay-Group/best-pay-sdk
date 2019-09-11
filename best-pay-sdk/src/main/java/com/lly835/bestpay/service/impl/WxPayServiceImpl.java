@@ -298,6 +298,9 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
             case WXPAY_MWEB:
                 tradeType = "MWEB";
                 break;
+            default:
+                tradeType = payTypeEnum.getCode();
+                break;
         }
         return tradeType;
     }
@@ -387,4 +390,49 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
 
         return url;
     }
+
+    @Override
+    public WxQrCodeAsyncResponse asyncQrCodeNotify(String notifyData) {
+
+        //签名校验
+        if (!WxPaySignature.verify(XmlUtil.toMap(notifyData), wxPayH5Config.getMchKey())) {
+            log.error("【微信支付异步通知】签名验证失败, response={}", notifyData);
+            throw new RuntimeException("【微信支付异步通知】签名验证失败");
+        }
+
+        //xml解析为对象
+        WxQrCodeAsyncResponse asyncQrCodeResponse = (WxQrCodeAsyncResponse) XmlUtil.toObject(notifyData, WxQrCodeAsyncResponse.class);
+
+
+        return asyncQrCodeResponse;
+    }
+
+    public WxQrCode2WxResponse buildQrCodeResponse(PayResponse payResponse) {
+        WxQrCode2WxResponse response = new WxQrCode2WxResponse();
+        response.setReturnCode("SUCCESS");
+//        response.setReturnMsg("");
+        response.setAppid(wxPayH5Config.getAppId());
+        response.setMchId(wxPayH5Config.getMchId());
+        response.setNonceStr(payResponse.getNonceStr());
+        response.setPrepayId(payResponse.getPackAge());
+        response.setResultCode("SUCCESS");
+//        response.setErrCodeDes("");
+
+
+        //先构造要签名的map
+        Map<String, String> map = new HashMap<>();
+        map.put("return_code", response.getReturnCode());
+//        map.put("return_msg", response.getReturnMsg());
+        map.put("appid", response.getAppid());
+        map.put("mch_id", response.getMchId());
+        map.put("nonce_str", response.getNonceStr());
+        map.put("prepay_id", response.getPrepayId());
+        map.put("result_code", response.getResultCode());
+//        map.put("err_code_des", response.getErrCodeDes());
+
+        response.setSign(WxPaySignature.sign(map, wxPayH5Config.getMchKey()));
+
+        return response;
+    }
+
 }

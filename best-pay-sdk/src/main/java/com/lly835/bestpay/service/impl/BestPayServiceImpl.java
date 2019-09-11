@@ -6,6 +6,8 @@ import com.lly835.bestpay.enums.BestPayResultEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.exception.BestPayException;
 import com.lly835.bestpay.model.*;
+import com.lly835.bestpay.model.wxpay.response.WxQrCode2WxResponse;
+import com.lly835.bestpay.model.wxpay.response.WxQrCodeAsyncResponse;
 import com.lly835.bestpay.service.BestPayService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -123,5 +125,23 @@ public class BestPayServiceImpl implements BestPayService {
         wxPayService.setWxPayH5Config(this.wxPayH5Config);
 
         return wxPayService.getQrCodeUrl(productId);
+    }
+
+    @Override
+    public WxQrCodeAsyncResponse asyncQrCodeNotify(String notifyData) {
+
+        WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+
+        return wxPayService.asyncQrCodeNotify(notifyData);
+    }
+
+    public WxQrCode2WxResponse buildQrCodeResponse(PayResponse payResponse) {
+
+        WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+
+        return wxPayService.buildQrCodeResponse(payResponse);
+
     }
 }
