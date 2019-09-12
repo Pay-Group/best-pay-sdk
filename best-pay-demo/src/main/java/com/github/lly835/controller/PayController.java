@@ -71,6 +71,12 @@ public class PayController {
     }
 
 
+    /**
+     * 根据商品ID及openid生成订单并向微信发起预支付
+     * @param productId
+     * @param openid
+     * @return
+     */
     private PayResponse payByProductIdAndOpenId(String productId, String openid) {
 
         //TODO: 根据productid生成商户系统的订单
@@ -87,7 +93,7 @@ public class PayController {
         request.setPayTypeEnum(BestPayTypeEnum.WXPAY_NATIVE);
         request.setOrderId(String.valueOf(random.nextInt(1000000000)));
         request.setOrderAmount(0.01);
-        request.setOrderName("最好的支付sdk-扫码付");
+        request.setOrderName("最好的支付sdk-扫码付模式1");
         request.setOpenid(openid);
         log.info("【发起支付】request={}", JsonUtil.toJson(request));
 
@@ -105,7 +111,8 @@ public class PayController {
     @GetMapping(value = "/qr_pay_v1")
     public ModelAndView qrPayV1(Map<String, Object> map) {
 
-        String payUrl = "http://www.qq.com";
+        String productId = "10001"; //商品id:应该根据实际需要调整
+        String payUrl = bestPayService.getQrCodeUrl(productId);
         map.put("payUrl", payUrl);
         return new ModelAndView("pay/qrpayV1", map);
     }
