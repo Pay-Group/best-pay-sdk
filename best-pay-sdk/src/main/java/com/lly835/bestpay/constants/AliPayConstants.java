@@ -62,4 +62,14 @@ public interface AliPayConstants {
      * 注：目前仅支持FAST_INSTANT_TRADE_PAY
      */
     String FAST_INSTANT_TRADE_PAY = "FAST_INSTANT_TRADE_PAY";
+
+    /**
+     * 商户签约的产品支持退款功能的前提下，买家付款成功；
+     */
+    String TRADE_SUCCESS = "TRADE_SUCCESS";
+
+    /**
+     * 商户签约的产品不支持退款功能的前提下，买家付款成功；或者，商户签约的产品支持退款功能的前提下，交易已经成功并且已经超过可退款期限。
+     */
+    String TRADE_FINISHED  = "TRADE_FINISHED";
 }

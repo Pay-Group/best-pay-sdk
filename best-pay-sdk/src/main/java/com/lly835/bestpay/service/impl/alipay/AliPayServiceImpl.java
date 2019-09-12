@@ -5,13 +5,13 @@ import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.constants.AliPayConstants;
 import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.alipay.request.AliPayPCRequest;
+import com.lly835.bestpay.model.alipay.response.AliPayAsyncResponse;
 import com.lly835.bestpay.service.impl.BestPayServiceImpl;
-import com.lly835.bestpay.utils.JsonUtil;
-import com.lly835.bestpay.utils.MapUtil;
-import com.lly835.bestpay.utils.WebUtil;
-import com.lly835.bestpay.utils.XmlUtil;
+import com.lly835.bestpay.utils.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -66,7 +66,7 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
 
     @Override
     public boolean verify(Map<String, String> toBeVerifiedParamMap, SignType signType, String sign) {
-        return AliPaySignature.verify(toBeVerifiedParamMap, aliPayConfig.getPrivateKey());
+        return AliPaySignature.verify(toBeVerifiedParamMap, aliPayConfig.getAliPayPublicKey());
     }
 
     /**
@@ -76,12 +76,24 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
      */
     @Override
     public PayResponse asyncNotify(String notifyData) {
+        try {
+            notifyData = URLDecoder.decode(notifyData,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         //签名校验
-        if (!AliPaySignature.verify(XmlUtil.toMap(notifyData), aliPayConfig.getPrivateKey())) {
+        if (!AliPaySignature.verify(MapUtil.form2Map(notifyData), aliPayConfig.getAliPayPublicKey())) {
             log.error("【支付宝支付异步通知】签名验证失败, response={}", notifyData);
             throw new RuntimeException("【支付宝支付异步通知】签名验证失败");
         }
-        return null;
+        HashMap<String, String> params = MapUtil.form2MapWithCamelCase(notifyData);
+        AliPayAsyncResponse response = MapUtil.mapToObject(params, AliPayAsyncResponse.class);
+        String tradeStatus =response.getTradeStatus();
+        if(!tradeStatus.equals(AliPayConstants.TRADE_FINISHED) &&
+                !tradeStatus.equals(AliPayConstants.TRADE_SUCCESS)) {
+            throw new RuntimeException("【支付宝支付异步通知】发起支付, trade_status != SUCCESS | FINISHED");
+        }
+        return buildPayResponse(response);
     }
 
     @Override
@@ -97,5 +109,14 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
     @Override
     public String downloadBill(DownloadBillRequest request) {
         return super.downloadBill(request);
+    }
+
+    private PayResponse buildPayResponse(AliPayAsyncResponse response) {
+        PayResponse payResponse = new PayResponse();
+        payResponse.setOrderAmount(Double.valueOf(response.getTotalAmount()));
+        payResponse.setOrderId(response.getTradeNo());
+        payResponse.setOutTradeNo(response.getOutTradeNo());
+        payResponse.setAppId(response.getAppId());
+        return payResponse;
     }
 }
