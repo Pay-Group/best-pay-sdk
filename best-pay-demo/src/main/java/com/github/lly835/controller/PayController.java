@@ -98,6 +98,18 @@ public class PayController {
 
     }
 
+    /**
+     * 扫码支付模式1入口
+     * @return
+     */
+    @GetMapping(value = "/qr_pay_v1")
+    public ModelAndView qrPayV1(Map<String, Object> map) {
+
+        String payUrl = "http://www.qq.com";
+        map.put("payUrl", payUrl);
+        return new ModelAndView("pay/qrpayV1", map);
+    }
+
     @PostMapping(value = "/qr_code_notify")
     @ResponseBody
     public String qrCodeNotify(@RequestBody String notifyData) {
