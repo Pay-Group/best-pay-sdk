@@ -295,6 +295,9 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
             case WXPAY_H5:
                 tradeType = "JSAPI";
                 break;
+            case WXPAY_MINI:
+                tradeType = "JSAPI";
+                break;
             case WXPAY_MWEB:
                 tradeType = "MWEB";
                 break;
