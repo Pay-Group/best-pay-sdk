@@ -281,6 +281,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         payResponse.setSignType(signType);
         payResponse.setPaySign(WxPaySignature.sign(map, wxPayH5Config.getMchKey()));
         payResponse.setMwebUrl(response.getMwebUrl());
+        payResponse.setCodeUrl(response.getCodeUrl());
 
         return payResponse;
     }

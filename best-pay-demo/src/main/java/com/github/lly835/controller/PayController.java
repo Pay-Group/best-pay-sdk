@@ -145,4 +145,16 @@ public class PayController {
         return xml;
     }
 
+    @GetMapping(value = "/qr_pay_v2")
+    public ModelAndView qrPayV2(Map<String, Object> map){
+        log.info("【扫码支付模式2】调用统一支付生成预支付交易");
+
+        PayResponse payResponse = payByProductIdAndOpenId("", "");
+
+        map.put("payUrl", payResponse.getCodeUrl());
+
+
+        return new ModelAndView("pay/qrpayV1", map);
+    }
+
 }
