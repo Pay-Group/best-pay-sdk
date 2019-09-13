@@ -1,3 +1,7 @@
+<html>
+${payResponse.body}
+</html>
+
 <script>
     function onBridgeReady(){
         WeixinJSBridge.invoke(
