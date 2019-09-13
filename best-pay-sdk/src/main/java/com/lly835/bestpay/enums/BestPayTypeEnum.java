@@ -17,6 +17,10 @@ public enum BestPayTypeEnum {
     WXPAY_H5("wxpay_h5", "微信公众账号支付"),
 
     WXPAY_MWEB("MWEB", "微信公众账号支付"),
+
+    WXPAY_NATIVE("NATIVE", "微信扫码付"),
+
+    WXPAY_MINI("wxpay_mini", "微信小程序支付")
     ;
 
     private String code;

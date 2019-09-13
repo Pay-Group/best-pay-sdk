@@ -127,4 +127,11 @@ public class WxPayTest {
 
     }
 
+    @Test
+    public void getQrCodeUrl() {
+
+        String url = bestPayService.getQrCodeUrl("1001");
+        log.info("【二维码URL】url={}", url);
+    }
+
 }

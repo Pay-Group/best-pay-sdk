@@ -2,6 +2,8 @@ package com.lly835.bestpay.service;
 
 import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.model.*;
+import com.lly835.bestpay.model.wxpay.response.WxQrCode2WxResponse;
+import com.lly835.bestpay.model.wxpay.response.WxQrCodeAsyncResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -62,4 +64,20 @@ public interface BestPayService {
      * @return
      */
     String downloadBill(DownloadBillRequest request);
+
+
+    /**
+     * 根据规则生成二维码URL
+     * @param productId 商品ID
+     * @return 二维码中的内容为链接
+     */
+    String getQrCodeUrl(String productId);
+
+
+    /**
+     * 微信扫码支付回调函数
+     * @param notifyData 回调参数
+     * @return
+     */
+    WxQrCodeAsyncResponse asyncQrCodeNotify(String notifyData);
 }
