@@ -95,10 +95,10 @@ public class PayController {
         request.setOrderAmount(0.01);
         request.setOrderName("最好的支付sdk-扫码付模式1");
         request.setOpenid(openid);
-        log.info("【发起支付】request={}", JsonUtil.toJson(request));
+        log.info("【发起支付-扫码模式1】request={}", JsonUtil.toJson(request));
 
         PayResponse payResponse = bestPayService.pay(request);
-        log.info("【发起支付】response={}", JsonUtil.toJson(payResponse));
+        log.info("【发起支付-扫码模式1】response={}", JsonUtil.toJson(payResponse));
 
         return payResponse;
 
@@ -113,6 +113,7 @@ public class PayController {
 
         String productId = "10001"; //商品id:应该根据实际需要调整
         String payUrl = bestPayService.getQrCodeUrl(productId);
+        map.put("payTitle", "扫码付-模式1");
         map.put("payUrl", payUrl);
         return new ModelAndView("pay/qrpayV1", map);
     }
@@ -145,12 +146,37 @@ public class PayController {
         return xml;
     }
 
+
+    /**
+     * 扫码付模式2的支付操作
+     * @return
+     */
+    private PayResponse payQrV2() {
+
+        PayRequest request = new PayRequest();
+        Random random = new Random();
+
+        //支付请求参数
+        request.setPayTypeEnum(BestPayTypeEnum.WXPAY_NATIVE);
+        request.setOrderId(String.valueOf(random.nextInt(1000000000)));
+        request.setOrderAmount(0.02);
+        request.setOrderName("最好的支付sdk-扫码付模式2");
+        log.info("【发起支付-扫码模式2】request={}", JsonUtil.toJson(request));
+
+        PayResponse payResponse = bestPayService.pay(request);
+        log.info("【发起支付-扫码模式2】response={}", JsonUtil.toJson(payResponse));
+
+        return payResponse;
+
+    }
+
     @GetMapping(value = "/qr_pay_v2")
     public ModelAndView qrPayV2(Map<String, Object> map){
         log.info("【扫码支付模式2】调用统一支付生成预支付交易");
 
-        PayResponse payResponse = payByProductIdAndOpenId("", "");
+        PayResponse payResponse = payQrV2();
 
+        map.put("payTitle", "扫码付-模式2");
         map.put("payUrl", payResponse.getCodeUrl());
 
 

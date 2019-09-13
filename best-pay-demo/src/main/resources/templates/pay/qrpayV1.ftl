@@ -6,5 +6,5 @@
         jQuery('#qrcode').qrcode("${payUrl}");
     })
 </script>
-
+<div>${payTitle}</div>
 <div id="qrcode"></div>
