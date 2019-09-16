@@ -45,7 +45,7 @@ public class PayController {
         Random random = new Random();
 
         //支付请求参数
-        request.setPayTypeEnum(BestPayTypeEnum.ALIPAY_PC);
+        request.setPayTypeEnum(BestPayTypeEnum.WXPAY_H5);
         request.setOrderId(String.valueOf(random.nextInt(1000000000)));
         request.setOrderAmount(0.01);
         request.setOrderName("最好的支付sdk");
@@ -55,6 +55,26 @@ public class PayController {
         PayResponse payResponse = bestPayService.pay(request);
         log.info("【发起支付】response={}", JsonUtil.toJson(payResponse));
 
+        map.put("payResponse", payResponse);
+
+        return new ModelAndView("pay/create", map);
+    }
+
+    /**
+     * 发起支付
+     */
+    @GetMapping(value = "/aliay/pay")
+    public ModelAndView aliPay(Map<String, Object> map) {
+        PayRequest request = new PayRequest();
+        Random random = new Random();
+        //支付请求参数
+        request.setPayTypeEnum(BestPayTypeEnum.ALIPAY_PC);
+        request.setOrderId(String.valueOf(random.nextInt(1000000000)));
+        request.setOrderAmount(0.01);
+        request.setOrderName("最好的支付sdk");
+        log.info("【发起支付】request={}", JsonUtil.toJson(request));
+        PayResponse payResponse = bestPayService.pay(request);
+        log.info("【发起支付】response={}", JsonUtil.toJson(payResponse));
         map.put("payResponse", payResponse);
 
         return new ModelAndView("pay/create", map);
