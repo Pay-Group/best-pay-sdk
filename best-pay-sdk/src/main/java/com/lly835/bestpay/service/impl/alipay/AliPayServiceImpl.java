@@ -48,9 +48,9 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
         aliPayRequest.setVersion("1.0");
         // 剔除空格、制表符、换行
         aliPayRequest.setBizContent(JsonUtil.toJson(requestParams).replaceAll("\\s*",""));
-        aliPayRequest.setSign(AliPaySignature.sign(MapUtil.buildMap(aliPayRequest),aliPayConfig.getPrivateKey()));
+        aliPayRequest.setSign(AliPaySignature.sign(MapUtil.object2MapWithUnderline(aliPayRequest),aliPayConfig.getPrivateKey()));
 
-        Map<String, String> parameters = MapUtil.buildMap(aliPayRequest);
+        Map<String, String> parameters = MapUtil.object2MapWithUnderline(aliPayRequest);
         Map<String, String> applicationParams = new HashMap<>();
         applicationParams.put("biz_content",aliPayRequest.getBizContent());
         parameters.remove("biz_content");
@@ -114,8 +114,8 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
     private PayResponse buildPayResponse(AliPayAsyncResponse response) {
         PayResponse payResponse = new PayResponse();
         payResponse.setOrderAmount(Double.valueOf(response.getTotalAmount()));
-        payResponse.setOrderId(response.getTradeNo());
-        payResponse.setOutTradeNo(response.getOutTradeNo());
+        payResponse.setOrderId(response.getOutTradeNo());
+        payResponse.setOutTradeNo(response.getTradeNo());
         payResponse.setAppId(response.getAppId());
         return payResponse;
     }

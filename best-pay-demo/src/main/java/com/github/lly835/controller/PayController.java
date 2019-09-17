@@ -63,7 +63,7 @@ public class PayController {
     /**
      * 发起支付
      */
-    @GetMapping(value = "/aliay/pay")
+    @GetMapping(value = "/alipay/pay")
     public ModelAndView aliPay(Map<String, Object> map) {
         PayRequest request = new PayRequest();
         Random random = new Random();
@@ -77,7 +77,7 @@ public class PayController {
         log.info("【发起支付】response={}", JsonUtil.toJson(payResponse));
         map.put("payResponse", payResponse);
 
-        return new ModelAndView("pay/create", map);
+        return new ModelAndView("pay/alipayPc", map);
     }
 
     /**

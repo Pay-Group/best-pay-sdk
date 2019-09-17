@@ -228,6 +228,28 @@ public class MapUtil {
         return map;
     }
 
+    /**
+     * 对象转map,将字段转换为下划线形式
+     * @param obj
+     * @return
+     */
+    public static Map<String, String> object2MapWithUnderline(Object obj) {
+        Map<String, String> map = new HashMap<>();
+        try {
+            Class<?> clazz = obj.getClass();
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                String fieldName = field.getName();
+                fieldName = CamelCaseUtil.toUnderlineName(fieldName);
+                String value = field.get(obj) == null ? "" : String.valueOf(field.get(obj));
+                map.put(fieldName, value);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
+
     public static <T> T mapToObject(Object obj,Class<T> clazz) {
         try {
             return objectMapper.readValue(serialize(obj),clazz);
