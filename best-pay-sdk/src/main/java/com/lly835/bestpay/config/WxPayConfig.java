@@ -15,7 +15,7 @@ import java.security.KeyStore;
  * 2017-07-02 13:58
  */
 @Data
-public class WxPayH5Config extends PayConfig {
+public class WxPayConfig extends PayConfig {
 
     /**
      * 公众号appId

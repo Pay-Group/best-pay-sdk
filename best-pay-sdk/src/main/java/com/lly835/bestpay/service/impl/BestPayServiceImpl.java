@@ -1,7 +1,7 @@
 package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.SignType;
-import com.lly835.bestpay.config.WxPayH5Config;
+import com.lly835.bestpay.config.WxPayConfig;
 import com.lly835.bestpay.enums.BestPayResultEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.exception.BestPayException;
@@ -15,17 +15,17 @@ import java.util.Map;
 
 public class BestPayServiceImpl implements BestPayService {
 
-    private WxPayH5Config wxPayH5Config;
+    private WxPayConfig wxPayConfig;
 
-    public void setWxPayH5Config(WxPayH5Config wxPayH5Config) {
-        this.wxPayH5Config = wxPayH5Config;
+    public void setWxPayConfig(WxPayConfig wxPayConfig) {
+        this.wxPayConfig = wxPayConfig;
     }
 
     @Override
     public PayResponse pay(PayRequest request) {
         //微信h5支付
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
         return wxPayService.pay(request);
     }
@@ -54,7 +54,7 @@ public class BestPayServiceImpl implements BestPayService {
 
         //微信h5支付
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
         return wxPayService.asyncNotify(notifyData);
     }
@@ -89,7 +89,7 @@ public class BestPayServiceImpl implements BestPayService {
     public RefundResponse refund(RefundRequest request) {
         //微信h5支付
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
         return wxPayService.refund(request);
     }
 
@@ -103,7 +103,7 @@ public class BestPayServiceImpl implements BestPayService {
     public OrderQueryResponse query(OrderQueryRequest request) {
         //微信h5支付
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
         return wxPayService.query(request);
     }
@@ -112,7 +112,7 @@ public class BestPayServiceImpl implements BestPayService {
     public String downloadBill(DownloadBillRequest request) {
 
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
 
         return wxPayService.downloadBill(request);
@@ -122,7 +122,7 @@ public class BestPayServiceImpl implements BestPayService {
     public String getQrCodeUrl(String productId) {
 
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
         return wxPayService.getQrCodeUrl(productId);
     }
@@ -131,7 +131,7 @@ public class BestPayServiceImpl implements BestPayService {
     public WxQrCodeAsyncResponse asyncQrCodeNotify(String notifyData) {
 
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
         return wxPayService.asyncQrCodeNotify(notifyData);
     }
@@ -139,7 +139,7 @@ public class BestPayServiceImpl implements BestPayService {
     public WxQrCode2WxResponse buildQrCodeResponse(PayResponse payResponse) {
 
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
         return wxPayService.buildQrCodeResponse(payResponse);
 

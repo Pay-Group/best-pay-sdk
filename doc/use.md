@@ -5,16 +5,16 @@
 
     ```
     //微信公众账号支付配置
-    WxPayH5Config wxPayH5Config = new WxPayH5Config();
-    wxPayH5Config.setAppId("xxxxx");
-    wxPayH5Config.setAppSecret("xxxxxxxx");
-    wxPayH5Config.setMchId("xxxxxx");
-    wxPayH5Config.setMchKey("xxxxxxx");
-    wxPayH5Config.setNotifyUrl("http://xxxxx");
+    WxPayConfig wxPayConfig = new WxPayConfig();
+    wxPayConfig.setAppId("xxxxx");
+    wxPayConfig.setAppSecret("xxxxxxxx");
+    wxPayConfig.setMchId("xxxxxx");
+    wxPayConfig.setMchKey("xxxxxxx");
+    wxPayConfig.setNotifyUrl("http://xxxxx");
             
     //支付类, 所有方法都在这个类里
     BestPayServiceImpl bestPayService = new BestPayServiceImpl();
-    bestPayService.setWxPayH5Config(wxPayH5Config);
+    bestPayService.setWxPayConfig(wxPayConfig);
     ```
 
     
