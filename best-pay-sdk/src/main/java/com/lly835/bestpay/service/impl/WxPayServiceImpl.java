@@ -1,7 +1,7 @@
 package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.SignType;
-import com.lly835.bestpay.config.WxPayH5Config;
+import com.lly835.bestpay.config.WxPayConfig;
 import com.lly835.bestpay.constants.WxPayConstants;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.enums.OrderStatusEnum;
@@ -39,7 +39,7 @@ import java.util.Map;
 @Slf4j
 public class WxPayServiceImpl extends BestPayServiceImpl {
 
-    private WxPayH5Config wxPayH5Config;
+    private WxPayConfig wxPayConfig;
 
     Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(WxPayConstants.WXPAY_GATEWAY)
@@ -51,8 +51,8 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
             )
             .build();
 
-    public void setWxPayH5Config(WxPayH5Config wxPayH5Config) {
-        this.wxPayH5Config = wxPayH5Config;
+    public void setWxPayConfig(WxPayConfig wxPayConfig) {
+        this.wxPayConfig = wxPayConfig;
     }
 
     @Override
@@ -64,12 +64,16 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         wxRequest.setOpenid(request.getOpenid());
 
         wxRequest.setTradeType(switchH5TradeType(request.getPayTypeEnum()));
-        wxRequest.setAppid(wxPayH5Config.getAppId());
-        wxRequest.setMchId(wxPayH5Config.getMchId());
-        wxRequest.setNotifyUrl(wxPayH5Config.getNotifyUrl());
+        if (request.getPayTypeEnum() == BestPayTypeEnum.WXPAY_H5){
+            wxRequest.setAppid(wxPayConfig.getAppId());
+        } else if (request.getPayTypeEnum() == BestPayTypeEnum.WXPAY_MINI){
+            wxRequest.setAppid(wxPayConfig.getMiniAppId());
+        }
+        wxRequest.setMchId(wxPayConfig.getMchId());
+        wxRequest.setNotifyUrl(wxPayConfig.getNotifyUrl());
         wxRequest.setNonceStr(RandomUtil.getRandomStr());
         wxRequest.setSpbillCreateIp(request.getSpbillCreateIp() == null || request.getSpbillCreateIp().isEmpty() ? "8.8.8.8" : request.getSpbillCreateIp());
-        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
+        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayConfig.getMchKey()));
 
         RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxRequest));
         Call<WxPaySyncResponse> call = retrofit.create(WxPayApi.class).unifiedorder(body);
@@ -96,7 +100,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
 
     @Override
     public boolean verify(Map map, SignType signType, String sign) {
-        return WxPaySignature.verify(map, wxPayH5Config.getMchKey());
+        return WxPaySignature.verify(map, wxPayConfig.getMchKey());
     }
 
     @Override
@@ -112,7 +116,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
     @Override
     public PayResponse asyncNotify(String notifyData) {
         //签名校验
-        if (!WxPaySignature.verify(XmlUtil.toMap(notifyData), wxPayH5Config.getMchKey())) {
+        if (!WxPaySignature.verify(XmlUtil.toMap(notifyData), wxPayConfig.getMchKey())) {
             log.error("【微信支付异步通知】签名验证失败, response={}", notifyData);
             throw new RuntimeException("【微信支付异步通知】签名验证失败");
         }
@@ -148,18 +152,18 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         wxRequest.setTotalFee(MoneyUtil.Yuan2Fen(request.getOrderAmount()));
         wxRequest.setRefundFee(MoneyUtil.Yuan2Fen(request.getOrderAmount()));
 
-        wxRequest.setAppid(wxPayH5Config.getAppId());
-        wxRequest.setMchId(wxPayH5Config.getMchId());
+        wxRequest.setAppid(wxPayConfig.getAppId());
+        wxRequest.setMchId(wxPayConfig.getMchId());
         wxRequest.setNonceStr(RandomUtil.getRandomStr());
-        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
+        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayConfig.getMchKey()));
 
         //初始化证书
-        if (wxPayH5Config.getSslContext() == null) {
-            wxPayH5Config.initSSLContext();
+        if (wxPayConfig.getSslContext() == null) {
+            wxPayConfig.initSSLContext();
         }
         OkHttpClient okHttpClient = new OkHttpClient()
                 .newBuilder()
-                .sslSocketFactory(wxPayH5Config.getSslContext().getSocketFactory())
+                .sslSocketFactory(wxPayConfig.getSslContext().getSocketFactory())
                 .addInterceptor((new HttpLoggingInterceptor()
                         .setLevel(HttpLoggingInterceptor.Level.BODY)))
                 .build();
@@ -205,10 +209,10 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         wxRequest.setOutTradeNo(request.getOrderId());
         wxRequest.setTransactionId(request.getOutOrderId());
 
-        wxRequest.setAppid(wxPayH5Config.getAppId());
-        wxRequest.setMchId(wxPayH5Config.getMchId());
+        wxRequest.setAppid(wxPayConfig.getAppId());
+        wxRequest.setMchId(wxPayConfig.getMchId());
         wxRequest.setNonceStr(RandomUtil.getRandomStr());
-        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
+        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayConfig.getMchKey()));
         RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxRequest));
 
         Call<WxOrderQueryResponse> call = retrofit.create(WxPayApi.class).orderquery(body);
@@ -279,7 +283,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         payResponse.setNonceStr(nonceStr);
         payResponse.setPackAge(packAge);
         payResponse.setSignType(signType);
-        payResponse.setPaySign(WxPaySignature.sign(map, wxPayH5Config.getMchKey()));
+        payResponse.setPaySign(WxPaySignature.sign(map, wxPayConfig.getMchKey()));
         payResponse.setMwebUrl(response.getMwebUrl());
         payResponse.setCodeUrl(response.getCodeUrl());
 
@@ -320,10 +324,10 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         WxDownloadBillRequest wxRequest = new WxDownloadBillRequest();
         wxRequest.setBillDate(request.getBillDate());
 
-        wxRequest.setAppid(wxPayH5Config.getAppId());
-        wxRequest.setMchId(wxPayH5Config.getMchId());
+        wxRequest.setAppid(wxPayConfig.getAppId());
+        wxRequest.setMchId(wxPayConfig.getMchId());
         wxRequest.setNonceStr(RandomUtil.getRandomStr());
-        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayH5Config.getMchKey()));
+        wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayConfig.getMchKey()));
         RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxRequest));
 
         Call<ResponseBody> call = retrofit.create(WxPayApi.class).downloadBill(body);
@@ -366,8 +370,8 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
     @Override
     public String getQrCodeUrl(String productId) {
 
-        String appid = wxPayH5Config.getAppId();
-        String mch_id = wxPayH5Config.getMchId();
+        String appid = wxPayConfig.getAppId();
+        String mch_id = wxPayConfig.getMchId();
         String timeStamp = String.valueOf(System.currentTimeMillis() / 1000);
         String nonceStr = RandomUtil.getRandomStr();
 
@@ -387,7 +391,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
                 + "&product_id=" + productId
                 + "&time_stamp=" + timeStamp
                 + "&nonce_str=" + nonceStr
-                + "&sign=" + WxPaySignature.sign(map, wxPayH5Config.getMchKey());
+                + "&sign=" + WxPaySignature.sign(map, wxPayConfig.getMchKey());
 
 
 
@@ -399,7 +403,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
     public WxQrCodeAsyncResponse asyncQrCodeNotify(String notifyData) {
 
         //签名校验
-        if (!WxPaySignature.verify(XmlUtil.toMap(notifyData), wxPayH5Config.getMchKey())) {
+        if (!WxPaySignature.verify(XmlUtil.toMap(notifyData), wxPayConfig.getMchKey())) {
             log.error("【微信支付异步通知】签名验证失败, response={}", notifyData);
             throw new RuntimeException("【微信支付异步通知】签名验证失败");
         }
@@ -415,8 +419,8 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         WxQrCode2WxResponse response = new WxQrCode2WxResponse();
         response.setReturnCode("SUCCESS");
 //        response.setReturnMsg("");
-        response.setAppid(wxPayH5Config.getAppId());
-        response.setMchId(wxPayH5Config.getMchId());
+        response.setAppid(wxPayConfig.getAppId());
+        response.setMchId(wxPayConfig.getMchId());
         response.setNonceStr(payResponse.getNonceStr());
         response.setPrepayId(payResponse.getPackAge());
         response.setResultCode("SUCCESS");
@@ -434,7 +438,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         map.put("result_code", response.getResultCode());
 //        map.put("err_code_des", response.getErrCodeDes());
 
-        response.setSign(WxPaySignature.sign(map, wxPayH5Config.getMchKey()));
+        response.setSign(WxPaySignature.sign(map, wxPayConfig.getMchKey()));
 
         return response;
     }
