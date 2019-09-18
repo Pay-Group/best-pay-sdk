@@ -76,9 +76,9 @@ public class BestPayServiceImpl implements BestPayService {
     public PayResponse asyncNotify(String notifyData) {
     	//<xml>开头的是微信通知
     	if (notifyData.startsWith("<xml>")) {
-			WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-			wxPayService.setWxPayConfig(this.wxPayConfig);
-			return wxPayService.asyncNotify(notifyData);
+    		WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+    		wxPayService.setWxPayConfig(this.wxPayConfig);
+    		return wxPayService.asyncNotify(notifyData);
 		}else {
         	AliPayServiceImpl aliPayService = new AliPayServiceImpl();
         	aliPayService.setAliPayConfig(aliPayConfig);
