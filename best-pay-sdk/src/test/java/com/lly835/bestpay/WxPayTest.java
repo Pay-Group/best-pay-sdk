@@ -1,6 +1,6 @@
 package com.lly835.bestpay;
 
-import com.lly835.bestpay.config.WxPayH5Config;
+import com.lly835.bestpay.config.WxPayConfig;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.wxpay.response.WxPayAsyncResponse;
@@ -24,23 +24,23 @@ import java.util.Random;
 @Slf4j
 public class WxPayTest {
 
-    private WxPayH5Config wxPayH5Config;
+    private WxPayConfig wxPayConfig;
 
     private BestPayServiceImpl bestPayService = new BestPayServiceImpl();
 
     @Before
     public void init() {
-        WxPayH5Config wxPayH5Config = new WxPayH5Config();
-        wxPayH5Config.setNotifyUrl("http://127.0.0.1:8080");
-        wxPayH5Config.setReturnUrl("http://127.0.0.1:8080");
-        wxPayH5Config.setAppId("wxd898fcb01713c658");
-        wxPayH5Config.setAppSecret("xxxx");
-        wxPayH5Config.setMchId("1483469312");
-        wxPayH5Config.setMchKey("2301500e77a3a6705ccbf56bb2922656");
-        wxPayH5Config.setKeyPath("h5.p12");
-        this.wxPayH5Config = wxPayH5Config;
+        WxPayConfig wxPayConfig = new WxPayConfig();
+        wxPayConfig.setNotifyUrl("http://127.0.0.1:8080");
+        wxPayConfig.setReturnUrl("http://127.0.0.1:8080");
+        wxPayConfig.setAppId("wxd898fcb01713c658");
+        wxPayConfig.setAppSecret("xxxx");
+        wxPayConfig.setMchId("1483469312");
+        wxPayConfig.setMchKey("2301500e77a3a6705ccbf56bb2922656");
+        wxPayConfig.setKeyPath("h5.p12");
+        this.wxPayConfig = wxPayConfig;
 
-        bestPayService.setWxPayH5Config(wxPayH5Config);
+        bestPayService.setWxPayConfig(wxPayConfig);
     }
 
     public static void sync() throws Exception {

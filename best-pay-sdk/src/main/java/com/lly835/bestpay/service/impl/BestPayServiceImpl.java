@@ -2,7 +2,7 @@ package com.lly835.bestpay.service.impl;
 
 import com.lly835.bestpay.config.AliPayConfig;
 import com.lly835.bestpay.config.SignType;
-import com.lly835.bestpay.config.WxPayH5Config;
+import com.lly835.bestpay.config.WxPayConfig;
 import com.lly835.bestpay.enums.BestPayResultEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.exception.BestPayException;
@@ -22,11 +22,11 @@ public class BestPayServiceImpl implements BestPayService {
      *  TODO 重构
      * 暂时先再引入一个config
      */
-    private WxPayH5Config wxPayH5Config;
+    private WxPayConfig wxPayConfig;
     private AliPayConfig aliPayConfig;
 
-    public void setWxPayH5Config(WxPayH5Config wxPayH5Config) {
-        this.wxPayH5Config = wxPayH5Config;
+    public void setWxPayConfig(WxPayConfig wxPayConfig) {
+        this.wxPayConfig = wxPayConfig;
     }
 
     public void setAliPayConfig(AliPayConfig aliPayConfig) {
@@ -36,17 +36,21 @@ public class BestPayServiceImpl implements BestPayService {
     @Override
     public PayResponse pay(PayRequest request) {
         Objects.requireNonNull(request,"request params must not be null");
-
+        //微信支付
+        WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+        wxPayService.setWxPayConfig(this.wxPayConfig);
+        // 支付宝网站PC支付
+        AliPayServiceImpl aliPayService = new AliPayServiceImpl();
+        aliPayService.setAliPayConfig(aliPayConfig);
         switch(request.getPayTypeEnum()) {
             case WXPAY_H5:
                 //微信h5支付
-                WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-                wxPayService.setWxPayH5Config(this.wxPayH5Config);
+                return wxPayService.pay(request);
+            case WXPAY_MINI:
+                //微信小程序支付
                 return wxPayService.pay(request);
             case ALIPAY_PC:
                 // 支付宝网站PC支付
-                AliPayServiceImpl aliPayService = new AliPayServiceImpl();
-                aliPayService.setAliPayConfig(aliPayConfig);
                 return aliPayService.pay(request);
             default:
               break;
@@ -79,7 +83,7 @@ public class BestPayServiceImpl implements BestPayService {
 
 //        //微信h5支付
 //        WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-//        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+//        wxPayService.setWxPayConfig(this.wxPayConfig);
 //        return wxPayService.asyncNotify(notifyData);
         //  支付宝PC支付
         AliPayServiceImpl aliPayService = new AliPayServiceImpl();
@@ -117,7 +121,7 @@ public class BestPayServiceImpl implements BestPayService {
     public RefundResponse refund(RefundRequest request) {
         //微信h5支付
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
         return wxPayService.refund(request);
     }
 
@@ -131,7 +135,7 @@ public class BestPayServiceImpl implements BestPayService {
     public OrderQueryResponse query(OrderQueryRequest request) {
         //微信h5支付
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
         return wxPayService.query(request);
     }
@@ -140,7 +144,7 @@ public class BestPayServiceImpl implements BestPayService {
     public String downloadBill(DownloadBillRequest request) {
 
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
 
         return wxPayService.downloadBill(request);
@@ -150,7 +154,7 @@ public class BestPayServiceImpl implements BestPayService {
     public String getQrCodeUrl(String productId) {
 
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
         return wxPayService.getQrCodeUrl(productId);
     }
@@ -159,7 +163,7 @@ public class BestPayServiceImpl implements BestPayService {
     public WxQrCodeAsyncResponse asyncQrCodeNotify(String notifyData) {
 
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
         return wxPayService.asyncQrCodeNotify(notifyData);
     }
@@ -167,7 +171,7 @@ public class BestPayServiceImpl implements BestPayService {
     public WxQrCode2WxResponse buildQrCodeResponse(PayResponse payResponse) {
 
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayH5Config(this.wxPayH5Config);
+        wxPayService.setWxPayConfig(this.wxPayConfig);
 
         return wxPayService.buildQrCodeResponse(payResponse);
 

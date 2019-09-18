@@ -1,7 +1,7 @@
 package com.github.lly835.config;
 
 import com.lly835.bestpay.config.AliPayConfig;
-import com.lly835.bestpay.config.WxPayH5Config;
+import com.lly835.bestpay.config.WxPayConfig;
 import com.lly835.bestpay.service.impl.BestPayServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,14 +22,14 @@ public class PayConfig {
     private AliPayAccountConfig aliPayAccountConfig;
 
     @Bean
-    public WxPayH5Config wxPayH5Config() {
-        WxPayH5Config wxPayH5Config = new WxPayH5Config();
-        wxPayH5Config.setAppId(accountConfig.getMpAppId());
-        wxPayH5Config.setMchId(accountConfig.getMchId());
-        wxPayH5Config.setMchKey(accountConfig.getMchKey());
-        wxPayH5Config.setKeyPath(accountConfig.getKeyPath());
-        wxPayH5Config.setNotifyUrl(accountConfig.getNotifyUrl());
-        return wxPayH5Config;
+    public WxPayConfig wxPayConfig() {
+        WxPayConfig wxPayConfig = new WxPayConfig();
+        wxPayConfig.setAppId(accountConfig.getMpAppId());
+        wxPayConfig.setMchId(accountConfig.getMchId());
+        wxPayConfig.setMchKey(accountConfig.getMchKey());
+        wxPayConfig.setKeyPath(accountConfig.getKeyPath());
+        wxPayConfig.setNotifyUrl(accountConfig.getNotifyUrl());
+        return wxPayConfig;
     }
 
     @Bean
@@ -44,9 +44,9 @@ public class PayConfig {
     }
 
     @Bean
-    public BestPayServiceImpl bestPayService(WxPayH5Config wxPayH5Config,AliPayConfig aliPayConfig) {
+    public BestPayServiceImpl bestPayService(WxPayConfig wxPayConfig, AliPayConfig aliPayConfig) {
         BestPayServiceImpl bestPayService = new BestPayServiceImpl();
-        bestPayService.setWxPayH5Config(wxPayH5Config);
+        bestPayService.setWxPayConfig(wxPayConfig);
         bestPayService.setAliPayConfig(aliPayConfig);
         return bestPayService;
     }
