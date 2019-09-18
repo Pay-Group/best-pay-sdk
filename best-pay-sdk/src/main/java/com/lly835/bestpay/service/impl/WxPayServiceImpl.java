@@ -64,7 +64,11 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         wxRequest.setOpenid(request.getOpenid());
 
         wxRequest.setTradeType(switchH5TradeType(request.getPayTypeEnum()));
-        wxRequest.setAppid(wxPayH5Config.getAppId());
+        if (request.getPayTypeEnum() == BestPayTypeEnum.WXPAY_H5){
+            wxRequest.setAppid(wxPayH5Config.getAppId());
+        } else if (request.getPayTypeEnum() == BestPayTypeEnum.WXPAY_MINI){
+            wxRequest.setAppid(wxPayH5Config.getMiniAppId());
+        }
         wxRequest.setMchId(wxPayH5Config.getMchId());
         wxRequest.setNotifyUrl(wxPayH5Config.getNotifyUrl());
         wxRequest.setNonceStr(RandomUtil.getRandomStr());

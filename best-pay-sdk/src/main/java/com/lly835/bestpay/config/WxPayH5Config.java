@@ -28,6 +28,16 @@ public class WxPayH5Config extends PayConfig {
     private String appSecret;
 
     /**
+     * 小程序appId
+     */
+    private String miniAppId;
+
+    /**
+     * 小程序appSecret
+     */
+    private String miniAppSecret;
+
+    /**
      * 商户号
      */
     private String mchId;
