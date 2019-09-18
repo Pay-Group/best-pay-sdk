@@ -62,12 +62,14 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         wxRequest.setTotalFee(MoneyUtil.Yuan2Fen(request.getOrderAmount()));
         wxRequest.setBody(request.getOrderName());
         wxRequest.setOpenid(request.getOpenid());
+        wxRequest.setTradeType(request.getPayTypeEnum().getCode());
 
-        wxRequest.setTradeType(switchH5TradeType(request.getPayTypeEnum()));
-        if (request.getPayTypeEnum() == BestPayTypeEnum.WXPAY_H5){
-            wxRequest.setAppid(wxPayConfig.getAppId());
-        } else if (request.getPayTypeEnum() == BestPayTypeEnum.WXPAY_MINI){
+        //小程序和app支付有独立的appid，公众号、h5、native都是公众号的appid
+        //TODO 加上app的appid
+        if (request.getPayTypeEnum() == BestPayTypeEnum.WXPAY_MINI){
             wxRequest.setAppid(wxPayConfig.getMiniAppId());
+        }else {
+            wxRequest.setAppid(wxPayConfig.getAppId());
         }
         wxRequest.setMchId(wxPayConfig.getMchId());
         wxRequest.setNotifyUrl(wxPayConfig.getNotifyUrl());
@@ -288,29 +290,6 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         payResponse.setCodeUrl(response.getCodeUrl());
 
         return payResponse;
-    }
-
-
-    /**
-     * H5支付交易类型选择
-     */
-    public String switchH5TradeType(BestPayTypeEnum payTypeEnum){
-        String tradeType = "JSAPI";
-        switch (payTypeEnum){
-            case WXPAY_H5:
-                tradeType = "JSAPI";
-                break;
-            case WXPAY_MINI:
-                tradeType = "JSAPI";
-                break;
-            case WXPAY_MWEB:
-                tradeType = "MWEB";
-                break;
-            default:
-                tradeType = payTypeEnum.getCode();
-                break;
-        }
-        return tradeType;
     }
 
     /**

@@ -3,6 +3,7 @@ package com.lly835.bestpay.service.impl;
 import com.lly835.bestpay.config.AliPayConfig;
 import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.config.WxPayConfig;
+import com.lly835.bestpay.enums.BestPayPlatformEnum;
 import com.lly835.bestpay.enums.BestPayResultEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.exception.BestPayException;
@@ -37,25 +38,18 @@ public class BestPayServiceImpl implements BestPayService {
     public PayResponse pay(PayRequest request) {
         Objects.requireNonNull(request,"request params must not be null");
         //微信支付
-        WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayConfig(this.wxPayConfig);
-        // 支付宝网站PC支付
-        AliPayServiceImpl aliPayService = new AliPayServiceImpl();
-        aliPayService.setAliPayConfig(aliPayConfig);
-        switch(request.getPayTypeEnum()) {
-            case WXPAY_H5:
-                //微信h5支付
-                return wxPayService.pay(request);
-            case WXPAY_MINI:
-                //微信小程序支付
-                return wxPayService.pay(request);
-            case ALIPAY_PC:
-                // 支付宝网站PC支付
-                return aliPayService.pay(request);
-            default:
-              break;
+        if (BestPayPlatformEnum.WX == request.getPayTypeEnum().getPlatform()) {
+            WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+            wxPayService.setWxPayConfig(this.wxPayConfig);
+            return wxPayService.pay(request);
         }
-        return null;
+        // 支付宝支付
+        else if (BestPayPlatformEnum.ALIPAY == request.getPayTypeEnum().getPlatform()) {
+            AliPayServiceImpl aliPayService = new AliPayServiceImpl();
+            aliPayService.setAliPayConfig(aliPayConfig);
+            return aliPayService.pay(request);
+        }
+        throw new RuntimeException("错误的支付方式");
 
     }
 
@@ -111,7 +105,7 @@ public class BestPayServiceImpl implements BestPayService {
         } else {
             //支付宝异步(发起支付时使用这个参数标识支付方式)
             String payType = request.getParameter("passback_params");
-            return BestPayTypeEnum.getByCode(payType);
+            return BestPayTypeEnum.getByName(payType);
         }
 
         throw new BestPayException(BestPayResultEnum.PAY_TYPE_ERROR);
