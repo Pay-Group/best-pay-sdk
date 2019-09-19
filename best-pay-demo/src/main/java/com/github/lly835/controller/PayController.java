@@ -1,5 +1,6 @@
 package com.github.lly835.controller;
 
+import com.github.lly835.config.WechatAccountConfig;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.PayRequest;
 import com.lly835.bestpay.model.PayResponse;
@@ -9,12 +10,15 @@ import com.lly835.bestpay.service.impl.BestPayServiceImpl;
 import com.lly835.bestpay.utils.JsonUtil;
 import com.lly835.bestpay.utils.XmlUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 
@@ -27,6 +31,9 @@ import java.util.Random;
 @Controller
 @Slf4j
 public class PayController {
+
+    @Autowired
+    private WechatAccountConfig wechatAccountConfig;
 
     @Autowired
     private BestPayServiceImpl bestPayService;
@@ -58,6 +65,33 @@ public class PayController {
         map.put("payResponse", payResponse);
 
         return new ModelAndView("pay/create", map);
+    }
+
+    @GetMapping(value = "/get_mini_openid")
+    public String getOpenid(@RequestParam(value = "code") String code){
+        String url = "https://api.weixin.qq.com/sns/jscode2session?appid="+wechatAccountConfig.getMiniAppId()+"&secret="+wechatAccountConfig.getMiniAppSecret()+"&js_code="+code+"&grant_type=authorization_code";
+        RestTemplate restTemplate = new RestTemplate();
+        String response = restTemplate.getForObject(url, String.class);
+        return response;
+
+    }
+
+    @GetMapping(value = "/mini_pay")
+    public ModelAndView minipay(@RequestParam(value = "openid") String openid,
+                            Map<String, Object> map){
+        Random random = new Random();
+        DateTime dateTime = new DateTime(new Date());
+        PayRequest payRequest = new PayRequest();
+        payRequest.setOpenid(openid);
+        payRequest.setOrderAmount(0.01);
+        payRequest.setOrderId(System.currentTimeMillis() + String.valueOf(random.nextInt(900000) + 100000)+dateTime.toString("yyyymmdd")+String.valueOf(random.nextInt(90000) + 10000));
+        payRequest.setOrderName("小程序支付");
+        payRequest.setPayTypeEnum(BestPayTypeEnum.WXPAY_MINI);
+        log.info("【发起支付】request={}", JsonUtil.toJson(payRequest));
+        PayResponse payResponse = bestPayService.pay(payRequest);
+        log.info("【发起支付】response={}", JsonUtil.toJson(payResponse));
+        map.put("payResponse", payResponse);
+        return new ModelAndView("pay/miniCreate", map);
     }
 
     /**
