@@ -18,6 +18,16 @@ public class WechatAccountConfig {
     private String mpAppId;
 
     /**
+     * 小程序appId
+     */
+    private String miniAppId;
+
+    /**
+     * 小程序appSecret
+     */
+    private String miniAppSecret;
+
+    /**
      * 商户号
      */
     private String mchId;

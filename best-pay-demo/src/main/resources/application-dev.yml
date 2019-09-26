@@ -4,6 +4,8 @@ wechat:
   mchKey: C5245D70xxxxx
   keyPath: /var/weixin_cert/h5.p12
   notifyUrl: http://xxx.com/notify
+  miniAppId: wxxxxxxxxxxx6bf9b
+  miniAppSecret: xxbc6xxxxxxxxxxxxxx9c49d
 
 alipay:
   appId: appId

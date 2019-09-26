@@ -25,6 +25,7 @@ public class PayConfig {
     public WxPayConfig wxPayConfig() {
         WxPayConfig wxPayConfig = new WxPayConfig();
         wxPayConfig.setAppId(accountConfig.getMpAppId());
+        wxPayConfig.setMiniAppId(accountConfig.getMiniAppId());
         wxPayConfig.setMchId(accountConfig.getMchId());
         wxPayConfig.setMchKey(accountConfig.getMchKey());
         wxPayConfig.setKeyPath(accountConfig.getKeyPath());
