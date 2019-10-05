@@ -46,15 +46,17 @@ public class PayController {
      * 发起支付
      */
     @GetMapping(value = "/pay")
-    public ModelAndView pay(@RequestParam(value = "openid") String openid,
+    @ResponseBody
+    public PayResponse pay(@RequestParam(value = "openid", required = false) String openid,
+                            @RequestParam BestPayTypeEnum payType,
+                            @RequestParam String orderId,
+                            @RequestParam Double amount,
                             Map<String, Object> map) {
         PayRequest request = new PayRequest();
-        Random random = new Random();
-
         //支付请求参数
-        request.setPayTypeEnum(BestPayTypeEnum.WXPAY_H5);
-        request.setOrderId(String.valueOf(random.nextInt(1000000000)));
-        request.setOrderAmount(0.01);
+        request.setPayTypeEnum(payType);
+        request.setOrderId(orderId);
+        request.setOrderAmount(amount);
         request.setOrderName("最好的支付sdk");
         request.setOpenid(openid);
         log.info("【发起支付】request={}", JsonUtil.toJson(request));
@@ -62,9 +64,22 @@ public class PayController {
         PayResponse payResponse = bestPayService.pay(request);
         log.info("【发起支付】response={}", JsonUtil.toJson(payResponse));
 
-        map.put("payResponse", payResponse);
+        return payResponse;
+    }
 
-        return new ModelAndView("pay/create", map);
+    /**
+     * 微信h5支付，要求referer是白名单的地址，这里做个重定向
+     * @param prepayId
+     * @param packAge
+     * @return
+     */
+    @GetMapping("/wxpay_mweb_redirect")
+    public ModelAndView wxpayMweb(@RequestParam("prepay_id") String prepayId,
+                                  @RequestParam("package") String packAge,
+                                  Map map) {
+        String url = String.format("https://wx.tenpay.com/cgi-bin/mmpayweb-bin/checkmweb?prepay_id=%s&package=%s", prepayId, packAge);
+        map.put("url", url);
+        return new ModelAndView("pay/wxpayMwebRedirect");
     }
 
     @GetMapping(value = "/get_mini_openid")
