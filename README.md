@@ -16,9 +16,9 @@
 2. IDE 需安装 lombok 插件
 3. 如果想贡献代码，请阅读[代码贡献指南](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/CONTRIBUTION.md)
 
-## 项目demo
-1. https://github.com/Pay-Group/best-pay-demo
-2. 扫码体验
+## 在线体验
+1. http://best-pay.springboot.cn
+2. 微信公众号支付请扫码体验
     
     ![师兄干货](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/weixin.jpg)
 
