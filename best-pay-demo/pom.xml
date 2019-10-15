@@ -7,9 +7,6 @@
 
     <groupId>com.github.lly835</groupId>
     <artifactId>best-pay-demo</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>war</packaging>
-
     <name>best-pay-demo</name>
     <description>best-pay-sdk demo</description>
 
@@ -52,7 +49,7 @@
         <dependency>
             <groupId>cn.springboot</groupId>
             <artifactId>best-pay-sdk</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <version>1.3.0.BETA</version>
         </dependency>
     </dependencies>
 
