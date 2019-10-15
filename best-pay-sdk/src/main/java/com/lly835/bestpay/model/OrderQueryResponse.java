@@ -19,6 +19,16 @@ public class OrderQueryResponse {
     private OrderStatusEnum orderStatusEnum;
 
     /**
+     *第三方支付的流水号
+     */
+    private String outTradeNo;
+
+    /**
+     * 附加内容，发起支付时传入
+     */
+    private String attach;
+
+    /**
      * 错误原因
      */
     private String resultMsg;

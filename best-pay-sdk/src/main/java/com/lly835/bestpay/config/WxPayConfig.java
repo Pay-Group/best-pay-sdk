@@ -33,9 +33,10 @@ public class WxPayConfig extends PayConfig {
     private String miniAppId;
 
     /**
-     * 小程序appSecret
+     * app应用appid
      */
-    private String miniAppSecret;
+    private String appAppId;
+
     /**
      * 商户号
      */

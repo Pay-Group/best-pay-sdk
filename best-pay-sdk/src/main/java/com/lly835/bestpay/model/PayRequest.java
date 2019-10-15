@@ -2,7 +2,6 @@ package com.lly835.bestpay.model;
 
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import lombok.Data;
-import org.simpleframework.xml.Default;
 
 /**
  * 支付时请求参数
@@ -31,12 +30,18 @@ public class PayRequest {
     private String orderName;
 
     /**
-     * 微信openid, 仅微信支付时需要
+     * 微信openid, 仅微信公众号/小程序支付时需要
      */
     private String openid;
 
     /**
      * 客户端访问Ip  外部H5支付时必传，需要真实Ip
+     * 20191015测试，微信h5支付已不需要真实的ip
      */
     private String spbillCreateIp;
+
+    /**
+     * 附加内容，发起支付时传入
+     */
+    private String attach;
 }

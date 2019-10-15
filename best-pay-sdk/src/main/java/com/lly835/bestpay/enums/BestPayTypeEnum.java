@@ -17,13 +17,15 @@ public enum BestPayTypeEnum {
 
     ALIPAY_WAP("alipay_wap", ALIPAY, "支付宝wap"),
 
-    WXPAY_H5("JSAPI", WX,"微信公众账号支付"),
+    WXPAY_MP("JSAPI", WX,"微信公众账号支付"),
 
     WXPAY_MWEB("MWEB", WX, "微信H5支付"),
 
     WXPAY_NATIVE("NATIVE", WX, "微信Native支付"),
 
-    WXPAY_MINI("JSAPI", WX, "微信小程序支付")
+    WXPAY_MINI("JSAPI", WX, "微信小程序支付"),
+
+    WXPAY_APP("APP", WX, "微信APP支付"),
     ;
 
     private String code;

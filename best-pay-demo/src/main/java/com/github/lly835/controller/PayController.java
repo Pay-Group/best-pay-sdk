@@ -1,9 +1,9 @@
 package com.github.lly835.controller;
 
 import com.github.lly835.config.WechatAccountConfig;
+import com.google.gson.Gson;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
-import com.lly835.bestpay.model.PayRequest;
-import com.lly835.bestpay.model.PayResponse;
+import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.wxpay.response.WxQrCode2WxResponse;
 import com.lly835.bestpay.model.wxpay.response.WxQrCodeAsyncResponse;
 import com.lly835.bestpay.service.impl.BestPayServiceImpl;
@@ -38,32 +38,28 @@ public class PayController {
     @Autowired
     private BestPayServiceImpl bestPayService;
 
-    @Autowired
-    private HttpServletRequest request;
-
-
     /**
      * 发起支付
      */
     @GetMapping(value = "/pay")
     @ResponseBody
     public PayResponse pay(@RequestParam(value = "openid", required = false) String openid,
-                            @RequestParam BestPayTypeEnum payType,
-                            @RequestParam String orderId,
-                            @RequestParam Double amount,
-                            Map<String, Object> map) {
-        PayRequest request = new PayRequest();
+                           @RequestParam BestPayTypeEnum payType,
+                           @RequestParam String orderId,
+                           @RequestParam Double amount,
+                           HttpServletRequest httpServletRequest) {
         //支付请求参数
+        PayRequest request = new PayRequest();
         request.setPayTypeEnum(payType);
         request.setOrderId(orderId);
         request.setOrderAmount(amount);
         request.setOrderName("最好的支付sdk");
         request.setOpenid(openid);
+        request.setAttach("附加的信息");
         log.info("【发起支付】request={}", JsonUtil.toJson(request));
 
         PayResponse payResponse = bestPayService.pay(request);
         log.info("【发起支付】response={}", JsonUtil.toJson(payResponse));
-
         return payResponse;
     }
 
@@ -82,22 +78,46 @@ public class PayController {
         return new ModelAndView("pay/wxpayMwebRedirect");
     }
 
-    @GetMapping(value = "/get_mini_openid")
-    public String getOpenid(@RequestParam(value = "code") String code){
-        String url = "https://api.weixin.qq.com/sns/jscode2session?appid="+wechatAccountConfig.getMiniAppId()+"&secret="+wechatAccountConfig.getMiniAppSecret()+"&js_code="+code+"&grant_type=authorization_code";
-        RestTemplate restTemplate = new RestTemplate();
-        String response = restTemplate.getForObject(url, String.class);
-        return response;
+    @GetMapping("/query")
+	@ResponseBody
+	public OrderQueryResponse query(@RequestParam String orderId) {
+		OrderQueryRequest orderQueryRequest = new OrderQueryRequest();
+		orderQueryRequest.setOrderId(orderId);
+		orderQueryRequest.setPayTypeEnum(BestPayTypeEnum.WXPAY_MWEB);
+		OrderQueryResponse queryResponse = bestPayService.query(orderQueryRequest);
+		return queryResponse;
+	}
 
+    @GetMapping("/refund")
+    @ResponseBody
+    public RefundResponse refund(@RequestParam String orderId) {
+        RefundRequest request = new RefundRequest();
+        request.setOrderId(orderId);
+        request.setPayTypeEnum(BestPayTypeEnum.WXPAY_MWEB);
+        request.setOrderAmount(0.1);
+        RefundResponse response = bestPayService.refund(request);
+        return response;
     }
 
+    /**
+     * 小程序支付
+     * @param code
+     * @param map
+     * @return
+     */
     @GetMapping(value = "/mini_pay")
-    public ModelAndView minipay(@RequestParam(value = "openid") String openid,
+    @ResponseBody
+    public PayResponse minipay(@RequestParam(value = "code") String code,
                             Map<String, Object> map){
+
+        String url = "https://api.weixin.qq.com/sns/jscode2session?appid="+wechatAccountConfig.getMiniAppId()+"&secret="+wechatAccountConfig.getMiniAppSecret()+"&js_code="+code+"&grant_type=authorization_code";
+        RestTemplate restTemplate = new RestTemplate();
+        String userInfo = restTemplate.getForObject(url, String.class);
+
         Random random = new Random();
         DateTime dateTime = new DateTime(new Date());
         PayRequest payRequest = new PayRequest();
-        payRequest.setOpenid(openid);
+        payRequest.setOpenid(((String) new Gson().fromJson(userInfo, Map.class).get("openid")));
         payRequest.setOrderAmount(0.01);
         payRequest.setOrderId(System.currentTimeMillis() + String.valueOf(random.nextInt(900000) + 100000)+dateTime.toString("yyyymmdd")+String.valueOf(random.nextInt(90000) + 10000));
         payRequest.setOrderName("小程序支付");
@@ -105,8 +125,7 @@ public class PayController {
         log.info("【发起支付】request={}", JsonUtil.toJson(payRequest));
         PayResponse payResponse = bestPayService.pay(payRequest);
         log.info("【发起支付】response={}", JsonUtil.toJson(payResponse));
-        map.put("payResponse", payResponse);
-        return new ModelAndView("pay/miniCreate", map);
+        return payResponse;
     }
 
     /**
@@ -134,9 +153,9 @@ public class PayController {
      */
     @PostMapping(value = "/notify")
     public ModelAndView notify(@RequestBody String notifyData) throws Exception {
-        log.info("【异步回调】request={}", notifyData);
+        log.info("【异步回调】支付平台的request={}", notifyData);
         PayResponse response = bestPayService.asyncNotify(notifyData);
-        log.info("【异步回调】response={}", JsonUtil.toJson(response));
+        log.info("【异步回调】处理后的数据data={}", JsonUtil.toJson(response));
         return new ModelAndView("pay/success");
     }
 

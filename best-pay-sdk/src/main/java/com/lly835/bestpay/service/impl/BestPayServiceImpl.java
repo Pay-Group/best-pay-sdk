@@ -114,7 +114,6 @@ public class BestPayServiceImpl implements BestPayService {
 
     @Override
     public RefundResponse refund(RefundRequest request) {
-        //微信h5支付
         WxPayServiceImpl wxPayService = new WxPayServiceImpl();
         wxPayService.setWxPayConfig(this.wxPayConfig);
         return wxPayService.refund(request);

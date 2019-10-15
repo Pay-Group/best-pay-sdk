@@ -22,6 +22,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import org.apache.commons.lang3.StringUtils;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -65,16 +66,18 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         wxRequest.setTradeType(request.getPayTypeEnum().getCode());
 
         //小程序和app支付有独立的appid，公众号、h5、native都是公众号的appid
-        //TODO 加上app的appid
         if (request.getPayTypeEnum() == BestPayTypeEnum.WXPAY_MINI){
             wxRequest.setAppid(wxPayConfig.getMiniAppId());
+        }else if (request.getPayTypeEnum() == BestPayTypeEnum.WXPAY_APP){
+            wxRequest.setAppid(wxPayConfig.getAppAppId());
         }else {
             wxRequest.setAppid(wxPayConfig.getAppId());
         }
         wxRequest.setMchId(wxPayConfig.getMchId());
         wxRequest.setNotifyUrl(wxPayConfig.getNotifyUrl());
         wxRequest.setNonceStr(RandomUtil.getRandomStr());
-        wxRequest.setSpbillCreateIp(request.getSpbillCreateIp() == null || request.getSpbillCreateIp().isEmpty() ? "8.8.8.8" : request.getSpbillCreateIp());
+        wxRequest.setSpbillCreateIp(StringUtils.isEmpty(request.getSpbillCreateIp()) ? "8.8.8.8" : request.getSpbillCreateIp());
+        wxRequest.setAttach(request.getAttach());
         wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayConfig.getMchKey()));
 
         RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxRequest));
@@ -238,6 +241,8 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         return OrderQueryResponse.builder()
                 .orderStatusEnum(OrderStatusEnum.findByName(response.getTradeState()))
                 .resultMsg(response.getTradeStateDesc() == null ? "" : response.getTradeStateDesc())
+				.outTradeNo(response.getTransactionId())
+				.attach(response.getAttach())
                 .build();
     }
 
@@ -256,6 +261,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         payResponse.setOrderAmount(MoneyUtil.Fen2Yuan(response.getTotalFee()));
         payResponse.setOrderId(response.getOutTradeNo());
         payResponse.setOutTradeNo(response.getTransactionId());
+        payResponse.setAttach(response.getAttach());
         payResponse.setMwebUrl(response.getMwebUrl());
         return payResponse;
     }

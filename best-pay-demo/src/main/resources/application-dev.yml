@@ -2,10 +2,11 @@ wechat:
   mpAppId: wxd898xxxx
   mchId: 1483xxxx
   mchKey: C5245D70xxxxx
-  keyPath: /var/weixin_cert/h5.p12
+  keyPath: /var/weixin_cert/wxpay.p12
   notifyUrl: http://xxx.com/notify
   miniAppId: wxxxxxxxxxxx6bf9b
   miniAppSecret: xxbc6xxxxxxxxxxxxxx9c49d
+  appAppId: wxxxxxxxxxxxx43b0
 
 alipay:
   appId: appId
