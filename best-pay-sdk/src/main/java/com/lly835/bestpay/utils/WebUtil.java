@@ -15,13 +15,13 @@ public class WebUtil {
 
     public static String buildForm(String baseUrl,Map<String, String> parameters) {
         StringBuffer sb = new StringBuffer();
-        sb.append("<form name=\"punchout_form\" method=\"post\" action=\"");
+        sb.append("<form id='bestPayForm' name=\"punchout_form\" method=\"post\" action=\"");
         sb.append(baseUrl);
         sb.append("\">\n");
         sb.append(buildHiddenFields(parameters));
         sb.append("<input type=\"submit\" value=\"立即支付\" style=\"display:none\" >\n");
         sb.append("</form>\n");
-        sb.append("<script>document.forms[0].submit();</script>");
+        sb.append("<script>document.getElementById('bestPayForm').submit();</script>");
         String form = sb.toString();
         return form;
     }
@@ -90,6 +90,7 @@ public class WebUtil {
         else
             urlSb = new StringBuffer(AliPayConstants.ALIPAY_GATEWAY_OPEN);
 
+        urlSb.append("/gateway.do");
         try {
             String charset = null != parameters.get("charset") ? parameters.get("charset") : "utf-8";
             String sysMustQuery = WebUtil.buildQuery(parameters, charset);

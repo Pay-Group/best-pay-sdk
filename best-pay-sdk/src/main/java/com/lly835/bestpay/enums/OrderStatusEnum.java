@@ -42,6 +42,6 @@ public enum OrderStatusEnum {
                 return orderStatusEnum;
             }
         }
-        return UNKNOW;
+        throw new RuntimeException("错误的微信支付状态");
     }
 }

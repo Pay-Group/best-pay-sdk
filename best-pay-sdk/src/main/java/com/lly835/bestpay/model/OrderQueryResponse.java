@@ -32,4 +32,14 @@ public class OrderQueryResponse {
      * 错误原因
      */
     private String resultMsg;
+
+    /**
+     * 订单号
+     */
+    private String orderId;
+
+    /**
+     * 支付完成时间
+     */
+    private String finishTime;
 }

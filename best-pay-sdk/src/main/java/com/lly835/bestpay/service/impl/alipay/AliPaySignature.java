@@ -43,9 +43,8 @@ public class AliPaySignature {
             return rsaSign(signContent,privateKey);
         } else if (AliPayConstants.SIGN_TYPE_RSA2.equals(signType)) {
             return rsa256Sign(signContent, privateKey);
-        } else {
-            return null;
         }
+        throw new RuntimeException("支付宝签名方式有误");
     }
 
     public static String getSignContent(Map<String, String> params) {

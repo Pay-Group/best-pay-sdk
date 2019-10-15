@@ -8,7 +8,7 @@ import java.util.Objects;
  * Created by this on 2019/9/8 16:31
  */
 @Data
-public class AliPayConfig {
+public class AliPayConfig extends PayConfig {
     /**
      * appId
      */
@@ -21,10 +21,6 @@ public class AliPayConfig {
      * 支付宝公钥
      */
     private String aliPayPublicKey;
-    /**
-     * 异步通知url
-     */
-    private String notifyUrl;
     /**
      * 默认非沙箱测试
      */

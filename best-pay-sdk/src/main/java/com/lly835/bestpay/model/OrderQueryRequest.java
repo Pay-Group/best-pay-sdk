@@ -1,6 +1,6 @@
 package com.lly835.bestpay.model;
 
-import com.lly835.bestpay.enums.BestPayTypeEnum;
+import com.lly835.bestpay.enums.BestPayPlatformEnum;
 import lombok.Data;
 
 /**
@@ -12,9 +12,9 @@ import lombok.Data;
 public class OrderQueryRequest {
 
     /**
-     * 支付方式.
+     * 支付平台.
      */
-    private BestPayTypeEnum payTypeEnum;
+    private BestPayPlatformEnum platformEnum;
 
     /**
      * 订单号(orderId 和 outOrderId 二选一，两个都传以outOrderId为准)

@@ -1,12 +1,13 @@
 package com.lly835.bestpay.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lly835.bestpay.enums.BestPayPlatformEnum;
 import lombok.Data;
 
 import java.net.URI;
 
 /**
- * 支付时的同步返回参数
+ * 支付时的同步/异步返回参数
  */
 @Data
 public class PayResponse {
@@ -60,4 +61,6 @@ public class PayResponse {
      * 附加内容，发起支付时传入
      */
     private String attach;
+
+    private BestPayPlatformEnum payPlatformEnum;
 }

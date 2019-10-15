@@ -13,3 +13,4 @@ alipay:
   privateKey: 商户私钥
   aliPayPublicKey: 支付宝公钥
   notifyUrl: http://xxx.com/notify
+  returnUrl: http://xxx.com/return

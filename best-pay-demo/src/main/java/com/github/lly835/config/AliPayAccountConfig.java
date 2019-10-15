@@ -27,4 +27,9 @@ public class AliPayAccountConfig {
      * 异步通知url
      */
     private String notifyUrl;
+
+    /**
+     * 同步返回的url
+     */
+    private String returnUrl;
 }
