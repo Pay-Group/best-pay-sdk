@@ -29,7 +29,7 @@ public interface AliPayConstants {
     /**
      * 沙箱测试
      */
-    String ALIPAY_GATEWAY_OPEN_DEV     = "https://openapi.alipaydev.com/gateway.do";
+    String ALIPAY_GATEWAY_OPEN_DEV     = "https://openapi.alipaydev.com/";
 
     /**
      * RSA签名类型
