@@ -25,7 +25,7 @@
 1. http://best-pay.springboot.cn
 2. 微信公众号支付请扫码体验
     
-    ![师兄干货](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/weixin.jpg)
+    ![师兄干货](http://img.mukewang.com/5db958ec0001b67d02580258.jpg)
 
 ## 交流方式
 1. qq群（590730230）加群暗号：best。目前项目处于刚刚起步开发阶段，欢迎有兴趣的朋友加群共同开发。
