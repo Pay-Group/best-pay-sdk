@@ -3,6 +3,9 @@
 
 ## 版本更新
 
+#### 1.3.0(2019.10.29）
+1. 正式版发布
+
 #### 1.3.0.BETA(2019.10.15）
 1. 新增微信h5、小程序、app、扫码，和支付宝PC支付
 2. 新增在线体验站点 http://best-pay.springboot.cn
@@ -25,15 +28,16 @@
     ![师兄干货](https://github.com/Pay-Group/best-pay-sdk/blob/master/doc/weixin.jpg)
 
 ## 交流方式
-1. qq群（590730230）。目前项目处于刚刚起步开发阶段，欢迎有兴趣的朋友加群共同开发。
+1. qq群（590730230）加群暗号：best。目前项目处于刚刚起步开发阶段，欢迎有兴趣的朋友加群共同开发。
 
 
 ## Maven最新版本
 ```xml
+<!-- https://mvnrepository.com/artifact/cn.springboot/best-pay-sdk -->
 <dependency>
     <groupId>cn.springboot</groupId>
     <artifactId>best-pay-sdk</artifactId>
-    <version>1.3.0.BETA</version>
+    <version>1.3.0</version>
 </dependency>
 ```
 

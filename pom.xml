@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>cn.springboot</groupId>
     <artifactId>best-pay</artifactId>
-    <version>1.3.0.BETA</version>
+    <version>1.3.0</version>
     <packaging>pom</packaging>
     <name>best-pay</name>
     <description>最好的支付sdk</description>
@@ -115,19 +115,6 @@
     </profiles>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.17</version>
-                    <configuration>
-                        <skip>true</skip>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
