@@ -21,6 +21,7 @@ import com.lly835.bestpay.utils.WebUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import org.apache.commons.lang3.StringUtils;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -80,7 +81,8 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
         aliPayRequest.setCharset("utf-8");
         aliPayRequest.setSignType(AliPayConstants.SIGN_TYPE_RSA2);
         aliPayRequest.setNotifyUrl(aliPayConfig.getNotifyUrl());
-        aliPayRequest.setReturnUrl(aliPayConfig.getReturnUrl());
+        //优先使用PayRequest.returnUrl
+        aliPayRequest.setReturnUrl(StringUtils.isEmpty(request.getReturnUrl()) ? aliPayConfig.getReturnUrl() : request.getReturnUrl());
         aliPayRequest.setTimestamp(LocalDateTime.now().format(formatter));
         aliPayRequest.setVersion("1.0");
         // 剔除空格、制表符、换行

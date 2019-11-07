@@ -44,4 +44,10 @@ public class PayRequest {
      * 附加内容，发起支付时传入
      */
     private String attach;
+
+    /**
+     * 支付后跳转（支付宝PC网站支付）
+     * 优先级高于PayConfig.returnUrl
+     */
+    private String returnUrl;
 }
