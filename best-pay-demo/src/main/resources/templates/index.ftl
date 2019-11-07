@@ -28,6 +28,7 @@
                             <label for="amount">支付方式</label>
                             <select class="form-control" id="payType">
                                 <option value="ALIPAY_PC">支付宝PC</option>
+                                <option value="ALIPAY_WAP">支付宝WAP</option>
                                 <option value="WXPAY_NATIVE">微信Native支付</option>
                                 <option value="WXPAY_MWEB">微信H5支付</option>
                                 <option value="WXPAY_MP">微信公众号支付</option>
@@ -93,7 +94,7 @@
                     data:data,
                     success:function(response){
                         //支付宝会跳转, 不要显示
-                        if ($("#payType").val() != 'ALIPAY_PC') {
+                        if (($("#payType").val() != 'ALIPAY_PC')&&($("#payType").val() != 'ALIPAY_WAP')) {
                             $('#response').html(JSON.stringify(response, null, "\t"))
                         }
 
@@ -116,6 +117,10 @@
                                 $('#result').html('app支付需由android/ios端发起')
                                 break
                             case 'ALIPAY_PC':
+                                console.log(response.body)
+                                $('#result').html(response.body)
+                                break
+                            case 'ALIPAY_WAP':
                                 console.log(response.body)
                                 $('#result').html(response.body)
                                 break

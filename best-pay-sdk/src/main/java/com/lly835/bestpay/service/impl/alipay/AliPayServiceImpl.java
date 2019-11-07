@@ -7,6 +7,7 @@ import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.constants.AliPayConstants;
 import com.lly835.bestpay.enums.AlipayTradeStatusEnum;
 import com.lly835.bestpay.enums.BestPayPlatformEnum;
+import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.alipay.AliPayApi;
 import com.lly835.bestpay.model.alipay.request.AliPayOrderQueryRequest;
@@ -63,14 +64,20 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
     public PayResponse pay(PayRequest request) {
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("out_trade_no",request.getOrderId());
+        AliPayPcRequest aliPayRequest = new AliPayPcRequest();
+        if (request.getPayTypeEnum() == BestPayTypeEnum.ALIPAY_PC){
+            requestParams.put("product_code", AliPayConstants.FAST_INSTANT_TRADE_PAY);
+            aliPayRequest.setMethod(AliPayConstants.ALIPAY_TRADE_PAGE_PAY);
+        }else {
+            requestParams.put("product_code", AliPayConstants.QUICK_WAP_PAY);
+            aliPayRequest.setMethod(AliPayConstants.ALIPAY_TRADE_WAP_PAY);
+        }
         requestParams.put("product_code", AliPayConstants.FAST_INSTANT_TRADE_PAY);
         requestParams.put("total_amount", String.valueOf(request.getOrderAmount()));
         requestParams.put("subject", String.valueOf(request.getOrderName()));
 
-        AliPayPcRequest aliPayRequest = new AliPayPcRequest();
         aliPayRequest.setAppId(aliPayConfig.getAppId());
         aliPayRequest.setCharset("utf-8");
-        aliPayRequest.setMethod(AliPayConstants.ALIPAY_TRADE_PAGE_PAY);
         aliPayRequest.setSignType(AliPayConstants.SIGN_TYPE_RSA2);
         aliPayRequest.setNotifyUrl(aliPayConfig.getNotifyUrl());
         aliPayRequest.setReturnUrl(aliPayConfig.getReturnUrl());
