@@ -4,17 +4,26 @@
 1. 配置
 
     ```
-    //微信公众账号支付配置
+    //微信支付配置
     WxPayConfig wxPayConfig = new WxPayConfig();
     wxPayConfig.setAppId("xxxxx");
     wxPayConfig.setAppSecret("xxxxxxxx");
     wxPayConfig.setMchId("xxxxxx");
     wxPayConfig.setMchKey("xxxxxxx");
     wxPayConfig.setNotifyUrl("http://xxxxx");
+    
+    //支付宝配置
+    AliPayConfig aliPayConfig = new AliPayConfig();
+    aliPayConfig.setAppId("xxxxxx");
+    aliPayConfig.setPrivateKey("xxxxxx");
+    aliPayConfig.setAliPayPublicKey("xxxxxx");
+    aliPayConfig.setReturnUrl("http://xxxxx");
+    aliPayConfig.setNotifyUrl("http://xxxxx");
             
     //支付类, 所有方法都在这个类里
     BestPayServiceImpl bestPayService = new BestPayServiceImpl();
     bestPayService.setWxPayConfig(wxPayConfig);
+    bestPayService.setAliPayConfig(aliPayConfig);
     ```
 
     
