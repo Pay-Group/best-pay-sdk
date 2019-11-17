@@ -13,10 +13,7 @@ import com.lly835.bestpay.model.wxpay.request.WxOrderQueryRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayRefundRequest;
 import com.lly835.bestpay.model.wxpay.request.WxPayUnifiedorderRequest;
 import com.lly835.bestpay.model.wxpay.response.*;
-import com.lly835.bestpay.utils.MapUtil;
-import com.lly835.bestpay.utils.MoneyUtil;
-import com.lly835.bestpay.utils.RandomUtil;
-import com.lly835.bestpay.utils.XmlUtil;
+import com.lly835.bestpay.utils.*;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -251,7 +248,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
                 .orderId(response.getOutTradeNo())
 				.attach(response.getAttach())
                 //yyyyMMddHHmmss -> yyyy-MM-dd HH:mm:ss
-                .finishTime(response.getTimeEnd().replaceAll("(\\d{4})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1-$2-$3 $4:$5:$6"))
+                .finishTime(StringUtil.isEmpty(response.getTimeEnd()) ? "" : response.getTimeEnd().replaceAll("(\\d{4})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})", "$1-$2-$3 $4:$5:$6"))
                 .build();
     }
 
