@@ -6,8 +6,10 @@
     ```
     //微信支付配置
     WxPayConfig wxPayConfig = new WxPayConfig();
-    wxPayConfig.setAppId("xxxxx");
-    wxPayConfig.setAppSecret("xxxxxxxx");
+    wxPayConfig.setAppId("xxxxx");          //公众号Id
+    wxPayConfig.setMiniAppId("xxxxx");      //小程序Id
+	wxPayConfig.setAppAppId("xxxxx");       //移动AppId
+    //支付商户资料
     wxPayConfig.setMchId("xxxxxx");
     wxPayConfig.setMchKey("xxxxxxx");
     wxPayConfig.setNotifyUrl("http://xxxxx");
