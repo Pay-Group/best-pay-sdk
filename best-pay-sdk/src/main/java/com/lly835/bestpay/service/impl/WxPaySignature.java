@@ -34,6 +34,28 @@ public class WxPaySignature {
     }
 
     /**
+     * 签名for App
+     * https://pay.weixin.qq.com/wiki/doc/api/app/app.php?chapter=9_12&index=2
+     * @param params
+     * @param signKey
+     * @return
+     */
+    public static String signForApp(Map<String, String> params, String signKey) {
+        SortedMap<String, String> sortedMap = new TreeMap<>(params);
+
+        StringBuilder toSign = new StringBuilder();
+        for (String key : sortedMap.keySet()) {
+            String value = params.get(key);
+            if (StringUtils.isNotEmpty(value) && !"sign".equals(key) && !"key".equals(key)) {
+                toSign.append(key.toLowerCase()).append("=").append(value).append("&");
+            }
+        }
+
+        toSign.append("key=").append(signKey);
+        return DigestUtils.md5Hex(toSign.toString()).toUpperCase();
+    }
+
+    /**
      * 校验签名
      * @param params
      * @param privateKey

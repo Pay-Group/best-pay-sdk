@@ -63,4 +63,6 @@ public class PayResponse {
     private String attach;
 
     private BestPayPlatformEnum payPlatformEnum;
+
+    private String prepayId;
 }

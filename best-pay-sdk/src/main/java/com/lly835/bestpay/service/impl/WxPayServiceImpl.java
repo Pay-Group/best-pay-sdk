@@ -284,28 +284,42 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
     private PayResponse buildPayResponse(WxPaySyncResponse response) {
         String timeStamp = String.valueOf(System.currentTimeMillis() / 1000);
         String nonceStr = RandomUtil.getRandomStr();
-        String packAge = "prepay_id=" + response.getPrepayId();
-        String signType = "MD5";
+        String prepayId = response.getPrepayId();
 
         //先构造要签名的map
         Map<String, String> map = new HashMap<>();
+        String signType = "MD5";
         map.put("appId", response.getAppid());
         map.put("timeStamp", timeStamp);
         map.put("nonceStr", nonceStr);
-        map.put("package", packAge);
-        map.put("signType", signType);
 
+        //返回的内容
         PayResponse payResponse = new PayResponse();
         payResponse.setAppId(response.getAppid());
         payResponse.setTimeStamp(timeStamp);
         payResponse.setNonceStr(nonceStr);
-        payResponse.setPackAge(packAge);
         payResponse.setSignType(signType);
-        payResponse.setPaySign(WxPaySignature.sign(map, wxPayConfig.getMchKey()));
         payResponse.setMwebUrl(response.getMwebUrl());
         payResponse.setCodeUrl(response.getCodeUrl());
 
-        return payResponse;
+        //区分APP支付，不需要拼接prepay_id, package="Sign=WXPay"
+        if(response.getTradeType().equals(BestPayTypeEnum.WXPAY_APP.getCode())) {
+            String packAge = "Sign=WXPay";
+            map.put("package", packAge);
+            map.put("prepayid", prepayId);
+            map.put("partnerid", response.getMchId());
+            payResponse.setPackAge(packAge);
+            payResponse.setPaySign(WxPaySignature.signForApp(map, wxPayConfig.getMchKey()));
+            payResponse.setPrepayId(prepayId);
+            return payResponse;
+        }else {
+            prepayId = "prepay_id=" + prepayId;
+            map.put("package", prepayId);
+            map.put("signType", signType);
+            payResponse.setPackAge(prepayId);
+            payResponse.setPaySign(WxPaySignature.sign(map, wxPayConfig.getMchKey()));
+            return payResponse;
+        }
     }
 
     /**
