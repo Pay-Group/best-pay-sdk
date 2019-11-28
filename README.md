@@ -3,13 +3,13 @@
 
 ## 版本更新
 
+#### 1.3.1(2019.11.28)
+    1. 修复：微信APP支付签名问题
+    2. 新增支付宝WAP支付
+    3. PayRequest增加参数returnUrl, 优先级高于PayConfig.returnUrl
+    4. 修复：查询订单，微信订单未支付的情况下timeEnd会返回空
 #### 1.3.0(2019.10.29）
-1. 正式版发布
-
-#### 1.3.0.BETA(2019.10.15）
-1. 新增微信h5、小程序、app、扫码，和支付宝PC支付
-2. 新增在线体验站点 http://best-pay.springboot.cn
-3. 异步通知和支付订单查询均已完成
+    1. 正式版发布
 
 更多更新记录 https://github.com/Pay-Group/best-pay-sdk/releases
 
