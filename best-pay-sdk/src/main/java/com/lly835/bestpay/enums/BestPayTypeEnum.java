@@ -36,8 +36,6 @@ public enum BestPayTypeEnum {
 
     private String desc;
 
-    private String methodName;
-
     BestPayTypeEnum(String code, BestPayPlatformEnum platform, String desc) {
         this.code = code;
         this.platform = platform;
