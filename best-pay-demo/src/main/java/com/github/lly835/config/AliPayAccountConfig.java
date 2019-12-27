@@ -32,4 +32,9 @@ public class AliPayAccountConfig {
      * 同步返回的url
      */
     private String returnUrl;
+
+    /**
+     * 是否使用沙箱
+     */
+    private Boolean sandbox;
 }

@@ -41,7 +41,7 @@ public class PayConfig {
         aliPayConfig.setAppId(aliPayAccountConfig.getAppId());
         aliPayConfig.setPrivateKey(aliPayAccountConfig.getPrivateKey());
         aliPayConfig.setAliPayPublicKey(aliPayAccountConfig.getAliPayPublicKey());
-        aliPayConfig.setSandbox(true);
+        aliPayConfig.setSandbox(aliPayAccountConfig.getSandbox());
         aliPayConfig.setReturnUrl(aliPayAccountConfig.getReturnUrl());
         return aliPayConfig;
     }

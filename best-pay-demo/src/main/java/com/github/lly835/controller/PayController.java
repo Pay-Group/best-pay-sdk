@@ -38,12 +38,14 @@ public class PayController {
     /**
      * 发起支付
      */
-    @GetMapping(value = "/pay")
+    @PostMapping(value = "/pay")
     @ResponseBody
     public PayResponse pay(@RequestParam(value = "openid", required = false) String openid,
                            @RequestParam BestPayTypeEnum payType,
                            @RequestParam String orderId,
-                           @RequestParam Double amount) {
+                           @RequestParam Double amount,
+                           @RequestParam(required = false) String buyerLogonId,
+                           @RequestParam(required = false) String buyerId) {
         //支付请求参数
         PayRequest request = new PayRequest();
         request.setPayTypeEnum(payType);
@@ -52,6 +54,12 @@ public class PayController {
         request.setOrderName("最好的支付sdk");
         request.setOpenid(openid);
         request.setAttach("这里是附加的信息");
+
+        if (payType == BestPayTypeEnum.ALIPAY_H5) {
+            request.setBuyerLogonId(buyerLogonId);
+            request.setBuyerId(buyerId);
+        }
+
         log.info("【发起支付】request={}", JsonUtil.toJson(request));
 
         PayResponse payResponse = bestPayService.pay(request);

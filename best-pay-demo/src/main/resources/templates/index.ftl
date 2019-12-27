@@ -29,6 +29,7 @@
                             <select class="form-control" id="payType">
                                 <option value="ALIPAY_PC">支付宝PC</option>
                                 <option value="ALIPAY_WAP">支付宝WAP</option>
+                                <option value="ALIPAY_H5">支付宝H5</option>
                                 <option value="WXPAY_NATIVE">微信Native支付</option>
                                 <option value="WXPAY_MWEB">微信H5支付</option>
                                 <option value="WXPAY_MP">微信公众号支付</option>
@@ -36,9 +37,17 @@
                                 <option value="WXPAY_APP">微信APP支付</option>
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" id="openidForm">
                             <label for="openid">openid</label>
                             <input type="text" class="form-control" id="openid" name="openid"/>
+                        </div>
+                        <div class="form-group" id="buyerLogonIdForm" hidden>
+                            <label for="buyerLogonId">买家支付宝账号（和buyer_id不能同时为空）</label>
+                            <input type="text" class="form-control" id="buyerLogonId" name="buyerLogonId"/>
+                        </div>
+                        <div class="form-group" id="buyerIdForm" hidden>
+                            <label for="buyerId">买家的支付宝唯一用户号（2088开头的16位纯数字）</label>
+                            <input type="text" class="form-control" id="buyerId" name="buyerId"/>
                         </div>
                         <button type="submit" onclick="" class="btn btn-default">提交</button>
                     </form>
@@ -78,6 +87,10 @@
                     $("#openid").val('o_KuH5GRKRY4kn7dmfCpvZBtRRgM')
                 }else if (payType == 'WXPAY_MP') {
                     $("#openid").val('oTgZpwZ9zPqleNgw2vshBqZQRG60')
+                }else if (payType == 'ALIPAY_H5') {
+                    $("#openidForm").hide()
+                    $("#buyerLogonIdForm").show()
+                    $("#buyerIdForm").show()
                 }
             })
 
@@ -86,10 +99,12 @@
                     orderId: $("#orderId").val(),
                     amount: $("#amount").val(),
                     payType: $("#payType").val(),
-                    openid: $("#openid").val()
+                    openid: $("#openid").val(),
+                    buyerLogonId: $("#buyerLogonId").val(),
+                    buyerId: $("#buyerId").val()
                 };
                 $.ajax({
-                    type:'get',
+                    type:'post',
                     url:'/pay',
                     data:data,
                     success:function(response){
@@ -123,6 +138,10 @@
                             case 'ALIPAY_WAP':
                                 console.log(response.body)
                                 $('#result').html(response.body)
+                                break
+                            case 'ALIPAY_H5':
+                                console.log(response.body)
+                                $('#result').html("h5发起支付文档 https://myjsapi.alipay.com/alipayjsapi/util/pay/tradePay.html")
                                 break
                         }
                     },

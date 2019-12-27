@@ -1,6 +1,7 @@
 package com.lly835.bestpay.model;
 
 import com.lly835.bestpay.enums.BestPayTypeEnum;
+import com.lly835.bestpay.model.alipay.request.AliPayTradeCreateRequest;
 import lombok.Data;
 
 /**
@@ -50,4 +51,16 @@ public class PayRequest {
      * 优先级高于PayConfig.returnUrl
      */
     private String returnUrl;
+
+    /**
+     * 买家支付宝账号
+     * {@link AliPayTradeCreateRequest.BizContent}
+     */
+    private String buyerLogonId;
+
+    /**
+     * 买家的支付宝唯一用户号（2088开头的16位纯数字）
+     * {@link AliPayTradeCreateRequest.BizContent}
+     */
+    private String buyerId;
 }

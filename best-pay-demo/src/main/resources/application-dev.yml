@@ -14,3 +14,4 @@ alipay:
   aliPayPublicKey: 支付宝公钥
   notifyUrl: http://xxx.com/notify
   returnUrl: http://xxx.com/return
+  sandbox: true #是否使用沙箱

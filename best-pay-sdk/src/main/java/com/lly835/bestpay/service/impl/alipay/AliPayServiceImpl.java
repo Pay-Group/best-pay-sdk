@@ -41,8 +41,8 @@ import java.util.Map;
 @Slf4j
 public class AliPayServiceImpl extends BestPayServiceImpl {
 
-    private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private AliPayConfig aliPayConfig;
+    protected final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    protected AliPayConfig aliPayConfig;
 
     public void setAliPayConfig(AliPayConfig aliPayConfig) {
         this.aliPayConfig = aliPayConfig;
@@ -63,6 +63,11 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
 
     @Override
     public PayResponse pay(PayRequest request) {
+		if (request.getPayTypeEnum() == BestPayTypeEnum.ALIPAY_H5){
+			AlipayH5ServiceImpl alipayH5Service = new AlipayH5ServiceImpl();
+			alipayH5Service.setAliPayConfig(aliPayConfig);
+			return alipayH5Service.pay(request);
+		}
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("out_trade_no",request.getOrderId());
         AliPayPcRequest aliPayRequest = new AliPayPcRequest();
