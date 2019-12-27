@@ -17,7 +17,7 @@ public enum BestPayTypeEnum {
 
     ALIPAY_WAP("alipay_wap", ALIPAY, "支付宝wap"),
 
-    ALIPAY_H5("alipay_h5", ALIPAY, "支付宝统一下单(h5)", "alipay.trade.create"),
+    ALIPAY_H5("alipay_h5", ALIPAY, "支付宝统一下单(h5)"),
 
     WXPAY_MP("JSAPI", WX,"微信公众账号支付"),
 
@@ -44,13 +44,6 @@ public enum BestPayTypeEnum {
         this.desc = desc;
     }
 
-    BestPayTypeEnum(String code, BestPayPlatformEnum platform, String desc, String methodName) {
-        this.code = code;
-        this.platform = platform;
-        this.desc = desc;
-        this.methodName = methodName;
-    }
-
     public String getCode() {
         return code;
     }
@@ -61,10 +54,6 @@ public enum BestPayTypeEnum {
 
     public String getDesc() {
         return desc;
-    }
-
-    public String getMethodName() {
-        return methodName;
     }
 
     public static BestPayTypeEnum getByName(String code) {
