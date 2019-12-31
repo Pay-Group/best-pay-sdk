@@ -78,7 +78,6 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
             requestParams.put("product_code", AliPayConstants.QUICK_WAP_PAY);
             aliPayRequest.setMethod(AliPayConstants.ALIPAY_TRADE_WAP_PAY);
         }
-        requestParams.put("product_code", AliPayConstants.FAST_INSTANT_TRADE_PAY);
         requestParams.put("total_amount", String.valueOf(request.getOrderAmount()));
         requestParams.put("subject", String.valueOf(request.getOrderName()));
 
