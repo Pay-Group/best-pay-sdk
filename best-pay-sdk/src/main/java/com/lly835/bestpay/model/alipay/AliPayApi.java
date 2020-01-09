@@ -1,6 +1,7 @@
 package com.lly835.bestpay.model.alipay;
 
 
+import com.lly835.bestpay.model.alipay.response.AliPayOrderCloseResponse;
 import com.lly835.bestpay.model.alipay.response.AliPayOrderCreateResponse;
 import com.lly835.bestpay.model.alipay.response.AliPayOrderQueryResponse;
 import retrofit2.Call;
@@ -21,4 +22,8 @@ public interface AliPayApi {
     @Headers("Content-Type:application/x-www-form-urlencoded; charset=utf-8")
     @POST("gateway.do")
     Call<AliPayOrderCreateResponse> tradeCreate(@FieldMap Map<String, String> map);
+
+    @FormUrlEncoded
+    @POST("gateway.do")
+    Call<AliPayOrderCloseResponse> close(@FieldMap Map<String, String> map);
 }

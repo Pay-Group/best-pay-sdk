@@ -10,9 +10,11 @@ import com.lly835.bestpay.enums.BestPayPlatformEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.alipay.AliPayApi;
+import com.lly835.bestpay.model.alipay.request.AliPayOrderCloseRequest;
 import com.lly835.bestpay.model.alipay.request.AliPayOrderQueryRequest;
 import com.lly835.bestpay.model.alipay.request.AliPayPcRequest;
 import com.lly835.bestpay.model.alipay.response.AliPayAsyncResponse;
+import com.lly835.bestpay.model.alipay.response.AliPayOrderCloseResponse;
 import com.lly835.bestpay.model.alipay.response.AliPayOrderQueryResponse;
 import com.lly835.bestpay.service.impl.BestPayServiceImpl;
 import com.lly835.bestpay.utils.JsonUtil;
@@ -193,5 +195,39 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
         payResponse.setOrderId(response.getOutTradeNo());
         payResponse.setOutTradeNo(response.getTradeNo());
         return payResponse;
+    }
+
+    @Override
+    public CloseResponse close(CloseRequest request) {
+        AliPayOrderCloseRequest aliPayOrderCloseRequest = new AliPayOrderCloseRequest();
+        aliPayOrderCloseRequest.setAppId(aliPayConfig.getAppId());
+        aliPayOrderCloseRequest.setTimestamp(LocalDateTime.now().format(formatter));
+        AliPayOrderQueryRequest.BizContent bizContent = new AliPayOrderQueryRequest.BizContent();
+        bizContent.setOutTradeNo(request.getOrderId());
+        bizContent.setTradeNo(request.getOutOrderId());
+        aliPayOrderCloseRequest.setBizContent(JsonUtil.toJsonWithUnderscores(bizContent).replaceAll("\\s*",""));
+        aliPayOrderCloseRequest.setSign(AliPaySignature.sign(MapUtil.object2MapWithUnderline(aliPayOrderCloseRequest), aliPayConfig.getPrivateKey()));
+
+        Call<AliPayOrderCloseResponse> call = retrofit.create(AliPayApi.class).close((MapUtil.object2MapWithUnderline(aliPayOrderCloseRequest)));
+        Response<AliPayOrderCloseResponse> retrofitResponse  = null;
+        try{
+            retrofitResponse = call.execute();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert retrofitResponse != null;
+        if (!retrofitResponse.isSuccessful()) {
+            throw new RuntimeException("【关闭支付宝订单】网络异常");
+        }
+        assert retrofitResponse.body() != null;
+        AliPayOrderCloseResponse.AlipayTradeCloseResponse response = retrofitResponse.body().getAlipayTradeCloseResponse();
+        if(!response.getCode().equals(AliPayConstants.RESPONSE_CODE_SUCCESS)) {
+            throw new RuntimeException("【关闭支付宝订单】code=" + response.getCode() + ", returnMsg=" + response.getMsg() + String.format("|%s|%s", response.getSubCode(), response.getSubMsg()));
+        }
+
+        CloseResponse closeResponse = new CloseResponse();
+        closeResponse.setOrderId(request.getOrderId() != null ? request.getOrderId() : "");
+        closeResponse.setOutTradeNo(response.getTradeNo());
+        return closeResponse;
     }
 }

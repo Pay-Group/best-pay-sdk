@@ -168,4 +168,15 @@ public class PayController {
         }
         throw new RuntimeException("错误的支付平台");
     }
+
+    @GetMapping("/pay/close")
+    @ResponseBody
+    public CloseResponse close(@RequestParam String orderId) {
+        CloseRequest request = new CloseRequest();
+        request.setPayTypeEnum(BestPayTypeEnum.ALIPAY_PC);
+        request.setOrderId(orderId);
+
+        CloseResponse close = bestPayService.close(request);
+        return close;
+    }
 }

@@ -125,4 +125,14 @@ public class BestPayServiceImpl implements BestPayService {
 
         return wxPayService.getQrCodeUrl(productId);
     }
+
+	@Override
+	public CloseResponse close(CloseRequest request) {
+        if (request.getPayTypeEnum().getPlatform() == BestPayPlatformEnum.ALIPAY) {
+            AliPayServiceImpl aliPayService = new AliPayServiceImpl();
+            aliPayService.setAliPayConfig(this.aliPayConfig);
+            return aliPayService.close(request);
+        }
+        throw new RuntimeException("尚未支持该种支付方式");
+	}
 }

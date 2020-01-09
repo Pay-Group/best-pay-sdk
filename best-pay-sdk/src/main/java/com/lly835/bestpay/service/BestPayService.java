@@ -70,4 +70,11 @@ public interface BestPayService {
      * @return 二维码中的内容为链接
      */
     String getQrCodeUrl(String productId);
+
+    /**
+     * 关闭订单
+     * @param request
+     * @return
+     */
+    CloseResponse close(CloseRequest request);
 }
