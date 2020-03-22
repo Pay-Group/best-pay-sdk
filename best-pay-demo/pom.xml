@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <best-pay-sdk.version>1.3.2-SNAPSHOT</best-pay-sdk.version>
+        <best-pay-sdk.version>1.3.2</best-pay-sdk.version>
     </properties>
 
     <dependencies>

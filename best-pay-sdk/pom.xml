@@ -7,7 +7,7 @@
     <parent>
         <groupId>cn.springboot</groupId>
         <artifactId>best-pay</artifactId>
-        <version>1.3.2-SNAPSHOT</version>
+        <version>1.3.2</version>
     </parent>
 
     <artifactId>best-pay-sdk</artifactId>
