@@ -4,6 +4,6 @@ jobs:
     docker:
       - image: maven:3.6.3-jdk-8
     steps:
-      - checkout
       - run: echo "start..."
+      - run: git clone https://github.com/Pay-Group/best-pay-sdk.git
       - run: mvn clean package -Dmaven.test.skip=true -U
