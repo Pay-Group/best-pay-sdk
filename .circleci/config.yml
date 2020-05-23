@@ -1,0 +1,9 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: maven:3.6.3-jdk-8
+    steps:
+      - checkout
+      - run: echo "start..."
+      - run: mvn clean package -Dmaven.test.skip=true -U
