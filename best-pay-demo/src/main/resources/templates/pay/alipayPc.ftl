@@ -1,3 +1,0 @@
-<html>
-${payResponse.body}
-</html>
