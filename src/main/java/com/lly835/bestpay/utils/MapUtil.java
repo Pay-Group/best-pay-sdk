@@ -194,13 +194,13 @@ public class MapUtil {
      * @return
      */
     public static HashMap<String, String> form2Map( String orderinfo) {
-        String listinfo[];
-        HashMap<String, String> map = new HashMap<String, String>();
+        String[] listinfo;
+        HashMap<String, String> map = new HashMap<>();
         listinfo = orderinfo.split("&");
         for(String s : listinfo)
         {
-            String list[]  = s.split("=");
-            if(list.length>1)
+            String[] list = s.split("=", 2);
+            if(list.length > 1)
             {
                 map.put(list[0], list[1]);
             }
