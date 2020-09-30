@@ -59,6 +59,11 @@ public interface AliPayConstants {
     String ALIPAY_TRADE_WAP_PAY = "alipay.trade.wap.pay";
 
     /**
+     * 支付宝二维码支付接口名称   method参数
+     */
+    String ALIPAY_TRADE_QRCODE_PAY = "alipay.trade.precreate";
+
+    /**
      * 销售产品码，与支付宝签约的产品码名称。
      * 注：目前仅支持FAST_INSTANT_TRADE_PAY
      */

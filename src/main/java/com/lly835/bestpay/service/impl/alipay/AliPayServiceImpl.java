@@ -46,6 +46,7 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
     protected final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     protected AliPayConfig aliPayConfig;
 
+    @Override
     public void setAliPayConfig(AliPayConfig aliPayConfig) {
         this.aliPayConfig = aliPayConfig;
     }
@@ -82,6 +83,10 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
             AlipayH5ServiceImpl alipayH5Service = new AlipayH5ServiceImpl();
             alipayH5Service.setAliPayConfig(aliPayConfig);
             return alipayH5Service.pay(request);
+        } else if (request.getPayTypeEnum() == BestPayTypeEnum.ALIPAY_QRCODE) {
+            AlipayQRCodeServiceImpl alipayQRCodeService = new AlipayQRCodeServiceImpl();
+            alipayQRCodeService.setAliPayConfig(aliPayConfig);
+            return alipayQRCodeService.pay(request);
         }
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("out_trade_no", request.getOrderId());
