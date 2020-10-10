@@ -63,4 +63,9 @@ public class PayRequest {
      * {@link AliPayTradeCreateRequest.BizContent}
      */
     private String buyerId;
+
+    /**
+     * 付款码
+     */
+    private String authCode;
 }

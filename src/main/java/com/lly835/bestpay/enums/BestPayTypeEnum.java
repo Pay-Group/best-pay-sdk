@@ -21,6 +21,8 @@ public enum BestPayTypeEnum {
 
     ALIPAY_QRCODE("alipay_precreate", ALIPAY, "支付宝统一收单线下交易预创建"),
 
+    ALIPAY_BARCODE("alipay_barcode", ALIPAY, "支付宝统一收单交易支付接口(付款码)"),
+
     WXPAY_MP("JSAPI", WX, "微信公众账号支付"),
 
     WXPAY_MWEB("MWEB", WX, "微信H5支付"),
