@@ -3,6 +3,7 @@ package com.lly835.bestpay.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lly835.bestpay.enums.BestPayPlatformEnum;
 import lombok.Data;
+import org.simpleframework.xml.Element;
 
 import java.net.URI;
 
@@ -11,6 +12,10 @@ import java.net.URI;
  */
 @Data
 public class PayResponse {
+
+    private String returnCode;
+
+    private String returnMsg;
 
     private String prePayParams;
 

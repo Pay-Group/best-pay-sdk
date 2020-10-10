@@ -32,6 +32,8 @@ public enum BestPayTypeEnum {
     WXPAY_MINI("JSAPI", WX, "微信小程序支付"),
 
     WXPAY_APP("APP", WX, "微信APP支付"),
+
+    WXPAY_MICRO("MICRO", WX, "微信付款码支付"),
     ;
 
     private String code;

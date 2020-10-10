@@ -28,7 +28,7 @@ import java.util.Map;
 @Slf4j
 public class WxPaySandboxKey {
 
-    public void get(String mchId) {
+    public void get(String mchId, String mchKey) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(WxPayConstants.WXPAY_GATEWAY)
                 .addConverterFactory(SimpleXmlConverterFactory.create())
@@ -36,15 +36,15 @@ public class WxPaySandboxKey {
         SandboxParam sandboxParam = new SandboxParam();
         sandboxParam.setMchId(mchId);
         sandboxParam.setNonceStr(RandomUtil.getRandomStr());
-        sandboxParam.setSign(WxPaySignature.sign(sandboxParam.buildMap(), ""));
+        sandboxParam.setSign(WxPaySignature.sign(sandboxParam.buildMap(), mchKey));
 
         String xml = XmlUtil.toString(sandboxParam);
         RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), xml);
         Call<WxPaySandboxKeyResponse> call = retrofit.create(WxPayApi.class).getsignkey(body);
-        Response<WxPaySandboxKeyResponse> retrofitResponse  = null;
-        try{
+        Response<WxPaySandboxKeyResponse> retrofitResponse = null;
+        try {
             retrofitResponse = call.execute();
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         if (!retrofitResponse.isSuccessful()) {

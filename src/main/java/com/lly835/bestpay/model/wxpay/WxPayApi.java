@@ -21,15 +21,23 @@ public interface WxPayApi {
      * @param body
      * @return
      */
-    @POST("/pay/unifiedorder")
+    @POST("pay/unifiedorder")
     Call<WxPaySyncResponse> unifiedorder(@Body RequestBody body);
+
+    /**
+     * 付款码支付
+     * @param body
+     * @return
+     */
+    @POST("pay/micropay")
+    Call<WxPaySyncResponse> micropay(@Body RequestBody body);
 
     /**
      * 申请退款
      * @param body
      * @return
      */
-    @POST("/secapi/pay/refund")
+    @POST("secapi/pay/refund")
     Call<WxRefundResponse> refund(@Body RequestBody body);
 
     /**
@@ -45,9 +53,9 @@ public interface WxPayApi {
      * @param body
      * @return
      */
-    @POST("/pay/orderquery")
+    @POST("pay/orderquery")
     Call<WxOrderQueryResponse> orderquery(@Body RequestBody body);
 
-    @POST("/pay/downloadbill")
+    @POST("pay/downloadbill")
     Call<ResponseBody> downloadBill(@Body RequestBody body);
 }
