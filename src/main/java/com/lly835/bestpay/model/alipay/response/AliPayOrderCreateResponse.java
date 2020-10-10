@@ -12,6 +12,8 @@ public class AliPayOrderCreateResponse {
 
 	private AlipayTradeCreateResponse alipayTradeCreateResponse;
 
+	private AlipayTradeCreateResponse alipayTradePrecreateResponse;
+
 	private String sign;
 
 	@Data
@@ -34,5 +36,10 @@ public class AliPayOrderCreateResponse {
 		 * 商家订单号
 		 */
 		private String outTradeNo;
+
+		/**
+		 * 支付二维码内容url
+		 */
+		private String qrCode;
 	}
 }

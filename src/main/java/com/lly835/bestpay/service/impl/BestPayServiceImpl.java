@@ -54,6 +54,7 @@ public class BestPayServiceImpl implements BestPayService {
      * @param request
      * @return
      */
+    @Override
     public PayResponse syncNotify(HttpServletRequest request) {
         return null;
     }
@@ -68,6 +69,7 @@ public class BestPayServiceImpl implements BestPayService {
      *
      * @return
      */
+    @Override
     public PayResponse asyncNotify(String notifyData) {
         //<xml>开头的是微信通知
         if (notifyData.startsWith("<xml>")) {

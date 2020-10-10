@@ -53,6 +53,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
             )
             .build();
 
+    @Override
     public void setWxPayConfig(WxPayConfig wxPayConfig) {
         this.wxPayConfig = wxPayConfig;
     }
@@ -153,6 +154,7 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
      * @param request
      * @return
      */
+    @Override
     public RefundResponse refund(RefundRequest request) {
         WxPayRefundRequest wxRequest = new WxPayRefundRequest();
         wxRequest.setOutTradeNo(request.getOrderId());
