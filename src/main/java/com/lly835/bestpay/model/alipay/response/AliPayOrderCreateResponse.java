@@ -14,6 +14,8 @@ public class AliPayOrderCreateResponse {
 
 	private AlipayTradeCreateResponse alipayTradePrecreateResponse;
 
+	private AlipayTradeCreateResponse alipayTradePayResponse;
+
 	private String sign;
 
 	@Data

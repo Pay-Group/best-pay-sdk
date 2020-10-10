@@ -87,6 +87,10 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
             AlipayQRCodeServiceImpl alipayQRCodeService = new AlipayQRCodeServiceImpl();
             alipayQRCodeService.setAliPayConfig(aliPayConfig);
             return alipayQRCodeService.pay(request);
+        } else if (request.getPayTypeEnum() == BestPayTypeEnum.ALIPAY_BARCODE) {
+            AlipayBarCodeServiceImpl alipayBarCodeService = new AlipayBarCodeServiceImpl();
+            alipayBarCodeService.setAliPayConfig(aliPayConfig);
+            return alipayBarCodeService.pay(request);
         }
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("out_trade_no", request.getOrderId());
