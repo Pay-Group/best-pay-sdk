@@ -17,6 +17,12 @@ public class PayResponse {
 
     private String returnMsg;
 
+    private String resultCode;
+
+    private String errCode;
+
+    private String errCodeDes;
+
     private String prePayParams;
 
     private URI payUri;

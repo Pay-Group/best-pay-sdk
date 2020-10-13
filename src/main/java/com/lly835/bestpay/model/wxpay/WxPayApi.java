@@ -58,4 +58,12 @@ public interface WxPayApi {
 
     @POST("pay/downloadbill")
     Call<ResponseBody> downloadBill(@Body RequestBody body);
+
+    /**
+     * 企业付款到用户银行卡
+     * @param body
+     * @return
+     */
+    @POST("mmpaysptrans/pay_bank")
+    Call<WxPaySyncResponse> payBank(@Body RequestBody body);
 }

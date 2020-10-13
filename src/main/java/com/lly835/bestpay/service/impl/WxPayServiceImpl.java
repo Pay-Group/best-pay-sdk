@@ -8,10 +8,7 @@ import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.enums.OrderStatusEnum;
 import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.wxpay.WxPayApi;
-import com.lly835.bestpay.model.wxpay.request.WxDownloadBillRequest;
-import com.lly835.bestpay.model.wxpay.request.WxOrderQueryRequest;
-import com.lly835.bestpay.model.wxpay.request.WxPayRefundRequest;
-import com.lly835.bestpay.model.wxpay.request.WxPayUnifiedorderRequest;
+import com.lly835.bestpay.model.wxpay.request.*;
 import com.lly835.bestpay.model.wxpay.response.*;
 import com.lly835.bestpay.utils.MapUtil;
 import com.lly835.bestpay.utils.MoneyUtil;
@@ -342,6 +339,11 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
 
     private RefundResponse buildRefundResponse(WxRefundResponse response) {
         RefundResponse refundResponse = new RefundResponse();
+        response.setReturnCode(response.getReturnCode());
+        response.setReturnMsg(response.getReturnMsg());
+        response.setResultCode(response.getResultCode());
+        response.setErrCode(response.getErrCode());
+        response.setErrCodeDes(response.getErrCodeDes());
         refundResponse.setOrderId(response.getOutTradeNo());
         refundResponse.setOrderAmount(MoneyUtil.Fen2Yuan(response.getTotalFee()));
         refundResponse.setOutTradeNo(response.getTransactionId());
@@ -352,6 +354,11 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
 
     private PayResponse buildPayResponse(WxPayAsyncResponse response) {
         PayResponse payResponse = new PayResponse();
+        payResponse.setReturnCode(response.getReturnCode());
+        payResponse.setReturnMsg(response.getReturnMsg());
+        payResponse.setResultCode(response.getResultCode());
+        payResponse.setErrCode(response.getErrCode());
+        payResponse.setErrCodeDes(response.getErrCodeDes());
         payResponse.setPayPlatformEnum(BestPayPlatformEnum.WX);
         payResponse.setOrderAmount(MoneyUtil.Fen2Yuan(response.getTotalFee()));
         payResponse.setOrderId(response.getOutTradeNo());
@@ -383,6 +390,9 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         PayResponse payResponse = new PayResponse();
         payResponse.setReturnCode(response.getReturnCode());
         payResponse.setReturnMsg(response.getReturnMsg());
+        payResponse.setResultCode(response.getResultCode());
+        payResponse.setErrCode(response.getErrCode());
+        payResponse.setErrCodeDes(response.getErrCodeDes());
         payResponse.setAppId(response.getAppid());
         payResponse.setTimeStamp(timeStamp);
         payResponse.setNonceStr(nonceStr);
@@ -408,6 +418,26 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
             payResponse.setPaySign(WxPaySignature.sign(map, wxPayConfig.getMchKey()));
             return payResponse;
         }
+    }
+
+    /**
+     * 返回给企业付款到银行卡的参数
+     *
+     * @param response
+     * @return
+     */
+    private PayBankResponse buildPayBankResponse(WxPaySyncResponse response) {
+        return PayBankResponse.builder()
+                .returnCode(response.getReturnCode())
+                .returnMsg(response.getReturnMsg())
+                .resultCode(response.getResultCode())
+                .errCode(response.getErrCode())
+                .errCodeDes(response.getErrCodeDes())
+                .amount(MoneyUtil.Fen2Yuan(response.getAmount()))
+                .cmmsAmt(MoneyUtil.Fen2Yuan(response.getCmmsAmt()))
+                .partnerTradeNo(response.getPartnerTradeNo())
+                .paymentNo(response.getPaymentNo())
+                .build();
     }
 
     /**
@@ -492,5 +522,45 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
                 + "&time_stamp=" + timeStamp
                 + "&nonce_str=" + nonceStr
                 + "&sign=" + WxPaySignature.sign(map, wxPayConfig.getMchKey());
+    }
+
+
+    @Override
+    public PayBankResponse payBank(PayBankRequest request) {
+        WxPayBankRequest wxPayBankRequest = WxPayBankRequest.builder()
+                .mchId(wxPayConfig.getMchId())
+                .partnerTradeNo(request.getOrderId())
+                .encBankNo(request.getBankNo())
+                .encTrueName(request.getTrueName())
+                .bankCode(request.getBankCode())
+                .amount(MoneyUtil.Yuan2Fen(request.getOrderAmount()))
+                .desc(request.getDesc())
+                .nonceStr(RandomUtil.getRandomStr())
+                .build();
+
+        wxPayBankRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxPayBankRequest), wxPayConfig.getMchKey()));
+        RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), XmlUtil.toString(wxPayBankRequest));
+
+        Call<WxPaySyncResponse> call = retrofit.create(WxPayApi.class).unifiedorder(body);
+        Response<WxPaySyncResponse> retrofitResponse = null;
+        try {
+            retrofitResponse = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert retrofitResponse != null;
+        if (!retrofitResponse.isSuccessful()) {
+            throw new RuntimeException("【微信付款到用户】发起支付, 网络异常");
+        }
+        WxPaySyncResponse response = retrofitResponse.body();
+
+        assert response != null;
+        if (!response.getReturnCode().equals(WxPayConstants.SUCCESS)) {
+            throw new RuntimeException("【微信付款到用户】发起支付, returnCode != SUCCESS, returnMsg = " + response.getReturnMsg());
+        }
+        if (!response.getResultCode().equals(WxPayConstants.SUCCESS)) {
+            throw new RuntimeException("【微信付款到用户】发起支付, resultCode != SUCCESS, err_code = " + response.getErrCode() + " err_code_des=" + response.getErrCodeDes());
+        }
+        return buildPayBankResponse(response);
     }
 }

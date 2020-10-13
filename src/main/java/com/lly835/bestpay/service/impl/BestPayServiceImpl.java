@@ -15,7 +15,7 @@ import java.util.Objects;
 public class BestPayServiceImpl implements BestPayService {
 
     /**
-     *  TODO 重构
+     * TODO 重构
      * 暂时先再引入一个config
      */
     private WxPayConfig wxPayConfig;
@@ -31,7 +31,7 @@ public class BestPayServiceImpl implements BestPayService {
 
     @Override
     public PayResponse pay(PayRequest request) {
-        Objects.requireNonNull(request,"request params must not be null");
+        Objects.requireNonNull(request, "request params must not be null");
         //微信支付
         if (BestPayPlatformEnum.WX == request.getPayTypeEnum().getPlatform()) {
             WxPayServiceImpl wxPayService = new WxPayServiceImpl();
@@ -102,7 +102,7 @@ public class BestPayServiceImpl implements BestPayService {
             WxPayServiceImpl wxPayService = new WxPayServiceImpl();
             wxPayService.setWxPayConfig(this.wxPayConfig);
             return wxPayService.query(request);
-        }else if (request.getPlatformEnum() == BestPayPlatformEnum.ALIPAY) {
+        } else if (request.getPlatformEnum() == BestPayPlatformEnum.ALIPAY) {
             AliPayServiceImpl aliPayService = new AliPayServiceImpl();
             aliPayService.setAliPayConfig(this.aliPayConfig);
             return aliPayService.query(request);
@@ -128,13 +128,23 @@ public class BestPayServiceImpl implements BestPayService {
         return wxPayService.getQrCodeUrl(productId);
     }
 
-	@Override
-	public CloseResponse close(CloseRequest request) {
+    @Override
+    public CloseResponse close(CloseRequest request) {
         if (request.getPayTypeEnum().getPlatform() == BestPayPlatformEnum.ALIPAY) {
             AliPayServiceImpl aliPayService = new AliPayServiceImpl();
             aliPayService.setAliPayConfig(this.aliPayConfig);
             return aliPayService.close(request);
         }
         throw new RuntimeException("尚未支持该种支付方式");
-	}
+    }
+
+    @Override
+    public PayBankResponse payBank(PayBankRequest request) {
+        if (request.getPayTypeEnum().getPlatform() == BestPayPlatformEnum.WX) {
+            WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+            wxPayService.setWxPayConfig(this.wxPayConfig);
+            return wxPayService.payBank(request);
+        }
+        throw new RuntimeException("尚未支持该种支付方式");
+    }
 }
