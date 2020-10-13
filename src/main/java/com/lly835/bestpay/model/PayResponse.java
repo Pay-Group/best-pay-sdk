@@ -13,6 +13,10 @@ import java.net.URI;
 @Data
 public class PayResponse {
 
+    /**
+     * 以下参数只有微信支付会返回 (在微信付款码支付使用)
+     * returnCode returnMsg resultCode errCode errCodeDes
+     */
     private String returnCode;
 
     private String returnMsg;
