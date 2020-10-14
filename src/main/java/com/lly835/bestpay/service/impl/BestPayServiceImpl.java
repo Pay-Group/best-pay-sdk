@@ -152,6 +152,10 @@ public class BestPayServiceImpl implements BestPayService {
             WxPayServiceImpl wxPayService = new WxPayServiceImpl();
             wxPayService.setWxPayConfig(this.wxPayConfig);
             return wxPayService.payBank(request);
+        } else if (request.getPayTypeEnum().getPlatform() == BestPayPlatformEnum.ALIPAY) {
+            AliPayServiceImpl aliPayService = new AliPayServiceImpl();
+            aliPayService.setAliPayConfig(this.aliPayConfig);
+            return aliPayService.payBank(request);
         }
         throw new RuntimeException("尚未支持该种支付方式");
     }

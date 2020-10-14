@@ -19,7 +19,50 @@ import java.net.URI;
 @AllArgsConstructor
 @Accessors(chain = true)
 public class PayBankResponse {
+    /**
+     * 商户订单号，需要保持唯一
+     */
+    private String orderId;
 
+    /**
+     * 代付成功后，返回的内部业务单号
+     */
+    private String outTradeNo;
+
+    /**
+     * 以下为支付宝字段
+     * <p>
+     * 支付宝支付资金流水号
+     */
+    private String payFundOrderId;
+
+    /**
+     * 转账单据状态。
+     */
+    private String status;
+
+
+    /**
+     * 以下为微信字段
+     * <p>
+     * 退款金额
+     */
+    private Double amount;
+
+    /**
+     * 手续费金额
+     */
+    private Double cmmsAmt;
+
+    /**
+     * 微信商户号
+     */
+    private String mchId;
+
+    /**
+     * 以下参数只有微信支付会返回 (在微信付款码支付使用)
+     * returnCode returnMsg resultCode errCode errCodeDes
+     */
     private String returnCode;
 
     private String returnMsg;
@@ -29,27 +72,4 @@ public class PayBankResponse {
     private String errCode;
 
     private String errCodeDes;
-
-    private String mchId;
-
-    /**
-     * 商户订单号，需要保持唯一
-     */
-    private String partnerTradeNo;
-
-    private Double amount;
-
-    private String nonceStr;
-
-    private String sign;
-
-    /**
-     * 代付成功后，返回的内部业务单号
-     */
-    private String paymentNo;
-
-    /**
-     * 手续费金额
-     */
-    private Double cmmsAmt;
 }

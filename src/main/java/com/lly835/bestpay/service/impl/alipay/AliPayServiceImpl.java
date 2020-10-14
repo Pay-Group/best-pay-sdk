@@ -10,14 +10,8 @@ import com.lly835.bestpay.enums.BestPayPlatformEnum;
 import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.alipay.AliPayApi;
-import com.lly835.bestpay.model.alipay.request.AliPayOrderCloseRequest;
-import com.lly835.bestpay.model.alipay.request.AliPayOrderQueryRequest;
-import com.lly835.bestpay.model.alipay.request.AliPayOrderRefundRequest;
-import com.lly835.bestpay.model.alipay.request.AliPayPcRequest;
-import com.lly835.bestpay.model.alipay.response.AliPayAsyncResponse;
-import com.lly835.bestpay.model.alipay.response.AliPayOrderCloseResponse;
-import com.lly835.bestpay.model.alipay.response.AliPayOrderQueryResponse;
-import com.lly835.bestpay.model.alipay.response.AliPayOrderRefundResponse;
+import com.lly835.bestpay.model.alipay.request.*;
+import com.lly835.bestpay.model.alipay.response.*;
 import com.lly835.bestpay.service.impl.BestPayServiceImpl;
 import com.lly835.bestpay.utils.JsonUtil;
 import com.lly835.bestpay.utils.MapUtil;
@@ -304,5 +298,54 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
         closeResponse.setOrderId(request.getOrderId() != null ? request.getOrderId() : "");
         closeResponse.setOutTradeNo(response.getTradeNo());
         return closeResponse;
+    }
+
+    @Override
+    public PayBankResponse payBank(PayBankRequest request) {
+        AliPayBankRequest aliPayBankRequest = new AliPayBankRequest();
+        aliPayBankRequest.setAppId(aliPayConfig.getAppId());
+        aliPayBankRequest.setTimestamp(LocalDateTime.now().format(formatter));
+        AliPayBankRequest.BizContent bizContent = new AliPayBankRequest.BizContent();
+        bizContent.setOutBizNo(request.getOrderId());
+        bizContent.setProductCode("TRANS_BANKCARD_NO_PWD");
+        bizContent.setOrderTitle(request.getDesc());
+        bizContent.setRemark(request.getDesc());
+        AliPayBankRequest.BizContent.Participant participant = new AliPayBankRequest.BizContent.Participant();
+        participant.setIdentity(request.getBankNo());
+        participant.setName(request.getTrueName());
+        participant.setIdentityType("BANKCARD_ACCOUNT");
+        AliPayBankRequest.BizContent.Participant.BankcardExtInfo bankcardExtInfo = new AliPayBankRequest.BizContent.Participant.BankcardExtInfo();
+        //暂时先默认对私
+        bankcardExtInfo.setAccountType(2);
+        bankcardExtInfo.setBankCode(request.getBankCode());
+        participant.setBankcardExtInfo(bankcardExtInfo);
+        bizContent.setPayeeInfo(participant);
+        aliPayBankRequest.setBizContent(JsonUtil.toJsonWithUnderscores(bizContent).replaceAll("\\s*", ""));
+        aliPayBankRequest.setSign(AliPaySignature.sign(MapUtil.object2MapWithUnderline(aliPayBankRequest), aliPayConfig.getPrivateKey()));
+
+        Call<AliPayBankResponse> call = retrofit.create(AliPayApi.class).payBank((MapUtil.object2MapWithUnderline(aliPayBankRequest)));
+
+        Response<AliPayBankResponse> retrofitResponse = null;
+        try {
+            retrofitResponse = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert retrofitResponse != null;
+        if (!retrofitResponse.isSuccessful()) {
+            throw new RuntimeException("【支付宝转账到银行卡】网络异常");
+        }
+        assert retrofitResponse.body() != null;
+        AliPayBankResponse.AlipayFundTransUniTransferResponse response = retrofitResponse.body().getAlipayFundTransUniTransferResponse();
+        if (!response.getCode().equals(AliPayConstants.RESPONSE_CODE_SUCCESS)) {
+            throw new RuntimeException("【支付宝转账到银行卡】code=" + response.getCode() + ", returnMsg=" + response.getMsg());
+        }
+
+        return PayBankResponse.builder()
+                .orderId(response.getOutBizNo())
+                .outTradeNo(response.getOrderId())
+                .payFundOrderId(response.getPayRundOrderId())
+                .status(response.getStatus())
+                .build();
     }
 }

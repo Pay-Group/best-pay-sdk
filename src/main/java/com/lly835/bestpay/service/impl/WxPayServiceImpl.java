@@ -437,8 +437,9 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
                 .errCodeDes(response.getErrCodeDes())
                 .amount(MoneyUtil.Fen2Yuan(response.getAmount()))
                 .cmmsAmt(MoneyUtil.Fen2Yuan(response.getCmmsAmt()))
-                .partnerTradeNo(response.getPartnerTradeNo())
-                .paymentNo(response.getPaymentNo())
+                .orderId(response.getPartnerTradeNo())
+                .mchId(response.getMchId())
+                .outTradeNo(response.getPaymentNo())
                 .build();
     }
 
