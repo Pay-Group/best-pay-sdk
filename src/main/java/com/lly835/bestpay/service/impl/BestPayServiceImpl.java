@@ -4,6 +4,7 @@ import com.lly835.bestpay.config.AliPayConfig;
 import com.lly835.bestpay.config.SignType;
 import com.lly835.bestpay.config.WxPayConfig;
 import com.lly835.bestpay.enums.BestPayPlatformEnum;
+import com.lly835.bestpay.enums.BestPayTypeEnum;
 import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.service.BestPayService;
 import com.lly835.bestpay.service.impl.alipay.AliPayServiceImpl;
@@ -85,9 +86,16 @@ public class BestPayServiceImpl implements BestPayService {
 
     @Override
     public RefundResponse refund(RefundRequest request) {
-        WxPayServiceImpl wxPayService = new WxPayServiceImpl();
-        wxPayService.setWxPayConfig(this.wxPayConfig);
-        return wxPayService.refund(request);
+        if (request.getPayPlatformEnum() == BestPayPlatformEnum.WX) {
+            WxPayServiceImpl wxPayService = new WxPayServiceImpl();
+            wxPayService.setWxPayConfig(this.wxPayConfig);
+            return wxPayService.refund(request);
+        } else if (request.getPayPlatformEnum() == BestPayPlatformEnum.ALIPAY) {
+            AliPayServiceImpl aliPayService = new AliPayServiceImpl();
+            aliPayService.setAliPayConfig(this.aliPayConfig);
+            return aliPayService.refund(request);
+        }
+        throw new RuntimeException("错误的支付平台");
     }
 
     /**

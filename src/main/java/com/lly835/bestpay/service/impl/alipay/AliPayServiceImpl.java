@@ -12,10 +12,12 @@ import com.lly835.bestpay.model.*;
 import com.lly835.bestpay.model.alipay.AliPayApi;
 import com.lly835.bestpay.model.alipay.request.AliPayOrderCloseRequest;
 import com.lly835.bestpay.model.alipay.request.AliPayOrderQueryRequest;
+import com.lly835.bestpay.model.alipay.request.AliPayOrderRefundRequest;
 import com.lly835.bestpay.model.alipay.request.AliPayPcRequest;
 import com.lly835.bestpay.model.alipay.response.AliPayAsyncResponse;
 import com.lly835.bestpay.model.alipay.response.AliPayOrderCloseResponse;
 import com.lly835.bestpay.model.alipay.response.AliPayOrderQueryResponse;
+import com.lly835.bestpay.model.alipay.response.AliPayOrderRefundResponse;
 import com.lly835.bestpay.service.impl.BestPayServiceImpl;
 import com.lly835.bestpay.utils.JsonUtil;
 import com.lly835.bestpay.utils.MapUtil;
@@ -166,7 +168,45 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
 
     @Override
     public RefundResponse refund(RefundRequest request) {
-        return super.refund(request);
+        AliPayOrderRefundRequest aliPayOrderRefundRequest = new AliPayOrderRefundRequest();
+        aliPayOrderRefundRequest.setAppId(aliPayConfig.getAppId());
+        aliPayOrderRefundRequest.setTimestamp(LocalDateTime.now().format(formatter));
+        AliPayOrderRefundRequest.BizContent bizContent = new AliPayOrderRefundRequest.BizContent();
+        bizContent.setOutTradeNo(request.getOrderId());
+        bizContent.setRefundReason(request.getRefundReason());
+        bizContent.setRefundAmount(request.getOrderAmount());
+        aliPayOrderRefundRequest.setBizContent(JsonUtil.toJsonWithUnderscores(bizContent).replaceAll("\\s*", ""));
+        aliPayOrderRefundRequest.setSign(AliPaySignature.sign(MapUtil.object2MapWithUnderline(aliPayOrderRefundRequest), aliPayConfig.getPrivateKey()));
+
+        Call<AliPayOrderRefundResponse> call = null;
+        if (aliPayConfig.isSandbox()) {
+            call = devRetrofit.create(AliPayApi.class).refund((MapUtil.object2MapWithUnderline(aliPayOrderRefundRequest)));
+        } else {
+            call = retrofit.create(AliPayApi.class).refund((MapUtil.object2MapWithUnderline(aliPayOrderRefundRequest)));
+        }
+
+        Response<AliPayOrderRefundResponse> retrofitResponse = null;
+        try {
+            retrofitResponse = call.execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assert retrofitResponse != null;
+        if (!retrofitResponse.isSuccessful()) {
+            throw new RuntimeException("【支付宝退款】网络异常");
+        }
+        assert retrofitResponse.body() != null;
+        AliPayOrderRefundResponse.AlipayTradeRefundResponse response = retrofitResponse.body().getAlipayTradeRefundResponse();
+        if (!response.getCode().equals(AliPayConstants.RESPONSE_CODE_SUCCESS)) {
+            throw new RuntimeException("【支付宝退款】code=" + response.getCode() + ", returnMsg=" + response.getMsg() + String.format("|%s|%s", response.getSubCode(), response.getSubMsg()));
+        }
+
+        return RefundResponse.builder()
+                .outTradeNo(response.getTradeNo())
+                .orderId(response.getOutTradeNo())
+                .outRefundNo(response.getTradeNo())
+                .orderAmount(response.getRefundFee())
+                .build();
     }
 
     @Override

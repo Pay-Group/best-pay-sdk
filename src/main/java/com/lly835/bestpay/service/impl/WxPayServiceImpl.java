@@ -241,6 +241,8 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
         wxRequest.setNonceStr(RandomUtil.getRandomStr());
         wxRequest.setSign(WxPaySignature.sign(MapUtil.buildMap(wxRequest), wxPayConfig.getMchKey()));
 
+        wxRequest.setRefundDesc(request.getRefundReason());
+
         //初始化证书
         if (wxPayConfig.getSslContext() == null) {
             wxPayConfig.initSSLContext();
