@@ -18,7 +18,9 @@ public class WxPaySyncResponse {
     @Element(name = "return_msg", required = false)
     private String returnMsg;
 
-    /** 以下字段在return_code为SUCCESS的时候有返回. */
+    /**
+     * 以下字段在return_code为SUCCESS的时候有返回.
+     */
     @Element(name = "appid", required = false)
     private String appid;
 
@@ -43,7 +45,15 @@ public class WxPaySyncResponse {
     @Element(name = "err_code_des", required = false)
     private String errCodeDes;
 
-    /** 以下字段在return_code 和result_code都为SUCCESS的时候有返回. */
+    @Element(name = "partner_trade_no", required = false)
+    private String partnerTradeNo;
+
+    @Element(name = "amount", required = false)
+    private Integer amount;
+
+    /**
+     * 以下字段在return_code 和result_code都为SUCCESS的时候有返回.
+     */
     @Element(name = "trade_type", required = false)
     private String tradeType;
 
@@ -55,4 +65,10 @@ public class WxPaySyncResponse {
 
     @Element(name = "mweb_url", required = false)
     private String mwebUrl;
+
+    @Element(name = "payment_no", required = false)
+    private String paymentNo;
+
+    @Element(name = "cmms_amt", required = false)
+    private Integer cmmsAmt;
 }

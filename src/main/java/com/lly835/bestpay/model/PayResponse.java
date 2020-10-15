@@ -3,6 +3,7 @@ package com.lly835.bestpay.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lly835.bestpay.enums.BestPayPlatformEnum;
 import lombok.Data;
+import org.simpleframework.xml.Element;
 
 import java.net.URI;
 
@@ -11,6 +12,20 @@ import java.net.URI;
  */
 @Data
 public class PayResponse {
+
+    /**
+     * 以下参数只有微信支付会返回 (在微信付款码支付使用)
+     * returnCode returnMsg resultCode errCode errCodeDes
+     */
+    private String returnCode;
+
+    private String returnMsg;
+
+    private String resultCode;
+
+    private String errCode;
+
+    private String errCodeDes;
 
     private String prePayParams;
 

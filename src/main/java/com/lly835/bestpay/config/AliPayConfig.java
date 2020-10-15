@@ -21,10 +21,6 @@ public class AliPayConfig extends PayConfig {
      * 支付宝公钥
      */
     private String aliPayPublicKey;
-    /**
-     * 默认非沙箱测试
-     */
-    private boolean sandbox = false;
 
     public void check() {
         Objects.requireNonNull(appId, "config param 'appId' is null.");

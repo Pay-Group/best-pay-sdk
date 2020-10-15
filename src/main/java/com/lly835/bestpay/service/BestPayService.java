@@ -77,4 +77,11 @@ public interface BestPayService {
      * @return
      */
     CloseResponse close(CloseRequest request);
+
+    /**
+     * 企业付款到用户银行卡
+     * @param request
+     * @return
+     */
+    PayBankResponse payBank(PayBankRequest request);
 }
