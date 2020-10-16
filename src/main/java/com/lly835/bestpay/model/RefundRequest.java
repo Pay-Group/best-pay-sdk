@@ -21,6 +21,11 @@ public class RefundRequest {
     private String orderId;
 
     /**
+     * 标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
+     */
+    private String outRequestNo;
+
+    /**
      * 订单金额.
      */
     private Double orderAmount;
