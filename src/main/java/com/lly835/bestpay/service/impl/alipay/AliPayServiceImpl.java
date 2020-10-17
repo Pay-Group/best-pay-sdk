@@ -168,8 +168,8 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
         AliPayOrderRefundRequest.BizContent bizContent = new AliPayOrderRefundRequest.BizContent();
         bizContent.setOutTradeNo(request.getOrderId());
         bizContent.setRefundReason(request.getRefundReason());
-        bizContent.setRefundAmount(request.getOrderAmount());
-        bizContent.setOutRequestNo(request.getOutRequestNo());
+        bizContent.setRefundAmount(request.getRefundAmount());
+        bizContent.setOutRequestNo(request.getRefundNo());
         aliPayOrderRefundRequest.setBizContent(JsonUtil.toJsonWithUnderscores(bizContent).replaceAll("\\s*", ""));
         aliPayOrderRefundRequest.setSign(AliPaySignature.sign(MapUtil.object2MapWithUnderline(aliPayOrderRefundRequest), aliPayConfig.getPrivateKey()));
 
