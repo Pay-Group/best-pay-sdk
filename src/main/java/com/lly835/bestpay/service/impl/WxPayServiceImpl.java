@@ -183,9 +183,11 @@ public class WxPayServiceImpl extends BestPayServiceImpl {
     public RefundResponse refund(RefundRequest request) {
         WxPayRefundRequest wxRequest = new WxPayRefundRequest();
         wxRequest.setOutTradeNo(request.getOrderId());
-        wxRequest.setOutRefundNo(request.getOrderId());
+        //兼容旧的
+        wxRequest.setOutRefundNo(request.getRefundNo() == null ? request.getOrderId() : request.getRefundNo());
         wxRequest.setTotalFee(MoneyUtil.Yuan2Fen(request.getOrderAmount()));
-        wxRequest.setRefundFee(MoneyUtil.Yuan2Fen(request.getOrderAmount()));
+        //兼容旧的
+        wxRequest.setRefundFee(MoneyUtil.Yuan2Fen(request.getRefundAmount() == null ? request.getOrderAmount() : request.getRefundAmount()));
 
         wxRequest.setAppid(wxPayConfig.getAppId());
         wxRequest.setMchId(wxPayConfig.getMchId());

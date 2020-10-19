@@ -79,5 +79,10 @@ public class AliPayOrderRefundRequest {
          * 查询选项，商户通过上送该字段来定制查询返回信息
          */
         private String queryOptions;
+
+        /**
+         * 标识一次退款请求，同一笔交易多次退款需要保证唯一，如需部分退款，则此参数必传。
+         */
+        private String outRequestNo;
     }
 }
