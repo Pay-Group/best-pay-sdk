@@ -60,6 +60,7 @@ public class AlipayBarCodeServiceImpl extends AliPayServiceImpl {
         aliPayOrderQueryRequest.setMethod(AliPayConstants.ALIPAY_TRADE_BARCODE_PAY);
         aliPayOrderQueryRequest.setAppId(aliPayConfig.getAppId());
         aliPayOrderQueryRequest.setTimestamp(LocalDateTime.now().format(formatter));
+        aliPayOrderQueryRequest.setNotifyUrl(aliPayConfig.getNotifyUrl());
         AliPayTradeCreateRequest.BizContent bizContent = new AliPayTradeCreateRequest.BizContent();
         bizContent.setOutTradeNo(request.getOrderId());
         bizContent.setTotalAmount(request.getOrderAmount());
