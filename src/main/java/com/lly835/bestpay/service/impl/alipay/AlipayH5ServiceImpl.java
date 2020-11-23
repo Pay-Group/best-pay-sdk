@@ -59,6 +59,7 @@ public class AlipayH5ServiceImpl extends AliPayServiceImpl {
 			throw new RuntimeException("alipay.trade.create: buyer_logon_id 和 buyer_id不能同时为空");
 		}
 
+		aliPayOrderQueryRequest.setNotifyUrl(aliPayConfig.getNotifyUrl());
 		aliPayOrderQueryRequest.setBizContent(JsonUtil.toJsonWithUnderscores(bizContent).replaceAll("\\s*",""));
 		aliPayOrderQueryRequest.setSign(AliPaySignature.sign(MapUtil.object2MapWithUnderline(aliPayOrderQueryRequest), aliPayConfig.getPrivateKey()));
 
