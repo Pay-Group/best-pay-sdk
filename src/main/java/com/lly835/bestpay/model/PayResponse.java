@@ -3,7 +3,6 @@ package com.lly835.bestpay.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lly835.bestpay.enums.BestPayPlatformEnum;
 import lombok.Data;
-import org.simpleframework.xml.Element;
 
 import java.net.URI;
 
@@ -80,4 +79,9 @@ public class PayResponse {
     private BestPayPlatformEnum payPlatformEnum;
 
     private String prepayId;
+
+    /**
+     * 支付宝App支付返回的请求参数信息
+     */
+    private String orderInfo;
 }
