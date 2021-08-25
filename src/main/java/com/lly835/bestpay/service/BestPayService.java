@@ -1,10 +1,7 @@
 package com.lly835.bestpay.service;
 
 import com.lly835.bestpay.config.SignType;
-import com.lly835.bestpay.model.PayRequest;
-import com.lly835.bestpay.model.PayResponse;
-import com.lly835.bestpay.model.RefundRequest;
-import com.lly835.bestpay.model.RefundResponse;
+import com.lly835.bestpay.model.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -51,5 +48,40 @@ public interface BestPayService {
      */
     RefundResponse refund(RefundRequest request);
 
+    /**
+     * 查询订单
+     * @param request
+     * @return
+     */
+    OrderQueryResponse query(OrderQueryRequest request);
 
+
+    /**
+     * 下载对账单
+     * @param request
+     * @return
+     */
+    String downloadBill(DownloadBillRequest request);
+
+
+    /**
+     * 根据规则生成二维码URL
+     * @param productId 商品ID
+     * @return 二维码中的内容为链接
+     */
+    String getQrCodeUrl(String productId);
+
+    /**
+     * 关闭订单
+     * @param request
+     * @return
+     */
+    CloseResponse close(CloseRequest request);
+
+    /**
+     * 企业付款到用户银行卡
+     * @param request
+     * @return
+     */
+    PayBankResponse payBank(PayBankRequest request);
 }

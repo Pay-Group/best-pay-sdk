@@ -36,7 +36,7 @@ public class WxPayUnifiedorderRequest {
     @Element(name = "notify_url")
     private String notifyUrl;
 
-    @Element(name = "openid", required=false)
+    @Element(name = "openid", required = false)
     private String openid;
 
     @Element(name = "out_trade_no")
@@ -50,4 +50,7 @@ public class WxPayUnifiedorderRequest {
 
     @Element(name = "trade_type")
     private String tradeType;
+
+    @Element(name = "auth_code", required = false)
+    private String authCode;
 }

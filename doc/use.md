@@ -1,24 +1,31 @@
 # 使用文档(以微信公众账号支付为例)
-## 视频教程
-1. [best-pay-sdk的使用](http://v.youku.com/v_show/id_XMjg5MjM4ODIyNA==.html)
-2. [支付调试补充](http://v.youku.com/v_show/id_XMjk1OTg2Mzk5Ng==.html)
-3. [借用授权并支付](http://v.youku.com/v_show/id_XMjk1OTg2NTEzNg==.html)
 
 ## 文字教程
 1. 配置
 
     ```
-    //微信公众账号支付配置
-    WxPayH5Config wxPayH5Config = new WxPayH5Config();
-    wxPayH5Config.setAppId("xxxxx");
-    wxPayH5Config.setAppSecret("xxxxxxxx");
-    wxPayH5Config.setMchId("xxxxxx");
-    wxPayH5Config.setMchKey("xxxxxxx");
-    wxPayH5Config.setNotifyUrl("http://xxxxx");
+    //微信支付配置
+    WxPayConfig wxPayConfig = new WxPayConfig();
+    wxPayConfig.setAppId("xxxxx");          //公众号Id
+    wxPayConfig.setMiniAppId("xxxxx");      //小程序Id
+	wxPayConfig.setAppAppId("xxxxx");       //移动AppId
+    //支付商户资料
+    wxPayConfig.setMchId("xxxxxx");
+    wxPayConfig.setMchKey("xxxxxxx");
+    wxPayConfig.setNotifyUrl("http://xxxxx");
+    
+    //支付宝配置
+    AliPayConfig aliPayConfig = new AliPayConfig();
+    aliPayConfig.setAppId("xxxxxx");
+    aliPayConfig.setPrivateKey("xxxxxx");
+    aliPayConfig.setAliPayPublicKey("xxxxxx");
+    aliPayConfig.setReturnUrl("http://xxxxx");
+    aliPayConfig.setNotifyUrl("http://xxxxx");
             
     //支付类, 所有方法都在这个类里
     BestPayServiceImpl bestPayService = new BestPayServiceImpl();
-    bestPayService.setWxPayH5Config(wxPayH5Config);
+    bestPayService.setWxPayConfig(wxPayConfig);
+    bestPayService.setAliPayConfig(aliPayConfig);
     ```
 
     

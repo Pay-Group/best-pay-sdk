@@ -22,3 +22,4 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+best-pay-demo/src/main/resources/application-prod.yml

@@ -14,7 +14,7 @@ public class MoneyUtil {
      * @return
      */
     public static Integer Yuan2Fen(Double yuan) {
-        return new BigDecimal(String.valueOf(yuan)).movePointRight(2).intValue();
+        return BigDecimal.valueOf(yuan).movePointRight(2).intValue();
     }
 
     /**

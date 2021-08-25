@@ -1,6 +1,10 @@
 package com.lly835.bestpay.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * 退款返回的参数
@@ -8,6 +12,10 @@ import lombok.Data;
  * 2017-07-08 23:40
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 public class RefundResponse {
 
     /**

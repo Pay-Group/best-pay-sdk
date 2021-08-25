@@ -14,6 +14,19 @@ class PayConfig {
      */
     private String returnUrl;
 
+    /**
+     * 默认非沙箱测试
+     */
+    private boolean sandbox = false;
+
+    public boolean isSandbox() {
+        return sandbox;
+    }
+
+    public void setSandbox(boolean sandbox) {
+        this.sandbox = sandbox;
+    }
+
     public String getNotifyUrl() {
         return notifyUrl;
     }
