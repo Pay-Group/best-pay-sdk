@@ -4,6 +4,10 @@
 示例 https://github.com/Pay-Group/best-pay-demo
 
 ## 版本更新
+#### 1.3.7(2022.8.18)
+    1. 新增支付app
+    2. 修复支付宝wap回调参数的bug
+
 #### 1.3.3(2020.5.23)
     2. 修正支付沙盒
 
@@ -12,8 +16,6 @@
     2. 新增支付宝WAP支付
     3. PayRequest增加参数returnUrl, 优先级高于PayConfig.returnUrl
     4. 修复：查询订单，微信订单未支付的情况下timeEnd会返回空
-#### 1.3.0(2019.10.29）
-    1. 正式版发布
 
 更多更新记录 https://github.com/Pay-Group/best-pay-sdk/releases
 
@@ -41,7 +43,7 @@
 <dependency>
     <groupId>cn.springboot</groupId>
     <artifactId>best-pay-sdk</artifactId>
-    <version>1.3.0</version>
+    <version>请使用最新版</version>
 </dependency>
 ```
 

@@ -105,4 +105,9 @@ public class AliPayAsyncResponse implements Serializable {
      * 交易结束时间
      */
     private String gmtClose;
+
+    /**
+     * 附加/回传参数
+     */
+    private String passbackParams;
 }

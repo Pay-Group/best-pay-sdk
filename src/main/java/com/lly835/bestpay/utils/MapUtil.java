@@ -77,6 +77,9 @@ public class MapUtil {
 
         String url = "";
         for(Map.Entry<String, String> entry : map.entrySet()){
+            if (StringUtil.isEmpty(entry.getValue())) {
+                continue;
+            }
             url += entry.getKey() + "=" + entry.getValue() + "&";
         }
 
@@ -176,8 +179,8 @@ public class MapUtil {
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             String value = map.get(key);
-            if (value == null) {
-                break;
+            if (StringUtil.isEmpty(value)) {
+                continue;
             }
             if (i == keys.size() - 1) {//拼接时，不包括最后一个&字符
                 prestr = prestr + key + "=" + URLEncoder.encode(value);

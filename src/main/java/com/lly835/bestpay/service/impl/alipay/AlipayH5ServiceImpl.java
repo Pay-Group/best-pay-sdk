@@ -52,6 +52,7 @@ public class AlipayH5ServiceImpl extends AliPayServiceImpl {
 		bizContent.setSubject(request.getOrderName());
 		bizContent.setBuyerLogonId(request.getBuyerLogonId());
 		bizContent.setBuyerId(request.getBuyerId());
+		bizContent.setPassbackParams(request.getAttach());
 
 		//必须传一个
 		if (StringUtil.isEmpty(bizContent.getBuyerId())

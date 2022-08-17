@@ -69,7 +69,7 @@ public interface AliPayConstants {
     String ALIPAY_TRADE_BARCODE_PAY = "alipay.trade.pay";
 
     /**
-     * 支付宝APP支付接口名称 method参数
+     * 支付宝APP支付
      */
     String ALIPAY_TRADE_APP_PAY = "alipay.trade.app.pay";
 
