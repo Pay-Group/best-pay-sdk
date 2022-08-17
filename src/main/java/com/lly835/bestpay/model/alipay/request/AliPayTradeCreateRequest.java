@@ -90,5 +90,12 @@ public class AliPayTradeCreateRequest {
          * 是否异步支付，传入true时，表明本次期望走异步支付，会先将支付请求受理下来，再异步推进。商户可以通过交易的异步通知或者轮询交易的状态来确定最终的交易结果
          */
         private Boolean isAsyncPay;
+
+        private String timeExpire;
+
+        /**
+         * 异步回传参数，attach
+         */
+        private String passbackParams;
     }
 }

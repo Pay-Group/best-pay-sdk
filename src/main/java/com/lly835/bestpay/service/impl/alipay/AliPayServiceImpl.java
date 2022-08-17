@@ -87,6 +87,10 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
             AlipayBarCodeServiceImpl alipayBarCodeService = new AlipayBarCodeServiceImpl();
             alipayBarCodeService.setAliPayConfig(aliPayConfig);
             return alipayBarCodeService.pay(request);
+        }else if (request.getPayTypeEnum() == BestPayTypeEnum.ALIPAY_APP) {
+            AlipayAppServiceImpl alipayAppService = new AlipayAppServiceImpl();
+            alipayAppService.setAliPayConfig(aliPayConfig);
+            return alipayAppService.pay(request);
         }
         Map<String, String> requestParams = new HashMap<>();
         requestParams.put("out_trade_no", request.getOrderId());
@@ -100,6 +104,7 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
         }
         requestParams.put("total_amount", String.valueOf(request.getOrderAmount()));
         requestParams.put("subject", String.valueOf(request.getOrderName()));
+        requestParams.put("passback_params", request.getAttach());
 
         aliPayRequest.setAppId(aliPayConfig.getAppId());
         aliPayRequest.setCharset("utf-8");
@@ -258,6 +263,7 @@ public class AliPayServiceImpl extends BestPayServiceImpl {
         payResponse.setOrderAmount(Double.valueOf(response.getTotalAmount()));
         payResponse.setOrderId(response.getOutTradeNo());
         payResponse.setOutTradeNo(response.getTradeNo());
+        payResponse.setAttach(response.getPassbackParams());
         return payResponse;
     }
 

@@ -6,6 +6,7 @@ import lombok.Data;
 import org.simpleframework.xml.Element;
 
 import java.net.URI;
+import java.util.Map;
 
 /**
  * 支付时的同步/异步返回参数
@@ -80,4 +81,6 @@ public class PayResponse {
     private BestPayPlatformEnum payPlatformEnum;
 
     private String prepayId;
+
+    private Map<String, String> map;
 }
